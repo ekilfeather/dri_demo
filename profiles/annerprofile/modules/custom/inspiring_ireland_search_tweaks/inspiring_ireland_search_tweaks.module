@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Extra behaviours to alter the faceted search of DRI Objects.
+ */
+
+
+/**
+ * Implements hook_preprocess_view_view_unformatted().
+ *
+ * Replaces the DRI Object ID (node-title) with a thumbnail image, by requesting
+ * file asset URL from the DRI API.
+ *
+ * @todo Important! Fallback for cases where image is unavailable.
+ */
+function inspiring_ireland_search_tweaks_preprocess_views_view_unformatted(&$variables) {
+  // Identify the view we want.
+  if ($variables['view']->name == 'dri_object_search' && $variables['view']->current_display == 'page') {
+
+    // Get all the DRI Object IDs in the view results.
+    $object_ids = array();
+    foreach ($variables['view']->result as $row) {
+      $object_ids[] = $row->_entity_properties['title'];
+    }
+
+    // Make the API call for all objects.
+    $assets = dri_api_get_assets($object_ids);
+
+    // The objects don't come back in the same order as we provided theme :-(
+    // Extract the thumbnails into an array we can use.
+    $thumbnails = array();
+    foreach ($assets as $key => $result) {
+      $id = $result['pid'];
+      $file = $result['files'][0]['thumbnail_large'];
+      $thumbnails[$id] = $file;
+    }
+
+    foreach ($variables['rows'] as $key => $markup) {
+
+      // Get the DRI Object ID (node-title views field).
+      $xml = new SimpleXMLElement('<row>' . $markup . '</row>');
+      $object_spans = $xml->xpath('//div[contains(@class, "views-field-title")]/span');
+      $object_id = $object_spans[0]->__toString();
+
+      if (!empty($thumbnails[$object_id])) {
+        $img_path = $thumbnails[$object_id];
+      }
+      else {
+        // @todo Add a placeholder fallback image?
+        $img_path = '';
+      }
+
+      $img = theme('imagecache_external', array(
+        'path' => $img_path,
+        'alt' => '', // not needed, image followed imediately by dri_title field
+        'style_name'=> 'facet_search',
+      ));
+
+      // Alter the markup in views row output by simple string replacement.
+      // Make sure we target the object_id in the views-field span,
+      // But not the object_id in the template's wrapper <a> link.
+      $search =  '<span class="field-content">' . $object_id . '</span>';
+      $replace = '<span class="field-content">' . $img . '</span>';
+      $output = str_replace($search, $replace, $markup);
+      $variables['rows'][$key] = $output;
+    }
+  }
+}
+
+
+/**
+ * Implements hook_preprocess_view_view_field().
+ *
+ * Provide the full URL of the object detail page for the DRI Object.
+ */
+function inspiring_ireland_search_tweaks_preprocess_views_view_fields(&$vars) {
+  if ($vars['view']->name == 'dri_object_search' && $vars['view']->current_display == 'page') {
+    global $base_url;
+    if (!empty($vars['row']->_entity_properties['title'])) {
+      $vars['object_detail_url'] = $base_url . '/object-detail/' . $vars['row']->_entity_properties['title'];
+    }
+  }
+}

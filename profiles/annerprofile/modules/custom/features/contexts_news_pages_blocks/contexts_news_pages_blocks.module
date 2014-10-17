@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Contexts - News Pages Blocks feature.
+ */
+
+include_once 'contexts_news_pages_blocks.features.inc';

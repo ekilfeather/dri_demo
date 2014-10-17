@@ -1,0 +1,1087 @@
+<?php
+
+/**
+ * @file
+ * Provides sample donation webform exports and form alters required etc.
+ *
+ * Single donation form nid: 1
+ * Regular donation form nid: 45
+ *
+ * Note, you need to manually set the currency code for the generated webform
+ * components in pay_form table, otherwise all transactions will be in the
+ * default currency.
+ */
+
+include_once 'annertech_donations.features.inc';
+
+/**
+ * @TODO
+ *  - add settings form to configure which is the single donation form(s) and
+ *    regular donation form.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function annertech_donations_permission() {
+  $perms = array(
+    'view donations reports' => array(
+      'title' => t('View donations reports'),
+      'description' => t('View single and regular donations reports'),
+    ),
+  );
+
+  return $perms;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function annertech_donations_menu() {
+  $items = array();
+
+  $items['admin/reports/donations'] = array(
+    'title' => 'Donations',
+    'description' => 'View single and regular donations reports',
+    'page callback' => 'annertech_donations_reports',
+    'access arguments' => array('view donations reports'),
+    'menu_name' => 'management',
+  );
+
+  return $items;
+}
+
+/**
+ * Menu callback for admin/reports/donations.
+ */
+function annertech_donations_reports() {
+  $single_donation_link = l(t('Single donations'), 'admin/reports/donations/single');
+  $links[] = $single_donation_link;
+
+  $regular_donation_link = l(t('Regular donations'), 'admin/reports/donations/regular');
+  $links[] = $regular_donation_link;
+
+  return theme('item_list', array('items' => $links));
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function annertech_donations_form_alter(&$form, $form_state, $form_id) {
+  // Need to get the ID of the donation webform.
+  // It's stored as a variable in settings.php
+  // Only modify webforms.
+  if (isset($form['#node']->nid) && $form_id == 'webform_client_form_' . $form['#node']->nid && in_array($form['#node']->type, array('webform'))) {
+
+    // Single donation form specific modifications.
+    // ---------------------------------------------
+    $webform_id = variable_get('single_donation_form_nid');
+    if ($form_id == 'webform_client_form_' . $webform_id) {
+      $form['#after_build'][] = 'annertech_donations_single_donation_form_after_build';
+      $form['#submit'][] = 'annertech_donations_single_donation_form_submit';
+      annertech_donations_single_donation_form_handle_multiple_components($form, $form_state);
+      $form['#validate'][] = 'annertech_donations_single_donation_form_validate';
+
+      // Handle GET params.
+      if (!empty($_GET['currency'])) {
+        $form['submitted']['your_donation']['currency']['#default_value'] = $_GET['currency'];
+      }
+      if (!empty($_GET['amount'])) {
+        $form['submitted']['your_donation']['select_amount_euro']['#default_value'] = $_GET['amount'];
+        $form['submitted']['your_donation']['select_amount_sterling']['#default_value'] = $_GET['amount'];
+      }
+      if (!empty($_GET['fund'])) {
+        $form['submitted']['your_donation']['donate_to']['#default_value'] = $_GET['fund'];
+      }
+
+      // Handle county / country fields.
+      if (module_exists('annertech_addressfield') && !empty($form['submitted']['your_personal_details']['addressfield'])) {
+        // Addressfield weight gets lost somehow, so store it for later retrieval.
+        $addressfield_weight = $form['submitted']['your_personal_details']['addressfield']['#weight'];
+
+        // Swap out the country / county fields.
+        annertech_donations_swap_in_country_state_fields($form, $form_state, 'your_personal_details');
+
+        // Reset addressfield weight.
+        $form['submitted']['your_personal_details']['addressfield']['#weight'] = $addressfield_weight;
+      }
+
+      // Handle postcode field requiredness.
+      if (!empty($form['submitted']['your_personal_details']['post_code'])) {
+        $form['submitted']['your_personal_details']['post_code']['#states'] = array(
+          'required' => array(
+            array(':input[name="submitted[your_personal_details][addressfield][country]"]' => array(array('value' => 'GB'), array('value' => 'US'))),
+          ),
+        );
+      }
+    }
+
+    // Regular donation form specific modifications.
+    // ----------------------------------------------
+    $webform_id = variable_get('regular_donation_form_nid');
+    if ($form_id == 'webform_client_form_' . $webform_id) {
+      $page_num = $form['details']['page_num']['#value'];
+
+      $form['#after_build'][] = 'annertech_donations_regular_donation_form_after_build';
+      $form['#validate'][] = 'annertech_donations_regular_donation_form_validate';
+      annertech_donations_regular_donation_form($form, $form_state, $webform_id);
+
+      // Handle county / country fields.
+      if (module_exists('annertech_addressfield') && !empty($form['submitted']['your_personal_details']['addressfield'])) {
+        // Addressfield weight gets lost somehow, so store it for later retrieval.
+        $addressfield_weight = $form['submitted']['your_personal_details']['addressfield']['#weight'];
+
+        // Swap out the country / county fields.
+        annertech_donations_swap_in_country_state_fields($form, $form_state, 'your_personal_details');
+
+        // Reset addressfield weight.
+        $form['submitted']['your_personal_details']['addressfield']['#weight'] = $addressfield_weight;
+      }
+
+      if ($page_num == 3) {
+        // Handle postcode field requiredness.
+        $currency = annertech_webforms_get_component_value('currency', $form_state);
+        $form['submitted']['your_personal_details']['currency_entered']['#value'] = $currency;
+        $form['submitted']['your_personal_details']['personal_postcode']['#states'] = array(
+          'required' => array(
+            array(':input[name="submitted[your_personal_details][addressfield][country]"]' => array(array('value' => 'GB'), array('value' => 'US'))),
+          ),
+        );
+      }
+
+      // Set the currency context
+      if ($page_num == '2') {
+        $currency = annertech_webforms_get_component_value('currency', $form_state);
+        // Set the currency context - allow blocks to react
+        if ($plugin = context_get_plugin('condition', 'form_currency')) {
+          $plugin->execute($currency);
+        }
+      }
+
+    }
+  }
+}
+
+/**
+ * Helper function to make modifications to the single donation webform.
+ */
+function annertech_donations_single_donation_form_handle_multiple_components(&$form, $form_state) {
+  // The Pay component can only ever be on the last step of the form.
+  if ($form['details']['page_num']['#value'] == $form['details']['page_count']['#value']) {
+
+    $node = $form['#node'];
+    $orig_pay_cid = $node->webform_pay_cid;
+    $pay_cid = annertech_donations_get_webform_pay_cid($node, $form['submitted']);
+
+    // Update the webform cid.
+    if (!empty($pay_cid) && $pay_cid != $orig_pay_cid) {
+      $pmid = $node->webform['components'][$pay_cid]['extra']['pmid'];
+      $node->webform_pay_cid = $pay_cid;
+      $form['#node'] = $node;
+    }
+  }
+}
+
+/**
+ * After build function for regular donation form.
+ */
+function annertech_donations_regular_donation_form_after_build($form) {
+  // Set up custom urls for reporting to google analytics.
+  if (module_exists('googleanalytics')) {
+    $page_num = $form['details']['page_num']['#value'];
+    $path = drupal_get_path_alias($_GET['q']);
+    $ga_url = '/' . check_url($path) . '/step-' . $page_num . '.html';
+    $settings = array('ga_url' => $ga_url);
+    drupal_add_js(array('annertech_donations' => $settings), array('type' => 'setting'));
+  }
+  return $form;
+}
+
+/**
+ * After build function for single donation form.
+ *
+ * This function does the following:
+ * - Changes cc_type field to a select widget and makes it required.
+ * - Adds help text to the cc_ccv2 field.
+ * - Adds default text to month and year expiry date selects.
+ * - Hides the currency field pay module puts in.
+ */
+function annertech_donations_single_donation_form_after_build($form, $form_state) {
+  // Set up custom urls for reporting to google analytics.
+  if (module_exists('googleanalytics')) {
+    $page_num = $form['details']['page_num']['#value'];
+    $path = drupal_get_path_alias($_GET['q']);
+    $ga_url = '/' . check_url($path) . '/step-' . $page_num . '.html';
+    $settings = array('ga_url' => $ga_url);
+    drupal_add_js(array('annertech_donations' => $settings), array('type' => 'setting'));
+  }
+
+  // Modify the last page of the form - i.e. payment widget.
+  if ($form['details']['page_num']['#value'] == $form['details']['page_count']['#value']) {
+    $pmid = $form['#node']->webform['components'][$form['#node']->webform_pay_cid]['extra']['pmid'];
+
+    // Change cc_type element to a select widget.
+    if (!empty($form['webform_pay']['pay_method'][$pmid]['cc_type'])) {
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#required'] = TRUE;
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#empty_value'] = '';
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#type'] = 'select';
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#theme'] = 'select';
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#multiple'] = NULL;
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#process'][0] = 'form_process_select';
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#process'][1] = 'ajax_process_form';
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#attributes']['title'] = $form['webform_pay']['pay_method'][$pmid]['cc_type']['#title'];
+      $file = drupal_get_path('module', 'annertech_donations') . '/js/pay_component.js';
+      $form['webform_pay']['pay_method'][$pmid]['cc_type']['#attached']['js'][$file] = array('type' => 'file');
+    }
+
+    // Add a description to the CCV field.
+    if (!empty($form['webform_pay']['pay_method'][$pmid]['cc_ccv2'])) {
+      $form['webform_pay']['pay_method'][$pmid]['cc_ccv2']['#description'] = t('Usually the last 3-4 digits in the signature area on the back of the card.');
+    }
+
+    // Modify expiration date selects.
+    if (!empty($form['webform_pay']['pay_method'][$pmid]['cc_exp_month'])) {
+      $form['webform_pay']['pay_method'][$pmid]['cc_exp_month']['#title'] = t('Expiry date');
+      $months = array('' => t('- month -')) + $form['webform_pay']['pay_method'][$pmid]['cc_exp_month']['#options'];
+      $form['webform_pay']['pay_method'][$pmid]['cc_exp_month']['#options'] = $months;
+      $form['webform_pay']['pay_method'][$pmid]['cc_exp_year']['#title'] = '<div class="hidden">' . t('Expiry year') . '</div>';
+      $years = array('' => t('- year -')) + $form['webform_pay']['pay_method'][$pmid]['cc_exp_year']['#options'];
+      $form['webform_pay']['pay_method'][$pmid]['cc_exp_year']['#options'] = $years;
+    }
+
+    // Hide currency field.
+    if (!empty($form['webform_pay']['pay_method'][$pmid]['cc_currency'])) {
+      $form['webform_pay']['pay_method'][$pmid]['cc_currency']['#type'] = 'hidden';
+      $form['webform_pay']['pay_method'][$pmid]['cc_currency']['#theme'] = 'hidden';
+      unset($form['webform_pay']['pay_method'][$pmid]['cc_currency']['#title']);
+      // Set it to the value of our custom currency field.
+      $currency = annertech_webforms_get_component_value('currency', $form_state);
+      $currency = $currency ? $currency : 'EUR';
+      $form['webform_pay']['pay_method'][$pmid]['cc_currency']['#value'] = $currency;
+    }
+  }
+
+  return $form;
+}
+
+/**
+ * Submit handler for single donation form.
+ *
+ * Handle submission of transactions to PayPal.
+ */
+function annertech_donations_single_donation_form_submit($form, &$form_state) {
+  unset($form_state['values']['submitted']['']);
+
+  // Only need to do this if the paypal module is enabled, and not on submission
+  // edit.
+  if (!module_exists('paypal') || !empty($form_state['values']['details']['sid'])) {
+    return;
+  }
+  // Handle the submission of the 2nd last page - i.e. just before pay element.
+  $page_num = $form['details']['page_num']['#value'] + 1;
+  if ($page_num == $form['details']['page_count']['#value']) {
+
+    // Determine webform_pay component to be used.
+    $node = $form['#node'];
+    $form_submitted = annertech_webforms_get_next_page_components($node, $form, $form_state, $page_num);
+    $pay_cid = annertech_donations_get_webform_pay_cid($node, $form_submitted);
+
+    if ($pay_cid) {
+      // Return if payment method is not paypal_ec.
+      $pmid = $node->webform['components'][$pay_cid]['extra']['pmid'];
+      $pfid = $node->webform['components'][$pay_cid]['extra']['pfid'];
+      $pay_method = pay_method_load($pmid);
+      if (empty($pay_method) || $pay_method->payment_type != 'paypal_ec') {
+        return;
+      }
+
+      // Retrieve submitted values.
+      // Note: hardcoded field names.
+      // TODO: investigate possibility of using pay method form component config
+      // to determine the field name of the amount field.
+      $currency = annertech_webforms_get_component_value('currency', $form_state);
+      $amount = annertech_webforms_get_component_value('amount', $form_state);
+      if (empty($amount)) {
+        $amount = annertech_webforms_get_component_value('select_amount_euro', $form_state);
+      }
+      if (empty($amount)) {
+        $amount = annertech_webforms_get_component_value('select_amount_sterling', $form_state);
+      }
+      if (empty($currency) || empty($amount)) {
+        return;
+      }
+      $fund = annertech_webforms_get_component_value('donate_to', $form_state);
+      $fund_component = annertech_webforms_get_webform_component('donate_to', $form_state);
+      if (!empty($fund_component)) {
+        $options = explode("\n", $fund_component['extra']['items']);
+        foreach ($options as $option) {
+          list($key, $value) = explode("|", $option);
+          if ($fund == $key) {
+            $fund = trim($value);
+            break;
+          }
+        }
+      }
+      $fund = empty($fund) ? t('Where needed most') : $fund;
+
+      // Set some stuff in $form_state['values']
+      $form_state['values']['note'] =  'Donation to "' . $fund . '"';
+      $form_state['values']['pmid'] = $pmid;
+      $form_state['values']['pfid'] = $pfid;
+      $form_state['values']['total'] = $amount;
+      $form_state['values']['amount'] = $amount;
+      $form_state['values']['cid'] = $pay_cid;
+      // Note: hardcoded field names. Don't see a way to avoid it here.
+      $form_state['values'] += $form_state['values']['submitted_tree']['your_donation'];
+      $form_state['values'] += $form_state['values']['submitted_tree']['your_personal_details'];
+
+
+      // Set up the Pay objects.
+      $pay = pay_load_object('pay_form', $pfid);
+      $pay->set_currency($currency);
+      $pay->pay_methods = array($pmid => $pmid);
+      $transaction = $pay->set_transaction($form_state['values']);
+      $transaction->set_currency($currency);
+      $pay_method = pay_method_load($form_state['values']);
+      $activity = $transaction->add_activity($pay_method);
+      $activity->do_activity($pay_method->pay_form_action, $form_state['values']);
+      $form_state['pay_activity'][] = $activity;
+
+      // Redirect to PayPal.
+      $activity->pay_method->form_submit($form, $form_state);
+
+      // Stash the submitted data for retrieval later.
+      annertech_donations_write_webform_pay_record($node, $pay, $activity, $form_state['values']);
+
+      return;
+    }
+  }
+}
+
+/**
+ * Validation handler for single donation form.
+ */
+function annertech_donations_single_donation_form_validate($form, &$form_state) {
+  // Set hidden amount field based on currency chosen.
+  $tree = $form_state['values']['submitted'];
+  if (array_key_exists('your_donation', $tree)) {
+    $amount = 0;
+    $donation_tree = $tree['your_donation'];
+    $currency = $donation_tree['currency'];
+    // Use form_set_value() to set an amount field for token use.
+    if ($currency == 'GBP') {
+      $amount = $tree['your_donation']['select_amount_sterling'];
+    }
+    else {
+      $amount = $tree['your_donation']['select_amount_euro'];
+    }
+    form_set_value($form['submitted']['amount'], $amount, $form_state);
+
+  }
+
+  // Ensure post code field is completed, if required.
+  elseif (array_key_exists('your_personal_details', $tree)) {
+    $country = $tree['your_personal_details']['addressfield']['country'];
+    if (in_array($country, array('GB', 'US')) && empty($tree['your_personal_details']['post_code'])) {
+      form_set_error('your_personal_details][post_code', t('Post code field is required.'));
+    }
+  }
+
+  // Validate cvv and issue number fields.
+  elseif ($form['details']['page_num']['#value'] == $form['details']['page_count']['#value']) {
+    $webform_pay = $form_state['values']['webform_pay']['pay_method'];
+    foreach ($webform_pay['selected'] as $key => $pay_method) {
+      $pmid = $key;
+    }
+    $card_type = $webform_pay[$pmid]['cc_type'];
+    if ($card_type == 'switch') {
+      if (empty($webform_pay[$pmid]['cc_issue_number'])) {
+        form_set_error('webform_pay][pay_method][' . $pmid . '][cc_issue_number', t('Issue number field is required.'));
+      }
+    }
+    elseif ($card_type != 'laser') {
+      if (empty($webform_pay[$pmid]['cc_ccv2'])) {
+        form_set_error('webform_pay][pay_method][' . $pmid . '][cc_ccv2', t('Security code field is required.'));
+      }
+    }
+  }
+}
+
+/**
+ * Validation handler for regular donation form.
+ */
+function annertech_donations_regular_donation_form_validate($form, &$form_state) {
+  $tree = $form_state['values']['submitted'];
+
+  if (array_key_exists('your_donation', $tree)) {
+    $donation_tree = $tree['your_donation'];
+    $currency = $donation_tree['currency'];
+    // Use form_set_value() to set start date to the next 8th date
+    // for GBP
+    if ($currency == 'GBP') {
+      $now = getdate();
+      if ($now['mon'] == 12) {
+        $now['mon'] = 1;
+        $now['year']++;
+      }
+      else {
+        $now['mon']++;
+      }
+      form_set_value($form['submitted']['your_donation']['starting_year'], $now['year'], $form_state);
+      form_set_value($form['submitted']['your_donation']['starting_month'], $now['mon'], $form_state);
+      form_set_value($form['submitted']['your_donation']['starting_day'], 1, $form_state);
+      $dd_date = sprintf('01/%02d/%04d', $now['mon'], $now['year']);
+    }
+    else {
+      $dd_day = $form_state['values']['submitted']['your_donation']['starting_day'];
+      $dd_month_name = $form_state['values']['submitted']['your_donation']['starting_month'];
+      $months = array_flip(array_keys(annertech_donations_list_months()));
+      $dd_month = $months[$dd_month_name] + 1;
+      $dd_year = $form_state['values']['submitted']['your_donation']['starting_year'];
+      $dd_date = sprintf('%02d/%02d/%04d', $dd_day, $dd_month, $dd_year);
+    }
+    form_set_value($form['submitted']['your_donation']['dd_start_date'], $dd_date, $form_state);
+
+    // Check that the start date for donations is in the future.
+    $donation_date = strtotime($donation_tree['starting_day'] . ' ' .
+    $donation_tree['starting_month'] . ' ' . $donation_tree['starting_year']);
+    $now = time();
+    if ($currency != 'GBP' && $donation_date <= $now) {
+      form_set_error('starting_month', 'The start date for your donation must be in the future.');
+    }
+  }
+
+  elseif (array_key_exists('bank_details', $tree)) {
+    $bank_tree = $tree['bank_details'];
+    if ($bank_tree['bank_building_society_acc_no']) {
+      $acc_no = $bank_tree['bank_building_society_acc_no'];
+      if (is_numeric($acc_no)) {
+        if (strlen($acc_no) != 8) {
+          form_set_error('bank_building_society_acc_no', 'The bank account number must be an eight digit number.');
+        }
+      }
+      else {
+        form_set_error('bank_building_society_acc_no', 'The bank account number
+        must be an eight digit number.');
+      }
+    }
+    if ($bank_tree['branch_sort_code']) {
+      $sort_code = $bank_tree['branch_sort_code'];
+      if (is_numeric($sort_code)) {
+        if (strlen($sort_code) != 6) {
+          form_set_error('branch_sort_code', 'The sort code must be a six digit number.');
+        }
+      }
+      else {
+        form_set_error('branch_sort_code', 'The sort code must be a six digit number.');
+      }
+    }
+  }
+
+  // Ensure post code field is completed, if required.
+  elseif (array_key_exists('your_personal_details', $tree)) {
+    $country = $tree['your_personal_details']['addressfield']['country'];
+    if (in_array($country, array('GB', 'US')) && empty($tree['your_personal_details']['personal_postcode'])) {
+      form_set_error('your_personal_details][personal_postcode', t('Post code field is required.'));
+    }
+  }
+}
+
+/**
+ * Helper function to make modifications to the regular donation webform.
+ */
+function annertech_donations_regular_donation_form(&$form, $form_state, $webform_id) {
+  // Step 1: modify direct debit amount field.
+  if (!empty($form['submitted']['your_donation']['direct_debit_amount'])) {
+    $form['submitted']['your_donation']['direct_debit_amount']['#prefix'] = '<div class="form-item inline-form-wrapper two-items">';
+  }
+
+  // Step 1: modify currency field.
+  if (!empty($form['submitted']['your_donation']['currency'])) {
+    $form['submitted']['your_donation']['currency']['#suffix'] = '</div>';
+    $file = drupal_get_path('module', 'annertech_donations') . '/js/regular_donation.js';
+    $form['submitted']['your_donation']['currency']['#attached']['js'][$file] = array('type' => 'file');
+  }
+
+  // Step 1: modify starting month field.
+  if (!empty($form['submitted']['your_donation']['starting_month']) && $form['submitted']['your_donation']['currency'] != 'GBP') {
+    $form['submitted']['your_donation']['starting_month']['#prefix'] = '<div class="pseudo-date-wrapper three-items inline-form-wrapper form-item">';
+    $form['submitted']['your_donation']['starting_month']['#prefix'] .= '<label for="edit-submitted-your-donation-starting-date">';
+    $form['submitted']['your_donation']['starting_month']['#prefix'] .= '<span class="form-required" title="' . t('This field is required.') . '">*</span> ';
+    $form['submitted']['your_donation']['starting_month']['#prefix'] .= t('Starting from') . '</label>';
+    $form['submitted']['your_donation']['starting_month']['#prefix'] .= '<div class="elements-wrapper">';
+  }
+
+  // Step 1: modify starting year field.
+  if (!empty($form['submitted']['your_donation']['starting_year'])) {
+    $form['submitted']['your_donation']['starting_year']['#suffix'] = '</div></div>';
+  }
+
+  // Get path to number_fields js file.
+  $file = drupal_get_path('module', 'annertech_donations') . '/js/number_fields.js';
+
+  // Step 2: attach validation javascript bank account number field.
+  if (!empty($form['submitted']['bank_details']['bank_building_society_acc_no'])) {
+    $form['submitted']['bank_details']['bank_building_society_acc_no']['#attached']['js'][$file] = array('type' => 'file');
+  }
+
+  // Step 2: attach validation javascript to bank sort code field.
+  if (!empty($form['submitted']['bank_details']['branch_sort_code'])) {
+    $form['submitted']['bank_details']['branch_sort_code']['#attached']['js'][$file] = array('type' => 'file');
+  }
+}
+
+/**
+* Implementation of hook_webform_select_options_info().
+* See webform/webform_hooks.php for further information on this hook in the Webform API.
+*/
+function annertech_donations_webform_select_options_info() {
+  $items = array();
+
+  $items['months'] = array(
+    'title' => t('Months of the year'),
+    'options callback' => 'annertech_donations_list_months'
+  );
+
+  $items['direct_debit_dates'] = array(
+    'title' => t('Direct debit dates'),
+    'options callback' => 'annertech_donations_direct_debit_dates'
+  );
+
+  $items['direct_debit_years'] = array(
+    'title' => t('Direct debit years'),
+    'options callback' => 'annertech_donations_direct_debit_years'
+  );
+
+  $items['salutations'] = array(
+    'title' => t('Personal salutations'),
+    'options callback' => 'annertech_donations_salutations'
+  );
+
+  $items['contact_methods'] = array(
+    'title' => t('Contact methods'),
+    'options callback' => 'annertech_donations_contact_methods'
+  );
+
+  return $items;
+}
+
+/**
+ * Helper function to create a select list of months of the year.
+ */
+function annertech_donations_list_months() {
+  $options = array(
+    'jan' => t('January'),
+    'feb' => t('February'),
+    'mar' => t('March'),
+    'apr' => t('April'),
+    'may' => t('May'),
+    'jun' => t('June'),
+    'jul' => t('July'),
+    'aug' => t('August'),
+    'sep' => t('September'),
+    'oct' => t('October'),
+    'nov' => t('November'),
+    'dec' => t('December'),
+  );
+  return $options;
+}
+
+/**
+ * Helper function to create a select list of starting dates for debits.
+ */
+function annertech_donations_direct_debit_dates() {
+  $options = array(
+    '1' => t('1st'),
+    '15' => t('15th'),
+  );
+  return $options;
+}
+
+/**
+ * Helper function to create a select list of possible years.
+ */
+function annertech_donations_direct_debit_years() {
+  $options = array();
+  $now = date('Y');
+  for ($i = 0; $i < 2; $i ++) {
+    $options[$now + $i] = $now + $i;
+  }
+  return $options;
+}
+
+/**
+ * Helper function to create a select list of personal salutations.
+ */
+function annertech_donations_salutations() {
+  $options = array(
+    'Mr' => t('Mr'),
+    'Mrs' => t('Mrs'),
+    'Ms' => t('Ms'),
+    'Miss' => t('Miss'),
+    'Dr' => t('Dr'),
+    'Fr' => t('Fr'),
+    'Rev' => t('Rev'),
+  );
+  return $options;
+}
+
+/**
+ * Helper function to create a select list of personal salutations.
+ */
+function annertech_donations_contact_methods() {
+  $options = array(
+    'email' => t('Email'),
+    'post' => t('Post'),
+    'sms' => t('SMS'),
+    'phone' => t('Phone'),
+  );
+  return $options;
+}
+
+/**
+ * Helper function to retrieve Webform Pay active component id.
+ */
+function annertech_donations_get_webform_pay_cid($node, $form_submitted) {
+  $pay_cid = 0;
+
+  // Get pay webform components for this webform.
+  $result = db_query("SELECT * FROM {webform_component} WHERE type = :type AND nid = :nid", array(':type' => 'pay', ':nid' => $node->nid));
+  while ($row = $result->fetchAssoc()) {
+    $extra = unserialize($row['extra']);
+    $extra['webform_conditional_field_value'] = $extra['conditional_values'];
+    $extra['webform_conditional_cid'] = $extra['conditional_component'];
+    $extra['webform_conditional_operator'] = $extra['conditional_operator'];
+    $row['extra'] = $extra;
+
+    // If this one matches the conditionals, save to $pay_cid.
+    $field = _webform_conditional_get_field($form_submitted, $row['cid']);
+    if (!empty($field) && _webform_condtional_component_is_conditional($row, $node->nid)) {
+      $pay_cid = $row['cid'];
+      break;
+    }
+  }
+
+  return $pay_cid;
+}
+
+/**
+ * Read record from annertech_donations_pay_transactions table.
+ */
+function annertech_donations_get_webform_pay_record($object) {
+  $records = array();
+
+  // Build our sql query and execute.
+  $query = db_select('annertech_donations_pay_transactions', 'a')
+            ->fields('a');
+  foreach ($object as $key => $value) {
+    $query->condition('a.' . $key, $value);
+  }
+  $result = $query->execute();
+
+  // Loop over the results.
+  while ($record = $result->fetchObject()) {
+    $records[$record->pxid] = $record;
+  }
+
+  return $records;
+}
+
+/**
+ * Write record to annertech_donations_pay_transactions table.
+ */
+function annertech_donations_write_webform_pay_record($node, $pay, $activity, $values) {
+  $record = new stdClass;
+  $record->paid = $activity->paid;
+  $record->pxid = $pay->transaction->pxid;
+  $record->uid = $pay->transaction->uid;
+  $record->nid = $node->nid;
+  $record->record_time = $pay->transaction->created;
+  $record->status = 0; // pending
+  $values['ip_address'] = $activity->hostname;
+  $record->data = base64_encode(serialize($values));
+
+  // Delete the record in case the user hits the back button.
+  db_query("DELETE FROM {annertech_donations_pay_transactions} WHERE nid = :nid AND pxid = :pxid", array(':nid' => $record->nid, ':pxid' => $record->pxid));
+  drupal_write_record('annertech_donations_pay_transactions', $record);
+}
+
+/**
+ * Implements hook_pay_paypal_ec_response().
+ */
+function annertech_donations_pay_paypal_ec_response($pay_activity, $responses) {
+  // Get the transaction time.
+  $transaction_record = db_query("SELECT * FROM {pay_transaction} WHERE pxid = :pxid", array(':pxid' => $pay_activity->pxid))->fetchObject();
+
+  // Fetch tmp record from db.
+  $object = new stdClass;
+  $object->pxid = $pay_activity->pxid;
+  $object->paid = $pay_activity->paid;
+  $object->record_time = $transaction_record->created;
+  $object->uid = $transaction_record->uid;
+  $object->status = 0;
+  $records = annertech_donations_get_webform_pay_record($object);
+  $webform_pay_record = $records[$object->pxid];
+
+  // Set up some variables.
+  $node = node_load($webform_pay_record->nid);
+  $data = unserialize(base64_decode($webform_pay_record->data));
+  $cid = $data['cid'];
+
+  // Update with required paypal info.
+  $paypal['paypal_order_reference'] = $responses['DoExpressCheckoutPayment']['TRANSACTIONID'];
+  $paypal['paypal_payer_id'] = $responses['GetExpressCheckoutDetails']['PAYERID'];
+  $paypal['paypal_payment_date'] = $responses['DoExpressCheckoutPayment']['ORDERTIME'];
+  $paypal['paypal_mc_fee'] = $responses['DoExpressCheckoutPayment']['FEEAMT'];
+  $paypal['paypal_mc_gross'] = $responses['DoExpressCheckoutPayment']['AMT'];
+  $paypal['paypal_payment_status'] = $responses['DoExpressCheckoutPayment']['PAYMENTSTATUS'];
+  $paypal['paypal_payment_type'] = $responses['DoExpressCheckoutPayment']['PAYMENTTYPE'];
+  $paypal['paypal_mc_currency'] = $responses['DoExpressCheckoutPayment']['CURRENCYCODE'];
+  $paypal['paypal_get_express_checkout_details_correlationid'] = $responses['GetExpressCheckoutDetails']['CORRELATIONID'];
+  $paypal['paypal_do_express_checkout_payment_correlationid'] = $responses['DoExpressCheckoutPayment']['CORRELATIONID'];
+  $paypal['payment_type'] = 'paypal_ec';
+  $paypal['pmid'] = $data['pmid'];
+  $data['submitted'][$cid] = $paypal;
+
+  // Create webform submission and get sid.
+  module_load_include('inc', 'webform', 'includes/webform.submissions');
+  module_load_include('inc', 'webform', 'includes/webform.components');
+  $submission = (object) array(
+    'nid' => $node->nid,
+    'uid' => $data['details']['uid'],
+    'submitted' => REQUEST_TIME,
+    'remote_addr' => $data['ip_address'],
+    'is_draft' => 0,
+    'data' => webform_submission_data($node, $data['submitted']),
+  );
+  $data['details']['sid'] = $sid = webform_submission_insert($node, $submission);
+
+  // Save to the database.
+  $webform_pay_record->data = base64_encode(serialize($data));
+  $webform_pay_record->status = 1;
+  $webform_pay_record->sid = $sid;
+  drupal_write_record('annertech_donations_pay_transactions', $webform_pay_record, 'pxid');
+
+
+  // Set a cookie including the server's submission time.
+  // The cookie expires in the length of the interval plus a day to compensate for different timezones.
+  if (variable_get('webform_use_cookies', 0)) {
+    $cookie_name = 'webform-' . $node->nid;
+    $time = REQUEST_TIME;
+    $params = session_get_cookie_params();
+    setcookie($cookie_name . '[' . $time . ']', $time, $time + $node->webform['submit_interval'] + 86400, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+  }
+
+  // Save session information about this submission for anonymous users,
+  // allowing them to access or edit their submissions.
+  if (!$webform_pay_record->uid && user_access('access own webform submissions')) {
+    $_SESSION['webform_submission'][$sid] = $node->nid;
+  }
+
+  // Get email.
+  $submission = webform_get_submission($node->webform['nid'], $sid, TRUE);
+  webform_submission_send_mail($node, $submission);
+
+  // Get confirmation text.
+  // Strip out empty tags added by WYSIWYG editors if needed.
+  $confirmation = strlen(trim(strip_tags($node->webform['confirmation']))) ? $node->webform['confirmation'] : '';
+
+  // Clean up the redirect URL and filter it for webform tokens.
+  $redirect_url = trim($node->webform['redirect_url']);
+  $redirect_url = _webform_filter_values($redirect_url, $node, $submission, NULL, FALSE, TRUE);
+
+  // Remove the domain name from the redirect.
+  $redirect_url = preg_replace('/^' . preg_quote($GLOBALS['base_url'], '/') . '\//', '', $redirect_url);
+
+  // Check confirmation and redirect_url fields.
+  $message = NULL;
+  $redirect = NULL;
+  $external_url = FALSE;
+  if ($redirect_url == '<none>') {
+    $redirect = 'node/' . $node->nid;
+  }
+  elseif ($redirect_url == '<confirmation>') {
+    $redirect = 'node/' . $node->nid . '/done';
+    $redirect_args = array('query' => array('sid' => $sid));
+  }
+  elseif (valid_url($redirect_url, TRUE)) {
+    $redirect = $redirect_url;
+    $external_url = TRUE;
+  }
+  elseif ($redirect_url && strpos($redirect_url, 'http') !== 0) {
+    $parts = drupal_parse_url($redirect_url);
+    $parts['query'] ? ($parts['query']['sid'] = $sid) : ($parts['query'] = array('sid' => $sid));
+    $query = $parts['query'];
+    $redirect = $parts['path'];
+    $redirect_args = array('query' => $query, 'fragment' => $parts['fragment']);
+  }
+
+  // If redirecting and we have a confirmation message, show it as a message.
+  if (!$external_url && (!empty($redirect_url) && $redirect_url != '<confirmation>') && !empty($confirmation)) {
+    drupal_set_message(check_markup($confirmation, $node->webform['confirmation_format'], '', TRUE));
+  }
+
+  // Redirect to appropriate thank you page.
+  drupal_goto($redirect, $redirect_args);
+  return;
+}
+
+/**
+ * Helper function to swap in the default state / country fields for the
+ * annertech_addressfield ones.
+ */
+function annertech_donations_swap_in_country_state_fields(&$form, $form_state, $form_key) {
+  $country = 'IE';
+  $state = '';
+
+  if (!empty($form_state['addressfield'])) {
+    $addressfield = array_pop($form_state['addressfield']);
+    $country = (isset($addressfield['country']) ? $addressfield['country'] : $country);
+    $state = (isset($addressfield['state']) ? $addressfield['state'] : $state);
+  }
+
+  // Get default values.
+  // Args to drupal_get_form() are $node, $submission.
+  if (!empty($form_state['build_info']['args']) && !empty($form_state['build_info']['args'][1])) {
+    $submission = $form_state['build_info']['args'][1];
+    $country_cid = annertech_webforms_get_component_value('country', $form_state, TRUE);
+    $country = (!empty($submission->data[$country_cid]['value'][0]) ? $submission->data[$country_cid]['value'][0] : $country);
+    $state_cid = annertech_webforms_get_component_value('state', $form_state, TRUE);
+    $state = (!empty($submission->data[$state_cid]['value'][0]) ? $submission->data[$state_cid]['value'][0] : $state);
+  }
+
+  // Load in the state/country fields widget.
+  $widget = array();
+  annertech_addressfield_get_country_state_fields($widget, $country, $state);
+
+  $country_weight = $form['submitted'][$form_key]['addressfield']['country']['#weight'];
+  $widget['addressfield']['#weight'] = $country_weight;
+  $widget['addressfield']['state']['#default_value'] = $state;
+  $widget['addressfield']['state']['#required'] = TRUE;
+  $form['submitted'][$form_key]['addressfield'] = $widget['addressfield'];
+  $form['submitted'][$form_key]['addressfield']['element_key'] = $widget['element_key'];
+}
+
+/**
+ * Implements hook_webform_submission_render_alter().
+ */
+function annertech_donations_webform_submission_render_alter(&$renderable) {
+  $single_donation_nid = variable_get('single_donation_form_nid');
+  $regular_donation_nid = variable_get('regular_donation_form_nid');
+  $node = $renderable['#node'];
+
+  switch ($node->nid) {
+    // Single donation form.
+    case $single_donation_nid:
+      // Map state code to state name.
+      if (module_exists('annertech_addressfield')) {
+        $country = $renderable['your_personal_details']['addressfield']['country']['#value'][0];
+        $state = $renderable['your_personal_details']['addressfield']['state']['#value'];
+        $state = annertech_addressfield_get_state_name($country, $state);
+        $renderable['your_personal_details']['addressfield']['state']['#value'] = $state;
+      }
+      break;
+
+    // Regular donation form.
+    case $regular_donation_nid:
+      // Map state code to state name.
+      if (module_exists('annertech_addressfield')) {
+        $country = $renderable['your_personal_details']['addressfield']['country']['#value'][0];
+        $state = $renderable['your_personal_details']['addressfield']['state']['#value'];
+        $state = annertech_addressfield_get_state_name($country, $state);
+        $renderable['your_personal_details']['addressfield']['state']['#value'] = $state;
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_context_plugins().
+ */
+function annertech_donations_context_plugins() {
+  $plugins = array();
+  $plugins['form_currency'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'annertech_donations') .'/plugins/contexts',
+      'file' => 'context_condition_currency.inc',
+      'class' => 'context_condition_currency',
+      'parent' => 'context_condition',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implements hook_context_registry().
+ */
+function annertech_donations_context_registry() {
+  return array(
+    'conditions' => array(
+      'form_currency' => array(
+        'title' => t('Form currency'),
+        'plugin' => 'form_currency',
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function annertech_donations_views_pre_render(&$view) {
+  switch ($view->name) {
+    case 'single_donations_report':
+    case 'regular_donations_report':
+      if ($view->current_display != 'euro_attachment' && $view->current_display != 'gbp_attachment') {
+        // Add the datepicker jquery to this view.
+        drupal_add_library('system', 'ui.datepicker');
+        drupal_add_js('jQuery(document).ready(function(){jQuery( "#edit-submitted-max, #edit-submitted-min, #edit-submitted-value" ).datepicker({
+            dateFormat: "yy-m-dd",
+            autoSize: false
+          });});', 'inline');
+
+        // For each state and country code returned, render as full name.
+        if (module_exists('annertech_addressfield') && !empty($view->result)) {
+          foreach ($view->result as $i => $row) {
+            // Note these field names/aliases may change if the view is altered.
+            $state_code = $row->webform_submitted_data_webform_submissions_5_data;
+            $country_code = $row->webform_submitted_data_webform_submissions_6_data;
+
+            $state = annertech_addressfield_get_state_name($country_code, $state_code);
+            $country = annertech_addressfield_get_country_name($country_code);
+
+            $view->result[$i]->webform_submitted_data_webform_submissions_5_data = $state;
+            $view->result[$i]->webform_submitted_data_webform_submissions_6_data = $country;
+          }
+        }
+      }
+      break;
+
+  }
+}
+
+/**
+ * Implements hook_pay_googleanalytics_transaction_alter().
+ */
+function annertech_donations_pay_googleanalytics_transaction_alter(&$trans, &$transaction, $activity) {
+  module_load_include('inc', 'webform', 'includes/webform.submissions');
+  module_load_include('inc', 'webform', 'includes/webform.components');
+
+  // Retrieve submitted data.
+  $pxid = $transaction->pxid;
+  $record = db_query("SELECT nid, sid FROM {webform_submitted_data} WHERE no = 'pxid' AND data = :pxid", array(':pxid' => $pxid))->fetchObject();
+  if (empty($record)) {
+    return;
+  }
+  $submission = webform_get_submission($record->nid, $record->sid);
+
+  // Get the mapping of cids to component form_keys.
+  $components = array();
+  $node = node_load($record->nid);
+  foreach ($node->webform['components'] as $cid => $component) {
+    $components[$component['form_key']] = $cid;
+  }
+
+  // Set country and state.
+  $state = $submission->data[$components['state']]['value'][0];
+  $country = $submission->data[$components['country']]['value'][0];
+  if (module_exists('annertech_addressfield')) {
+    $state = annertech_addressfield_get_state_name($country, $state);
+    $country = annertech_addressfield_get_country_name($country);
+  }
+  $trans['state'] = $state;
+  $trans['country'] = $country;
+  $trans['city'] = $submission->data[$components['city_town']]['value'][0];
+
+  // Overwrite transaction id to make it unique when mixed in with Drupal
+  // Commerce transactions.
+  $trans['pxid'] = 'pay' . $pxid;
+
+  // Do a currency conversion.
+  if ($transaction->currency == 'GBP') {
+    $conversion_rate = variable_get('oxfam_gdb_to_euro_exchange_rate', 1);
+    $trans['total'] = sprintf('%0.2f', $trans['total'] * $conversion_rate);
+  }
+}
+
+/**
+ * Implements hook_pay_googleanalytics_products_alter().
+ */
+function annertech_donations_pay_googleanalytics_products_alter(&$products, &$transaction, $activity) {
+  module_load_include('inc', 'webform', 'includes/webform.submissions');
+  module_load_include('inc', 'webform', 'includes/webform.components');
+
+  // Retrieve submitted data.
+  $pxid = $transaction->pxid;
+  $record = db_query("SELECT nid, sid FROM {webform_submitted_data} WHERE no = 'pxid' AND data = :pxid", array(':pxid' => $pxid))->fetchObject();
+  if (empty($record)) {
+    return;
+  }
+  $submission = webform_get_submission($record->nid, $record->sid);
+
+  // Get the mapping of cids to component form_keys.
+  $components = array();
+  $node = node_load($record->nid);
+  foreach ($node->webform['components'] as $cid => $component) {
+    $components[$component['form_key']] = $cid;
+  }
+
+  // Get fund.
+  $fund_name = $submission->data[$components['donate_to']]['value'][0];
+  $fund_component = $node->webform['components'][$components['donate_to']];
+  if (!empty($fund_component)) {
+    $options = explode("\n", $fund_component['extra']['items']);
+    foreach ($options as $option) {
+      list($key, $value) = explode("|", $option);
+      if ($fund_name == $key) {
+        $fund_name = trim($value);
+        break;
+      }
+    }
+  }
+  $fund_name = empty($fund_name) ? t('Where needed most') : $fund_name;
+
+  // Set up product.
+  $product = new stdClass;
+  $product->product_id = $node->title . ':' . $transaction->pfid;
+  $product->price = $transaction->total;
+  $product->quantity = 1;
+  $product->title = $fund_name;
+
+  // Overwrite transaction id to make it unique when mixed in with Drupal
+  // Commerce transactions.
+  $trans['pxid'] = 'pay' . $pxid;
+
+  // Do a currency conversion.
+  if ($transaction->currency == 'GBP') {
+    $conversion_rate = variable_get('oxfam_gdb_to_euro_exchange_rate', 1);
+    $product->price = sprintf('%0.2f', $product->price * $conversion_rate);
+  }
+
+  $products[] = $product;
+}
+
+/**
+ * Implements hook_js_alter().
+ */
+function annertech_donations_js_alter(&$javascript) {
+  $ga_url = NULL;
+  foreach ($javascript['settings']['data'] as $id => $data) {
+    foreach ($data as $key => $setting) {
+      if ($key == 'annertech_donations') {
+        $ga_url = $setting['ga_url'];
+        break;
+      }
+    }
+  }
+  if ($ga_url) {
+    foreach ($javascript as $key => $settings) {
+      if (is_numeric($key) && $settings['type'] == 'inline' && preg_match('/var _gaq = _gaq/', $settings['data'])) {
+        $data = preg_replace('/\["_trackPageview"\]/', '["_trackPageview", "' . $ga_url . '"]', $settings['data']);
+        $javascript[$key]['data'] = $data;
+        break;
+      }
+    }
+  }
+}
+

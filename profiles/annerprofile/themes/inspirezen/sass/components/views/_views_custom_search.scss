@@ -1,0 +1,49 @@
+/**
+ * Styling for the custom search view
+ */
+
+.view-custom-search {
+  .view-header {
+    @include rem(padding-bottom, 2rem);
+    @extend %f20;
+    color: $purple;
+  }
+  .views-search-results-wrapper {
+    @include rem(padding, 2rem 0 0 0);
+    border-top: 1px solid $grey-search-border;
+    clear: both;
+  }
+  .views-search-results-type {
+   @include rem(padding, .5rem);
+   @extend %f12;
+   background: $grey-search-type;
+   color: $white;
+   float: right;
+   letter-spacing: 2px;
+   position: relative;
+   text-transform: uppercase;
+   top: -28px;
+  }
+  .views-search-results-image {
+    @include rem(padding, 0 2rem 2rem 0);
+    float: left;
+  }
+  .views-search-results-inner {
+  }
+  .views-search-results-title {
+    @include font-size(20px);
+  }
+  .views-search-results-date {}
+  .views-search-results-body {}
+  .views-search-results-link {
+    float: left;
+  }
+  .views-search-results-link-arrow {
+    @extend %f30;
+    color: $purple;
+    font-weight: 300;
+    position: relative;
+    left: 5px;
+    top: -13px;
+  }
+}

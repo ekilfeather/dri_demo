@@ -1,0 +1,16 @@
+name = Annertech Donations
+description = Single and regular donations form integration
+core = 7.x
+package = Annertech
+php = 5.2
+dependencies[] = annertech_webforms
+dependencies[] = ctools
+dependencies[] = pay
+dependencies[] = views
+dependencies[] = views_data_export
+dependencies[] = webform
+dependencies[] = webform_pay
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[views_view][] = regular_donations_report
+features[views_view][] = single_donations_report

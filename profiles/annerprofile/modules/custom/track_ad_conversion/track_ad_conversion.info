@@ -1,0 +1,8 @@
+name = Track Ad Payment Conversions
+description = Track payment conversions for Ubercart and Payment API from ad click-thrus
+core = 7.x
+package = Annertech
+
+files[] = track_ad_conversion.admin.inc
+files[] = track_ad_conversion.tokens.inc
+

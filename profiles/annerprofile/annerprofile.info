@@ -1,0 +1,231 @@
+name = Annertech Profile
+description = "Enables some default modules"
+version = VERSION
+core = 7.x
+
+; These are only enabled on install
+dependencies[] = block
+;dependencies[] = color
+dependencies[] = comment
+dependencies[] = contextual
+dependencies[] = dashboard
+dependencies[] = help
+dependencies[] = image
+dependencies[] = list
+dependencies[] = menu
+dependencies[] = number
+dependencies[] = options
+dependencies[] = path
+dependencies[] = taxonomy
+dependencies[] = dblog
+dependencies[] = search
+;dependencies[] = toolbar
+dependencies[] = overlay
+dependencies[] = field_ui
+dependencies[] = file
+dependencies[] = rdf
+files[] = annerprofile.profile
+
+; Building blocks
+dependencies[] = context
+dependencies[] = context_ui
+dependencies[] = views
+dependencies[] = views_ui
+dependencies[] = features
+dependencies[] = strongarm
+dependencies[] = diff
+dependencies[] = bean
+dependencies[] = menu_block
+dependencies[] = main_links
+dependencies[] = module_filter
+
+; Panels
+dependencies[] = panels
+dependencies[] = page_manager
+
+; Other essentials
+dependencies[] = admin_menu
+dependencies[] = admin_menu_toolbar
+dependencies[] = webform
+dependencies[] = draggableviews
+dependencies[] = backup_migrate
+dependencies[] = pathauto
+dependencies[] = redirect
+dependencies[] = token
+dependencies[] = transliteration
+dependencies[] = googleanalytics
+dependencies[] = mollom
+dependencies[] = field_group
+dependencies[] = field_collection
+dependencies[] = email
+dependencies[] = link
+;dependencies[] = ds
+dependencies[] = select_or_other
+dependencies[] = site_map
+dependencies[] = scroll_to_destination_anchors
+dependencies[] = eu_cookie_compliance
+dependencies[] = job_scheduler
+dependencies[] = querypath
+
+; Geo modules
+dependencies[] = geophp
+dependencies[] = geofield
+dependencies[] = proj4js
+dependencies[] = openlayers
+dependencies[] = openlayers_views
+
+; Entity related modules.
+dependencies[] = entity
+dependencies[] = entitycache
+dependencies[] = entity_token
+dependencies[] = viewfield
+
+; Wysiwyg modules
+dependencies[] = wysiwyg
+;dependencies[] = wysiwyg_linebreaks
+
+; Media modules
+dependencies[] = media
+;dependencies[] = media_gallery
+dependencies[] = media_internet
+dependencies[] = media_youtube
+dependencies[] = smartcrop
+dependencies[] = imagecache_external
+
+; Feeds
+dependencies[] = feeds
+dependencies[] = feeds_ui
+dependencies[] = feeds_jsonpath_parser
+
+; Rules
+dependencies[] = rules
+dependencies[] = rules_admin
+
+; Date modules
+dependencies[] = date
+dependencies[] = date_api
+dependencies[] = date_views
+dependencies[] = date_popup
+
+; Commerce modules
+; Disabled by default
+; dependencies[] = addressfield
+; dependencies[] = commerce
+; dependencies[] = commerce_ui
+; dependencies[] = commerce_payment
+; dependencies[] = commerce_payment_ui
+; dependencies[] = commerce_price
+; dependencies[] = commerce_product
+; dependencies[] = commerce_product_ui
+; dependencies[] = commerce_product_pricing
+; dependencies[] = commerce_product_pricing_ui
+; dependencies[] = commerce_product_reference
+; dependencies[] = commerce_cart
+; dependencies[] = commerce_checkout
+; dependencies[] = commerce_customer
+; dependencies[] = commerce_customer_ui
+; dependencies[] = commerce_line_item
+; dependencies[] = commerce_line_item_ui
+; dependencies[] = commerce_order
+; dependencies[] = commerce_order_ui
+; dependencies[] = commerce_features
+; dependencies[] = inline_entity_form
+; dependencies[] = commerce_custom_product
+; dependencies[] = commerce_donate
+; dependencies[] = commerce_realex
+
+; Development modules
+dependencies[] = devel
+dependencies[] = devel_generate
+
+; Export modules
+dependencies[] = node_export
+dependencies[] = node_export_features
+dependencies[] = uuid
+
+; i18n
+dependencies[] = locale
+dependencies[] = i18n
+dependencies[] = i18n_field
+dependencies[] = i18n_menu
+dependencies[] = i18n_path
+dependencies[] = i18n_redirect
+dependencies[] = i18n_string
+dependencies[] = i18n_translation
+dependencies[] = i18n_variable
+dependencies[] = variable
+dependencies[] = variable_realm
+dependencies[] = variable_store
+dependencies[] = entity_translation
+dependencies[] = title
+dependencies[] = dnl
+
+; Search modules
+dependencies[] = search_api
+;dependencies[] = search_api_solr
+dependencies[] = search_api_db
+dependencies[] = search_api_views
+dependencies[] = sarnia
+;dependencies[] = facetapi
+
+;Custom Modules
+dependencies[] = inspiring_ireland_tweaks
+dependencies[] = dri_api
+dependencies[] = dri_object
+
+; custom features (Fields)
+dependencies[] - field_bases_shared
+
+; Custom features (Content Types)
+dependencies[] = content_types_content_page
+dependencies[] = content_types_news
+dependencies[] = content_types_partners
+dependencies[] = content_types_homepage
+dependencies[] = content_types_landing_page
+
+; Custom features (Pages)
+
+; Custom features (Contexts)
+dependencies[] = contexts_news_pages_blocks
+dependencies[] = contexts_sitewide
+
+; Custom features (Views)
+dependencies[] = views_news
+dependencies[] = views_news_archive
+dependencies[] = views_news_tags
+dependencies[] = views_taxonomy_terms
+dependencies[] = views_partners
+dependencies[] = views_partners_homepage_list
+dependencies[] = views_custom_search
+
+; Custom features (Search)
+;dependencies[] = dri_search_api_sarnia_server
+
+; Custom features - DRI Object search
+dependencies[] = field_bases_dri_metadata
+dependencies[] = taxonomy_dri_subject
+dependencies[] = taxonomy_dri_type
+dependencies[] = taxonomy_dri_institute
+dependencies[] = taxonomy_dri_temporal_coverage
+dependencies[] = content_types_dri_object
+dependencies[] = search_api_server_dri_objects
+dependencies[] = search_api_index_dri_objects
+dependencies[] = views_dri_object_index
+dependencies[] = context_dri_object_search
+
+
+; Custom features (General)
+dependencies[] = extra_html
+dependencies[] = extra_html_wysiwyg
+dependencies[] = only_html_input_format
+dependencies[] = annertech_date_formats
+dependencies[] = annertech_image_styles
+dependencies[] = annertech_field_bases
+dependencies[] = annertech_pathauto_settings
+dependencies[] = annertech_cookie_compliance
+dependencies[] = webforms_contact_us
+dependencies[] = node_export_partners
+dependencies[] = annertech_menu_blocks
+
+dependencies[] = languages_config
+

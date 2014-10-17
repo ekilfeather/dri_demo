@@ -1,0 +1,6 @@
+name = News archive
+description = Provides a news archive block
+core = 7.x
+package = Annertech
+dependencies[] = taxonomy
+dependencies[] = views

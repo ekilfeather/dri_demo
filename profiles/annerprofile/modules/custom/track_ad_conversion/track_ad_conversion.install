@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the track_ad_conversion module.
+ *
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function track_ad_conversion_schema() {
+  $schema['track_ad_conversion_methods'] = array(
+    'description' => 'A table containing the available ad conversion tracking methods.',
+    'fields' => array(
+      'method_id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier for method.',
+      ),
+      'name' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'The method name.',
+      ),
+      'snippet' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'The method snippet.',
+      ),
+      'status' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+        'description' => 'Whether the method is active or not.',
+      ),
+      'placement' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Placement of the snippet.',
+      ),
+      'data' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'description' => 'Method parameters.',
+      ),
+    ),
+    'primary key' => array('method_id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Add 'placement' column to track_ad_conversion_methods table.
+ */
+function track_ad_conversion_update_6000() {
+  $ret = array();
+
+  db_add_field('track_ad_conversion_methods', 'placement', array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''));
+  db_update('track_ad_conversion_methods')
+  ->fields(array(
+    'placement' => 'footer',
+  ))
+  ->execute();
+
+  return t('Added placement column to the track_ad_conversion_methods table.');
+}
+

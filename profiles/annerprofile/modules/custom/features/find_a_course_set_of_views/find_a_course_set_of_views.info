@@ -1,0 +1,10 @@
+name = Find a course set of views
+description = Map and directory views of training providers.
+core = 7.x
+package = Features
+php = 5.2.4
+dependencies[] = ctools
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[views_view][] = providers

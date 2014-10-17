@@ -1,0 +1,172 @@
+<?php
+
+/**
+ * @file
+ * Provides handy functions for manipulating webforms.
+ */
+
+/**
+ * Helper function to retrieve array of components that will appear on a given
+ * page of multi-step webform.
+ */
+function annertech_webforms_get_next_page_components($node, $form, $form_state, $page_num) {
+  $form_submitted = array();
+
+  form_load_include($form_state, 'inc', 'webform', 'includes/webform.components');
+  form_load_include($form_state, 'inc', 'webform', 'includes/webform.submissions');
+
+  // If in a multi-step form, a submission ID may be specified in form state.
+  // Load this submission. This allows anonymous users to use auto-save.
+  $submission = array();
+  if (empty($submission) && !empty($form_state['values']['details']['sid'])) {
+    $submission = webform_get_submission($node->nid, $form_state['values']['details']['sid']);
+  }
+
+  // Shorten up our variable names.
+  $component_tree = $form_state['webform']['component_tree'];
+  $page_count = $form_state['webform']['page_count'];
+  $form_state['webform']['page_num'] = $page_num;
+
+  // Recursively add components to the form. The unfiltered version of the
+  // form (typically used in Form Builder), includes all components.
+  foreach ($component_tree['children'] as $cid => $component) {
+    $component_value = isset($form_state['values']['submitted'][$cid]) ? $form_state['values']['submitted'][$cid] : NULL;
+    if (_webform_client_form_rule_check($node, $component, $page_num, $form_state)) {
+      _webform_client_form_add_component($node, $component, $component_value, $form_submitted, $form, $form_state, $submission, 'form', $page_num, 'FALSE');
+    }
+  }
+
+  return $form_submitted;
+}
+
+/**
+ * Helper function to retrieve the submitted value of a webform component.
+ */
+function annertech_webforms_get_component_value($form_key, $form_state, $return_cid = FALSE) {
+  // Handle both storage and editing a webform submission.
+  if (!empty($form_state['storage'])) {
+    $storage = $form_state['storage'];
+  }
+  elseif (isset($form_state['webform'])) {
+    $storage = $form_state['webform'];
+  }
+
+  // Traverse the array.
+  $cid = _annertech_webforms_traverse_webform_submission($form_key, $storage);
+  if (empty($cid)) {
+    return NULL;
+  }
+
+  // Return the cid or the actual value as required.
+  if ($return_cid) {
+    return $cid;
+  }
+  elseif (!empty($storage['submitted'])) {
+    return $storage['submitted'][$cid];
+  }
+
+  return NULL;
+}
+
+/**
+ * Helper function to retrieve a particular webform component.
+ */
+function annertech_webforms_get_webform_component($form_key, $form_state) {
+  // Handle both storage and editing a webform submission.
+  if (!empty($form_state['storage'])) {
+    $storage = $form_state['storage'];
+  }
+  elseif (isset($form_state['webform'])) {
+    $storage = $form_state['webform'];
+  }
+
+  // Traverse the array.
+  $component = _annertech_webforms_traverse_webform_submission($form_key, $storage, FALSE);
+  if (empty($component)) {
+    return NULL;
+  }
+
+  return $component;
+}
+
+/**
+ * Helper function to annertech_webforms_get_component_value() and
+ * annertech_webforms_get_webform_component() to traverse the
+ * webform submission data.
+ */
+function _annertech_webforms_traverse_webform_submission($form_key, $array, $return_cid = TRUE) {
+  if (is_array($array)) {
+    foreach ($array as $cid => $component) {
+      if (!empty($component['form_key']) && $component['form_key'] == $form_key) {
+        if ($return_cid) {
+          return $cid;
+        }
+        else {
+          return $component;
+        }
+      }
+      elseif (!empty($component['children'])) {
+        $match = _annertech_webforms_traverse_webform_submission($form_key, $component['children'], $return_cid);
+        if ($match) {
+          return $match;
+        }
+      }
+    }
+  }
+  return NULL;
+}
+
+
+/**
+ * Swap in the addressfield country / state fields.
+ */
+function _annertech_webforms_apply_addressfield_country_state_fields(&$form, $form_state) {
+  // Handle county / country fields.
+  if (module_exists('annertech_addressfield') && !empty($form['submitted']['details']['addressfield'])) {
+    // Addressfield weight gets lost somehow, so store it for later retrieval.
+    $addressfield_weight = $form['submitted']['details']['addressfield']['#weight'];
+
+    // Swap out the country / county fields.
+    $country = 'IE';
+    $state = '';
+
+    if (!empty($form_state['addressfield'])) {
+      $addressfield = array_pop($form_state['addressfield']);
+      $country = (isset($addressfield['country']) ? $addressfield['country'] : $country);
+      $state = (isset($addressfield['state']) ? $addressfield['state'] : $state);
+    }
+
+    // Get default values.
+    // Args to drupal_get_form() are $node, $submission.
+    if (!empty($form_state['build_info']['args']) && !empty($form_state['build_info']['args'][1])) {
+      $submission = $form_state['build_info']['args'][1];
+      $country_cid = trocaire_webforms_get_component_value('country', $form_state, TRUE);
+      $country = (!empty($submission->data[$country_cid]['value'][0]) ? $submission->data[$country_cid]['value'][0] : $country);
+      $state_cid = trocaire_webforms_get_component_value('state', $form_state, TRUE);
+      $state = (!empty($submission->data[$state_cid]['value'][0]) ? $submission->data[$state_cid]['value'][0] : $state);
+    }
+
+    // Load in the state/country fields widget.
+    $widget = array();
+    annertech_addressfield_get_country_state_fields($widget, $country, $state);
+
+    $country_weight = $form['submitted']['details']['addressfield']['country']['#weight'];
+    $widget['addressfield']['#weight'] = $country_weight;
+    $widget['addressfield']['state']['#default_value'] = $state;
+    $widget['addressfield']['state']['#required'] = TRUE;
+    $widget['addressfield']['state']['#webform_validated'] = FALSE;
+    $widget['addressfield']['state']['#needs_validation'] = TRUE;
+    $widget['addressfield']['state']['#validated'] = TRUE;
+    $widget['addressfield']['country']['#webform_validated'] = FALSE;
+    $widget['addressfield']['country']['#needs_validation'] = TRUE;
+    $widget['addressfield']['country']['#validated'] = TRUE;
+    $form['submitted']['details']['addressfield'] = $widget['addressfield'];
+    $form['submitted']['details']['addressfield']['element_key'] = $widget['element_key'];
+
+
+    // Reset addressfield weight.
+    $form['submitted']['details']['addressfield']['#weight'] = $addressfield_weight;
+  }
+}
+
+

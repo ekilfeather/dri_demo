@@ -1,0 +1,64 @@
+/**
+ * Theming for the News Landing Page
+ */
+
+.page-news {
+  .page__title {
+    background: image-url('news/news-ln-header.png') $white no-repeat 0 0;
+    @include rem(padding, 1rem 0 3rem 6rem);
+    // padding-bottom: 3rem;
+    // padding-left: 6rem;
+  }
+  #content {
+    border-right: 1px solid $grey-news-border;
+    @include rem(padding-right, 2rem);
+    // padding-right: 2rem;
+  }
+  .region-sidebar-second {
+    @include rem(padding-left, 2rem);
+    // padding-left: 2rem;
+  }
+}
+.view-news {
+  .views-row {
+    border-top: 1px solid $grey-news-border;
+    @include rem(padding, 2rem 0 2.2rem 0);
+    // padding: 2rem 0 2.2rem 0;
+  }
+  .views-row-last {
+      border-bottom: 1px solid $grey-news-border;
+      @include rem(margin-bottom, 1.5rem);
+      // margin-bottom: 1.5rem;
+    }
+  .node-title {
+    @include element-invisible;
+  }
+  .field-name-field-image {
+    float: left;
+    @include rem(padding-right, 1rem);
+    // padding-right: 1rem;
+  }
+  .field-name-title-field {
+    @extend %f20h2;
+    a {
+      color: $purple;
+      font-weight: 600;
+    }
+  }
+  .field-name-field-news-publication-date {
+  }
+  .field-name-body {
+    overflow: hidden;
+  }
+  .views-news-read-more {
+    background: image-url('news/news-read-more.png') $white no-repeat 80px 0;
+    // @include rem(margin, -53px 0 3rem 163px);
+    margin: -53px 0 3rem 163px;
+    @include responsive(tablet) {
+      margin-top: -33px;
+    }
+    @include responsive(phone) {
+      margin-top: -33px;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+name = DRI API integration
+description = Provides integration with the Digital Repository of Ireland API.
+package = Annertech
+core = 7.x
+
+dependencies[] = guzzle
+
+files[] = includes/DriApiClient.php

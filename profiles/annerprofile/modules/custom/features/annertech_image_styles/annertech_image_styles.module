@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Annertech - Image Styles feature.
+ */
+
+include_once 'annertech_image_styles.features.inc';

@@ -1,0 +1,9 @@
+name = Search API Server - DRI Objects
+description = Search API server for DRI Object index
+core = 7.x
+package = DRI Objects
+dependencies[] = entity
+dependencies[] = search_api
+dependencies[] = search_api_db
+features[features_api][] = api:2
+features[search_api_server][] = dri_db_server

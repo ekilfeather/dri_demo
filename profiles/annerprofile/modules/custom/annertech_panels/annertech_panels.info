@@ -1,0 +1,4 @@
+name = Annertech Panel Layouts
+description = Collection of custom panel layouts
+package = Annertech
+core = 7.x

@@ -1,0 +1,4 @@
+core = "7.x"
+dependencies[] = "menu_block"
+description = "Exported Menu Block for Main links"
+name = "Main Links"

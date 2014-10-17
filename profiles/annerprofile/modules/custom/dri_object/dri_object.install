@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for dri_object module.
+ */
+
+
+/**
+ * Enable new dri_language module dependency for dri_object.
+ */
+function dri_object_update_7001() {
+  $modules = array(
+    'dri_language',
+  );
+  module_enable($modules);
+  return t('Enabled new module dependency - dri_language.');
+}

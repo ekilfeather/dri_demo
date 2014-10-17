@@ -1,0 +1,48 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function annertech_donations_schema() {
+  $schema = array();
+
+  $schema['annertech_donations_pay_transactions'] = array(
+    'description' => 'A table containing the pay transactions that need to be processed.',
+    'fields' => array(
+      'pxid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the pay transaction record.'),
+      'paid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the pay activity record.'),
+      'nid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the webform node.'),
+      'uid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the user.'),
+      'sid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the webform submission.'),
+      'status' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'description' => 'Whether the transaction has been processed.'),
+      'data' => array('type' => 'text', 'not null' => TRUE, 'description' => "The card holder's personal details."),
+      'record_time' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'description' => "Time"),
+    ),
+    'primary key' => array('pxid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Create annertech_donations_pay_transactions table.
+ */
+function annertech_donations_update_7000() {
+  $spec = array(
+    'description' => 'A table containing the pay transactions that need to be processed.',
+    'fields' => array(
+      'pxid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the pay transaction record.'),
+      'paid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the pay activity record.'),
+      'nid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the webform node.'),
+      'uid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the user.'),
+      'sid' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the webform submission.'),
+      'status' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0, 'description' => 'Whether the transaction has been processed.'),
+      'data' => array('type' => 'text', 'not null' => TRUE, 'description' => "The card holder's personal details."),
+      'record_time' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'description' => "Time"),
+    ),
+    'primary key' => array('pxid'),
+  );
+  db_create_table('annertech_donations_pay_transactions', $spec);
+  return t('Created annertech_donations_pay_transactions table.');
+}
+

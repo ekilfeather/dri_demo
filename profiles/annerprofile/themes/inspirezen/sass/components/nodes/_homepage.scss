@@ -1,0 +1,548 @@
+/**
+ * Homepage Styling
+ */
+
+.node-type-homepage {
+  #main {
+    position: relative;
+    top: -25px;
+  }
+  .page__title {
+    @extend %hide-text;
+  }
+  // What is inspriing Ireland - toggle box
+  .toggle-wiii {
+    @include zen-grid-item(1,12);
+    height: 146px;
+    position: relative;
+    top: 20px;
+    left: 10px;
+    z-index: 20;
+  }
+  .toggle-wiii-x,
+  .toggle-wiii-i {
+    @include border-radius(50%);
+    @extend %f30;
+    @extend %pie;
+    color: $grey-dark;
+    padding: 14px 13px;
+    text-align: center;
+    width: 25px;
+  }
+  .toggle-wiii-i {
+    background: #f5f5f5;
+    font-family: $georgia;
+    font-style: italic;
+  }
+  .group-home-wiii-wrapper {
+    // background: $grey-light;
+    // background: rgba($white,.5);
+    height: 145px;
+    z-index: 25;
+  }
+  .group-home-wiii {
+    @extend %transition;
+    background: $grey-light;
+    background: rgba($white,.5);
+    color: $fontcol;
+    height: 105px;
+    position: relative;
+    top: 0px;
+    z-index: 15;
+    .field-name-field-home-wii-title {
+      @extend %f20;
+      text-transform: uppercase;
+      font-weight: 400;
+      margin-right: -33.3333%;
+      padding-left: 25px;
+      position: relative;
+      top: 20px;
+      width: 33.3333%;
+    }
+    .field-name-field-home-wii-text {
+      margin-left: 41.6667%;
+      margin-right: -91.6667%;
+      position: relative;
+      top: -20px;
+      width: 50%;
+    }
+  }
+  // Main Homepage slider
+  .field-name-field-home-slider-image {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+      position: relative;
+      top: 0;
+      left: 0;
+      margin-top: -146px;
+      width: 100%;
+      z-index: -1;
+      img {
+        height: auto;
+      }
+    }
+  .group-home-slider-wrapper {
+    @extend %letter-spacing-default;
+    @extend %text-shadow;
+    position: absolute;
+    top: 180px;
+    @include responsive(phone) {
+      @include text-shadow(0 0 0 $white, 0 0 0 $white, 0 0 0 $white);
+    }
+    @include responsive(phone-large) {
+      @include text-shadow(0 0 0 $white, 0 0 0 $white, 0 0 0 $white);
+    }
+  }
+  .group-home-slider {
+    @extend %transition;
+    @include zen-clear();
+    .field-name-field-home-slider-title {
+      @include zen-grid-item (6,2);
+      @extend %f60;
+      color: $white;
+      font-weight: 300;
+    }
+    .field-name-field-home-slider-text {
+      @include zen-clear();
+      @include zen-grid-item(7,2);
+      @extend %f16;
+      color: $white;
+    }
+    .field-name-field-home-slider-link {
+      @include zen-clear();
+      @include zen-grid-item(2,2);
+      @extend %btn-doormat-search;
+      @extend %f16;
+      background: $purple-button;
+      border: 1px solid $grey-light;
+      @include rem(padding, 1rem);
+      // padding: 1rem;
+      &:focus,
+      &:hover {
+        background: $grey-dark;
+      }
+    }
+  }
+
+  // The items below the slider.
+  #below-the-fold {
+    position: relative;
+    top: 72px;
+  }
+
+  // Left block under slider - Sense of Identity
+  .group-home-left {
+    @extend %transition;
+    @include zen-clear();
+    @include zen-grid-item(4,1);
+    position: relative;
+    top: 0;
+    left: 0;
+    &:focus,
+    &:hover {
+      background: rgba($purple,.7);
+    }
+    .field-name-field-home-left-title {
+      @extend %doormat-title;
+      color: $white;
+    }
+    .field-name-field-home-left-link {
+      @extend %btn-doormat-search;
+      @extend %btn-doormat-search-position;
+    }
+  }
+  // Center block under slider - Sense of Freedom
+  .group-home-center {
+    @extend %transition;
+    @include zen-grid-item(4,5);
+    position: relative;
+    top: 0;
+    left: 0;
+    &:focus,
+    &:hover {
+      background: rgba($purple,.7);
+    }
+    .field-name-field-home-center-title{
+      @extend %doormat-title;
+      color: $white;
+    }
+    .field-name-field-home-center-link {
+      @extend %btn-doormat-search;
+      @extend %btn-doormat-search-position;
+    }
+  }
+  // Right Block under slider - Latest News
+  .group-home-news {
+    @extend %transition;
+    @include zen-grid-item(4,9);
+    background: image-url('home/home-ln-bg.png') $grey-footer no-repeat 0 0;
+    height: 290px;
+    .field-name-field-home-latest-news {
+      @include rem(padding, 0 2.5rem);
+      // padding: 0 2.5rem;
+      line-height: 1.5;
+      position: relative;
+      top: 0;
+      left: 0;
+    }
+    .home-news-header-img {
+      float: left;
+      @include rem(margin-right, 1rem);
+      // margin-right: 1rem;
+      @include rem(padding-top, 1.5rem);
+      // padding-top: 1.5rem;
+    }
+    .home-news-header {
+      @extend %doormat-title;
+      margin-left: 0;
+      padding-left: 105px;
+      @include rem(padding-top, 1.15rem);
+      // padding-top: 1.15rem;
+    }
+  }
+  // Footer block on homepage - Partner Logos
+  .group-home-partners-label {
+    h3 {
+      @extend %f12;
+      color: $fontcol;
+      font-weight: 400;
+      @include rem(margin-left, .5rem);
+      // margin-left: .5rem;
+      @include rem(padding-top, 1rem);
+      // padding-top: 1rem;
+      text-transform: uppercase;
+    }
+  }
+  .group-home-partners {
+    @extend %transition;
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+    background: $white;
+    @include rem(margin, 5rem 0 3.4rem 0);
+    .field-name-field-home-our-partners {
+      .view-content {
+        text-align: center;
+        .views-row {
+          min-height: 65px;
+          float: left;
+          @include rem(margin, .5rem);
+          max-width: 200px;
+          width: 168px;
+        }
+      }
+      // img {
+      //   float: left;
+      //   @include rem(margin, .5rem);
+      //   // margin: .5rem;
+      //   max-width: 260px;
+      //   @extend %transition;
+      //   filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 10+ */
+      //   // filter: gray; /* IE6-9 */
+      //   -webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
+      //   -webkit-backface-visibility: hidden; /* Fix for transition flickering */
+      //   &:hover {
+      //     filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0\'/></filter></svg>#grayscale");
+      //     -webkit-filter: grayscale(0%);
+      //   }
+      // }
+    }
+  }
+  .view-news {
+    .views-row {
+      border: 0;
+    }
+    .views-field-title {
+      @extend %f16;
+      clear: left;
+      font-weight: 600;
+      a {
+        color: $grey-dark;
+      }
+    }
+    .views-news-home-read-all {
+      a {
+        font-weight: 600;
+      }
+      &:after {
+        background: image-url('home/home-ln-more-arrow.png') $grey-footer no-repeat 5px -1px;
+        content: "";
+        padding-left: 20px;
+      }
+    }
+  }
+}
+
+// Responsive Settings
+.node-type-homepage {
+  // Large Tablet (anything less than desktop size)
+  @include responsive(tablet-large) {
+    // What is inspriing Ireland - toggle box
+    .group-home-wiii {
+      @include zen-grid-item(12,1);
+    .field-name-field-home-wii-title {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      padding-left: 0;
+    }
+    .field-name-field-home-wii-text {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      top: 0;
+    }
+  }
+    // Main Homepage slider
+  .field-name-field-home-slider-id {}
+  .group-home-slider {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+    .field-name-field-home-slider-title {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+    .field-name-field-home-slider-text {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+    .field-name-field-home-slider-link {
+      @include zen-clear();
+      @include zen-grid-item(2,2);
+    }
+  }
+
+      // Left block under slider - Sense of Place
+    .group-home-left {
+      @include zen-clear();
+      @include zen-grid-item(6,1);
+      img {
+        width: 100%;
+      }
+    }
+    .group-home-center {
+      @include zen-grid-item(6,7);
+      img {
+        width: 100%;
+      }
+    }
+    .group-home-news {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+      background: image-url('home/home-ln-bg.png') $grey-light no-repeat 100% 0;
+      margin-bottom: 3rem;
+    }
+    .group-home-partners {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+}
+  // tablet
+  @include responsive(tablet) {
+    // What is inspriing Ireland - toggle box
+    .group-home-wiii {
+      @include zen-grid-item(12,1);
+      height: 145px;
+    .field-name-field-home-wii-title {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      padding-left: 0;
+    }
+    .field-name-field-home-wii-text {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      top: 0;
+    }
+  }
+  // Main Homepage slider
+  .field-name-field-home-slider-id {}
+  .group-home-slider-wrapper {}
+  .group-home-slider {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+    .field-name-field-home-slider-title {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      @include rem(line-height, 4.5rem);
+    }
+    .field-name-field-home-slider-text {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+    .field-name-field-home-slider-link {
+      @include zen-clear();
+      @include zen-grid-item(2,2);
+    }
+  }
+    // Left block under slider - Sense of Place
+    .group-home-left {
+      @include zen-clear();
+      @include zen-grid-item(6,1);
+      img {
+        width: 100%;
+      }
+    }
+    .group-home-center {
+      @include zen-grid-item(6,7);
+      img {
+        width: 100%;
+      }
+    }
+    .group-home-news {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+      background: image-url('home/home-ln-bg.png') $grey-light no-repeat 100% 0;
+      margin-bottom: 3rem;
+    }
+    .group-home-partners {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+  }
+
+  // Phone Large - a few items between phone and tablet
+  @include responsive(phone-large) {
+    // What is inspriing Ireland - toggle box
+      .group-home-wiii {
+        @include zen-grid-item(12,1);
+      .field-name-field-home-wii-title {
+        @include zen-grid-item(10,2);
+        position: relative;
+        top: 3rem;
+      }
+      .field-name-field-home-wii-text {
+        @include zen-clear();
+        @include zen-grid-item(10,2);
+        position: relative;
+        top: 2rem;
+      }
+    }
+    .toggle-wiii {
+      @include zen-grid-item(1,12);
+      left: -10px;
+    }
+    // Main Homepage slider
+    .group-home-slider-wrapper {
+      position: relative;
+      top: 0;
+    }
+    .group-home-slider {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+      .field-name-field-home-slider-id {}
+      .field-name-field-home-slider-title {
+        @include zen-clear();
+        @include zen-grid-item(10,2);
+        @include font-size(48px);
+        color: $fontcol;
+      }
+      .field-name-field-home-slider-text {
+        @include zen-clear();
+        @include zen-grid-item(10,2);
+        color: $fontcol;
+      }
+      .field-name-field-home-slider-link {
+        @include zen-clear();
+        @include zen-grid-item(6,2);
+        margin-bottom: 3rem;
+      }
+    }
+  }
+  // phone
+  @include responsive(phone) {
+  // What is inspriing Ireland - toggle box
+    .group-home-wiii-wrapper {}
+    .group-home-wiii {
+      height: 200px;
+    }
+    .group-home-wiii {
+      @include zen-grid-item(12,1);
+    .field-name-field-home-wii-title {
+      @include zen-grid-item(10,2);
+      padding-left: 0;
+      position: relative;
+      top: 3rem;
+    }
+    .field-name-field-home-wii-text {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      position: relative;
+      top: 2rem;
+    }
+  }
+  .toggle-wiii {
+    @include zen-grid-item(1,12);
+    left: -10px;
+    height: 75px;
+  }
+
+  // Main Homepage slider
+  .group-home-slider-wrapper {
+    position: relative;
+    top: 0;
+  }
+  .field-name-field-home-slider-image {
+    margin-top: 0;
+  }
+  .group-home-slider {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+    .field-name-field-home-slider-title {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      @include font-size(48px);
+      color: $fontcol;
+      @include rem(line-height, 4.5rem);
+    }
+    .field-name-field-home-slider-text {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      color: $fontcol;
+    }
+    .field-name-field-home-slider-link {
+      @include zen-clear();
+      @include zen-grid-item(6,2);
+      margin-bottom: 3rem;
+    }
+  }
+  // The items below the slider.
+  #below-the-fold {
+    position: relative;
+    top: 0;
+  }
+    // Left block under slider - Sense of Place
+    .group-home-left {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      margin-bottom: 3rem;
+      img {
+        height: auto;
+        width: 100%;
+      }
+    }
+    // Center block under slider - Sense of Freedom
+    .group-home-center {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      margin-bottom: 3rem;
+      img {
+        height: auto;
+        width: 100%;
+      }
+    }
+    // Right Block under slider - Latest News
+    .group-home-news {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+      background: $grey-footer;
+      height: auto;
+      margin-bottom: 0rem;
+      .home-news-header {
+        @include font-size(20px);
+        @include rem(padding-top, 2.4rem);
+      }
+    }
+    // Footer block on homepage - Partner Logos
+    .group-home-partners {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+  }
+}

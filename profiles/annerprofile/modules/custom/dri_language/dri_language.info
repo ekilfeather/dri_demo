@@ -1,0 +1,4 @@
+name = DRI Languages
+description = Provides helper functions for handling language codes from the Digital Repository of Ireland.
+package = Annertech
+core = 7.x

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the publication content type feature.
+ */
+
+include_once 'publication_content_type.features.inc';

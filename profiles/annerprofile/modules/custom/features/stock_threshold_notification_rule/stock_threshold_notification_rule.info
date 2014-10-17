@@ -1,0 +1,9 @@
+name = Stock Threshold Notification Rule
+description = A rule to email all admins when a stock reorder threshold is reached.
+core = 7.x
+package = Features
+php = 5.2.4
+dependencies[] = entity
+dependencies[] = rules
+features[features_api][] = api:1
+features[rules_config][] = rules_notify_when_reorder_threshold_reached

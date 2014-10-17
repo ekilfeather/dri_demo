@@ -1,0 +1,394 @@
+diff -up -r track_ad_conversion.admin.inc track_ad_conversion.admin.inc
+--- track_ad_conversion.admin.inc	2012-10-18 07:24:56.000000000 +0100
++++ track_ad_conversion.admin.inc	2012-10-18 07:37:19.000000000 +0100
+@@ -14,7 +14,7 @@ function track_ad_conversion_list() {
+ 
+   // No methods found.
+   if (empty($methods)) {
+-    return '<p>' . t('No tracking methods configured. Please <a href="@url">add one</a> now.', array('@url' => url('admin/settings/track-ad-conversion/add'))) . '</p>';
++    return '<p>' . t('No tracking methods configured. Please <a href="@url">add one</a> now.', array('@url' => url('admin/config/track-ad-conversion/add'))) . '</p>';
+   }
+ 
+   $header = array(
+@@ -28,19 +28,19 @@ function track_ad_conversion_list() {
+     $row = array();
+     $row[] = check_plain($method->name);
+     $row[] = ($method->status ? t('Yes') : t('No'));
+-    $edit = l(t('edit'), 'admin/settings/track-ad-conversion/' . $method->method_id . '/edit');
+-    $delete = l(t('delete'), 'admin/settings/track-ad-conversion/' . $method->method_id . '/delete');
++    $edit = l(t('edit'), 'admin/config/track-ad-conversion/' . $method->method_id . '/edit');
++    $delete = l(t('delete'), 'admin/config/track-ad-conversion/' . $method->method_id . '/delete');
+     $row[] = $edit . '&nbsp;' . $delete;
+     $rows[] = $row;
+   }
+ 
+-  return theme('table', $header, $rows);
++  return theme('table', array('header' => $header, 'rows' => $rows));
+ }
+ 
+ /**
+  * Add a new ad conversion tracking method.
+  */
+-function track_ad_conversion_add_method_form($form_state = NULL) {
++function track_ad_conversion_add_method_form($form, $form_state = NULL) {
+   return track_ad_conversion_method_form(FALSE);
+ }
+ 
+@@ -65,13 +65,13 @@ function track_ad_conversion_add_method_
+   drupal_write_record('track_ad_conversion_methods', $method);
+ 
+   drupal_set_message(t('Your method has been saved successfully.'));
+-  $form_state['redirect'] = 'admin/settings/track-ad-conversion';
++  $form_state['redirect'] = 'admin/config/track-ad-conversion';
+ }
+ 
+ /**
+  * Edit an ad conversion tracking method.
+  */
+-function track_ad_conversion_edit_method_form($form_state = NULL, $method_id) {
++function track_ad_conversion_edit_method_form($form, $form_state = NULL, $method_id) {
+   $method = track_ad_conversion_get_methods($method_id);
+   if (empty($method)) {
+     drupal_set_message(t('Failed to find matching method.'), 'error');
+@@ -102,7 +102,7 @@ function track_ad_conversion_edit_method
+   drupal_write_record('track_ad_conversion_methods', $method, 'method_id');
+ 
+   drupal_set_message(t('Your method has been saved successfully.'));
+-  $form_state['redirect'] = 'admin/settings/track-ad-conversion';
++  $form_state['redirect'] = 'admin/config/track-ad-conversion';
+ }
+ 
+ /**
+@@ -125,7 +125,7 @@ function track_ad_conversion_method_form
+     '#required' => TRUE,
+     '#default_value' => (!empty($method) ? $method->name : ''),
+   );
+-  
++
+   $form['snippet'] = array(
+     '#type' => 'textarea',
+     '#title' => t('Code snippet'),
+@@ -134,16 +134,17 @@ function track_ad_conversion_method_form
+     '#default_value' => (!empty($method) ? $method->snippet : ''),
+   );
+   $form['token'] = array(
+-    '#collapsed'      => TRUE,
+-    '#collapsible'    => TRUE,
+-    '#title'          => t('Replacement values'),
+-    '#type'           => 'fieldset',
++    '#collapsed' => TRUE,
++    '#collapsible' => TRUE,
++    '#title' => t('Replacement values'),
++    '#type' => 'fieldset',
+   );
++  // TODO Please change this theme call to use an associative array for the $variables parameter.
+   $form['token']['token_help'] = array(
+     '#value' => theme('token_help', 'track_ad_conversion'),
+   );
+ 
+-  
++
+   $form['status'] = array(
+     '#type' => 'checkbox',
+     '#title' => t('Enabled'),
+@@ -153,7 +154,10 @@ function track_ad_conversion_method_form
+   $form['placement'] = array(
+     '#type' => 'radios',
+     '#title' => t('Placement'),
+-    '#options' => array('header' => t('Header'), 'footer' => t('Footer (recommended)')),
++    '#options' => array(
++      'header' => t('Header'),
++      'footer' => t('Footer (recommended)'),
++    ),
+     '#default_value' => (!empty($method) ? $method->placement : 'footer'),
+     '#description' => t('Note, <em>Header</em> option is only valid for JavaScript code and should not contain <em>&lt;script&gt;</em> tags.'),
+   );
+@@ -178,7 +182,10 @@ function track_ad_conversion_method_form
+     '#type' => 'radios',
+     '#title' => t('Limit or extend the options below by the pages entered'),
+     '#description' => t("If <em>Extend</em> is chosen, then the matching on page path when combined with the other selection options is an <em>OR</em> operation.  If <em>Limit</em> is chosen, then an <em>AND</em> operation is used to determine if this is an active method."),
+-    '#options' => array('limit' => t('Limit'), 'extend' => t('Extend')),
++    '#options' => array(
++      'limit' => t('Limit'),
++      'extend' => t('Extend'),
++    ),
+     '#default_value' => (!empty($method) ? $method->data['track_pages_type'] : 'extend'),
+   );
+ 
+@@ -190,7 +197,7 @@ function track_ad_conversion_method_form
+       '#default_value' => (!empty($method) ? $method->data['ubercart'] : 0),
+     );
+   }
+-  
++
+   // Payment API.
+   if (module_exists('pay')) {
+     $form['track']['payment_api'] = array(
+@@ -219,14 +226,14 @@ function track_ad_conversion_method_form
+     '#type' => 'submit',
+     '#value' => (!empty($method) ? t('Save') : t('Add')),
+   );
+-  
++
+   return $form;
+ }
+ 
+ /**
+  * Delete a ad tracking method.
+  */
+-function track_ad_conversion_delete_method_form($form_state = NULL, $method_id) {
++function track_ad_conversion_delete_method_form($form, $form_state = NULL, $method_id) {
+   $form = array();
+   $method = track_ad_conversion_get_methods($method_id);
+   if (empty($method)) {
+@@ -242,7 +249,7 @@ function track_ad_conversion_delete_meth
+   return confirm_form(
+     $form,
+     t('Are you sure you want to delete method %method?', array('%method' => $method->name)),
+-    'admin/settings/track-ad-conversion',
++    'admin/config/track-ad-conversion',
+     t('This action cannot be undone.'),
+     t('Delete')
+   );
+@@ -252,8 +259,12 @@ function track_ad_conversion_delete_meth
+  * Submit handler for delete ad tracking method.
+  */
+ function track_ad_conversion_delete_method_form_submit($form, &$form_state) {
+-  db_query("DELETE FROM {track_ad_conversion_methods} WHERE method_id = %d", $form_state['values']['method_id']);
++  // TODO Please review the conversion of this statement to the D7 database API syntax.
++  /* db_query("DELETE FROM {track_ad_conversion_methods} WHERE method_id = %d", $form_state['values']['method_id']) */
++  db_delete('track_ad_conversion_methods')
++  ->condition('method_id', $form_state['values']['method_id'])
++  ->execute();
+   drupal_set_message(t('Method deleted successfully.'));
+-  $form_state['redirect'] = 'admin/settings/track-ad-conversion';
++  $form_state['redirect'] = 'admin/config/track-ad-conversion';
+ }
+ 
+diff -up -r track_ad_conversion.info track_ad_conversion.info
+--- track_ad_conversion.info	2012-10-18 07:24:56.000000000 +0100
++++ track_ad_conversion.info	2012-10-18 07:37:19.000000000 +0100
+@@ -1,5 +1,5 @@
+ ; $Id$
+ name = Track Ad Payment Conversions
+ description = Track payment conversions for Ubercart and Payment API from ad click-thrus
+-core = 6.x
++core = 7.x
+ package = Trocaire
+diff -up -r track_ad_conversion.install track_ad_conversion.install
+--- track_ad_conversion.install	2012-10-18 07:24:56.000000000 +0100
++++ track_ad_conversion.install	2012-10-18 07:37:19.000000000 +0100
+@@ -1,4 +1,10 @@
+ <?php
++/**
++ * @file
++ * Install, update and uninstall functions for the track_ad_conversion module.
++ *
++ */
++
+ // $Id$
+ 
+ /**
+@@ -12,12 +18,41 @@ function track_ad_conversion_schema() {
+   $schema['track_ad_conversion_methods'] = array(
+     'description' => 'A table containing the available ad conversion tracking methods.',
+     'fields' => array(
+-      'method_id' => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE, 'description' => 'The primary identifier for method.'),
+-      'name' => array('type' => 'text', 'not null' => TRUE, 'description' => 'The method name.'),
+-      'snippet' => array('type' => 'text', 'not null' => TRUE, 'description' => 'The method snippet.'),
+-      'status' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 1, 'description' => 'Whether the method is active or not.'),
+-      'placement' => array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => '', 'description' => 'Placement of the snippet.'),
+-      'data' => array('type' => 'text', 'not null' => TRUE, 'description' => 'Method parameters.'),
++      'method_id' => array(
++        'type' => 'serial',
++        'unsigned' => TRUE,
++        'not null' => TRUE,
++        'description' => 'The primary identifier for method.',
++      ),
++      'name' => array(
++        'type' => 'text',
++        'not null' => TRUE,
++        'description' => 'The method name.',
++      ),
++      'snippet' => array(
++        'type' => 'text',
++        'not null' => TRUE,
++        'description' => 'The method snippet.',
++      ),
++      'status' => array(
++        'type' => 'int',
++        'size' => 'tiny',
++        'not null' => TRUE,
++        'default' => 1,
++        'description' => 'Whether the method is active or not.',
++      ),
++      'placement' => array(
++        'type' => 'varchar',
++        'length' => 32,
++        'not null' => TRUE,
++        'default' => '',
++        'description' => 'Placement of the snippet.',
++      ),
++      'data' => array(
++        'type' => 'text',
++        'not null' => TRUE,
++        'description' => 'Method parameters.',
++      ),
+     ),
+     'primary key' => array('method_id'),
+   );
+@@ -29,14 +64,16 @@ function track_ad_conversion_schema() {
+  * Implements hook_install().
+  */
+ function track_ad_conversion_install() {
+-  drupal_install_schema('track_ad_conversion');
++  // TODO The drupal_(un)install_schema functions are called automatically in D7.
++  // drupal_install_schema('track_ad_conversion')
+ }
+ 
+ /**
+  * Implements hook_uninstall().
+  */
+ function track_ad_conversion_uninstall() {
+-  drupal_uninstall_schema('track_ad_conversion');
++  // TODO The drupal_(un)install_schema functions are called automatically in D7.
++  // drupal_uninstall_schema('track_ad_conversion')
+ }
+ 
+ /**
+@@ -45,9 +82,18 @@ function track_ad_conversion_uninstall()
+ function track_ad_conversion_update_6000() {
+   $ret = array();
+ 
+-  db_add_field($ret, 'track_ad_conversion_methods', 'placement', array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''));
+-  db_query("UPDATE {track_ad_conversion_methods} SET placement = 'footer'");
+-
+-  return $ret;
++  db_add_field('track_ad_conversion_methods', 'placement', array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''));
++  // TODO Please review the conversion of this statement to the D7 database API syntax.
++  /* db_query("UPDATE {track_ad_conversion_methods} SET placement = 'footer'") */
++  db_update('track_ad_conversion_methods')
++  ->fields(array(
++    'placement' => 'footer',
++  ))
++  ->execute();
++
++  // hook_update_N() no longer returns a $ret array. Instead, return
++  // nothing or a translated string indicating the update ran successfully.
++  // See http://drupal.org/node/224333#update_sql.
++  return t('TODO Add a descriptive string here to show in the UI.') /* $ret */;
+ }
+ 
+diff -up -r track_ad_conversion.module track_ad_conversion.module
+--- track_ad_conversion.module	2012-10-18 07:24:56.000000000 +0100
++++ track_ad_conversion.module	2012-10-18 07:37:20.000000000 +0100
+@@ -13,10 +13,15 @@
+  */
+ 
+ /**
+- * Implements hook_perm().
++ * Implements hook_permission().
+  */
+-function track_ad_conversion_perm() {
+-  return array('administer track ad conversions');
++function track_ad_conversion_permission() {
++  return array(
++    'administer track ad conversions' => array(
++      'title' => t('administer track ad conversions'),
++      'description' => t('TODO Add a description for \'administer track ad conversions\''),
++    ),
++  );
+ }
+ 
+ /**
+@@ -25,14 +30,14 @@ function track_ad_conversion_perm() {
+ function track_ad_conversion_menu() {
+   $items = array();
+ 
+-  $items['admin/settings/track-ad-conversion'] = array(
++  $items['admin/config/track-ad-conversion'] = array(
+     'title' => 'Track ad conversions',
+     'page callback' => 'track_ad_conversion_list',
+     'access arguments' => array('administer track ad conversions'),
+     'file' => 'track_ad_conversion.admin.inc',
+   );
+ 
+-  $items['admin/settings/track-ad-conversion/list'] = array(
++  $items['admin/config/track-ad-conversion/list'] = array(
+     'title' => 'List',
+     'page callback' => 'track_ad_conversion_list',
+     'access arguments' => array('administer track ad conversions'),
+@@ -41,7 +46,7 @@ function track_ad_conversion_menu() {
+     'weight' => 0,
+   );
+ 
+-  $items['admin/settings/track-ad-conversion/add'] = array(
++  $items['admin/config/track-ad-conversion/add'] = array(
+     'title' => 'Add method',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('track_ad_conversion_add_method_form'),
+@@ -51,7 +56,7 @@ function track_ad_conversion_menu() {
+     'weight' => 1,
+   );
+ 
+-  $items['admin/settings/track-ad-conversion/%/edit'] = array(
++  $items['admin/config/track-ad-conversion/%/edit'] = array(
+     'title' => 'Edit track ad conversion method',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('track_ad_conversion_edit_method_form', 3),
+@@ -60,7 +65,7 @@ function track_ad_conversion_menu() {
+     'type' => MENU_CALLBACK,
+   );
+ 
+-  $items['admin/settings/track-ad-conversion/%/delete'] = array(
++  $items['admin/config/track-ad-conversion/%/delete'] = array(
+     'title' => 'Delete track ad conversion method',
+     'page callback' => 'drupal_get_form',
+     'page arguments' => array('track_ad_conversion_delete_method_form', 3),
+@@ -128,7 +133,7 @@ function track_ad_conversion_get_methods
+   $methods = array();
+ 
+   if ($method_id) {
+-    $method = db_fetch_object(db_query("SELECT * FROM {track_ad_conversion_methods} WHERE method_id = %d", $method_id));
++    $method = db_fetch_object(db_query("SELECT * FROM {track_ad_conversion_methods} WHERE method_id = :method_id", array(':method_id' => $method_id)));
+     $method->data = unserialize($method->data);
+     return $method;
+   }
+@@ -246,7 +251,7 @@ function track_ad_conversion_footer($mai
+     if (module_exists('uc_multiprice')) {
+       $currency = 'EUR';
+       if (isset($order->data['country_id'])) {
+-        $country = db_fetch_object(db_query("SELECT * FROM {uc_multiprice_currencies} WHERE country_id = %d", $order->data['country_id']));
++        $country = db_fetch_object(db_query("SELECT * FROM {uc_multiprice_currencies} WHERE country_id = :country_id", array(':country_id' => $order->data['country_id'])));
+         $currency = (!empty($country) && !empty($country->currency_code)) ? $country->currency_code : 'EUR';
+       }
+     }
+@@ -262,7 +267,7 @@ function track_ad_conversion_footer($mai
+     }
+     unset($_SESSION['track_ad_conversion_uc_order_id']);
+   }
+-  
++
+   return $output;
+ }
+ 
+@@ -342,7 +347,7 @@ function track_ad_conversion_init() {
+     if (module_exists('uc_multiprice')) {
+       $currency = 'EUR';
+       if (isset($order->data['country_id'])) {
+-        $country = db_fetch_object(db_query("SELECT * FROM {uc_multiprice_currencies} WHERE country_id = %d", $order->data['country_id']));
++        $country = db_fetch_object(db_query("SELECT * FROM {uc_multiprice_currencies} WHERE country_id = :country_id", array(':country_id' => $order->data['country_id'])));
+         $currency = (!empty($country) && !empty($country->currency_code)) ? $country->currency_code : 'EUR';
+       }
+     }
+@@ -358,8 +363,8 @@ function track_ad_conversion_init() {
+     }
+     unset($_SESSION['track_ad_conversion_uc_order_id']);
+   }
+-  
+-  drupal_add_js($output, 'inline', 'header');
++
++  drupal_add_js($output, array('type' => 'inline'));
+ 
+   return;
+ }

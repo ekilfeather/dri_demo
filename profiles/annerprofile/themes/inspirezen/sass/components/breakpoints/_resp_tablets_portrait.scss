@@ -1,0 +1,21 @@
+/**
+ * Styling for items on tablets in portrait mode
+ */
+
+@media only screen and (max-width: 768px) {
+  .node-type-homepage {
+    .group-home-left {
+      @include zen-grid-item(6,1);
+    }
+    .group-home-center {
+      @include zen-grid-item(6,7);
+    }
+    .group-home-news {
+      @include zen-clear();
+      @include zen-grid-item(6,1);
+    }
+    .group-home-partners {
+      @include zen-grid-item(6,7);
+    }
+  }
+}

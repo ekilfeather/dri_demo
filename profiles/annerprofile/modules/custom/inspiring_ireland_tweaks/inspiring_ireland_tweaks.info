@@ -1,0 +1,4 @@
+name = Inspiring Ireland Tweaks
+description = Small tweaks needed for the Inspiring Ireland website
+package = Annertech
+core = 7.x

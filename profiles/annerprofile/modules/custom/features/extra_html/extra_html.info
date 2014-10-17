@@ -1,0 +1,13 @@
+name = Extra HTML
+description = Editor Filter Format  and wysiwyg Profile
+core = 7.x
+package = Annertech
+dependencies[] = entity
+dependencies[] = features
+dependencies[] = filter
+dependencies[] = media
+dependencies[] = video_filter
+dependencies[] = wysiwyg
+features[features_api][] = api:2
+features[filter][] = extra_html
+project path = profiles/annerprofile/modules/custom/features

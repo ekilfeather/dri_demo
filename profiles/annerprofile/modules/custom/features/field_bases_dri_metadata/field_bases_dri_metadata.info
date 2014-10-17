@@ -1,0 +1,16 @@
+name = Field Bases - DRI metadata
+description = DRI Object metadata field bases.
+core = 7.x
+package = DRI Objects
+dependencies[] = features
+dependencies[] = geofield
+dependencies[] = text
+features[features_api][] = api:2
+features[field_base][] = field_dri_creator
+features[field_base][] = field_dri_date
+features[field_base][] = field_dri_description
+features[field_base][] = field_dri_geocode_point
+features[field_base][] = field_dri_geographical_coverage
+features[field_base][] = field_dri_publisher
+features[field_base][] = field_dri_rights
+features[field_base][] = field_dri_title

@@ -1,0 +1,437 @@
+<?php
+
+/**
+ * @file
+ * Provides page callback to display details of Digital Repository of Ireland
+ * objects.
+ *
+ * @todo Is it better to provide blocks? e.g. for object metadata?
+ */
+
+
+/**
+ * Pre-defined embedded content types.
+ *
+ * Currently only iframe, but could be extended with other types.
+ */
+define('DRI_EMBED_METHOD_IFRAME', 'iframe');
+
+
+/**
+ * Implements hook_menu().
+ *
+ * Depends on wildcard autoloading, using function provided by dri_api module.
+ *
+ * @see dri_object_load().
+ *
+ * @todo Title callback based on object details.
+ */
+function dri_object_menu() {
+  $items['object-detail/%dri_object'] = array(
+    'title' => t('Object Detail'),
+//    'title callback' => '',
+//    'title arguments' => array(1),
+    'page callback' => 'dri_object_page',
+    'page arguments' => array(1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['dri/%/%dri_object'] = array(
+    'title' => t('Object Detail'),
+//    'title callback' => '',
+//    'title arguments' => array(2),
+    'page callback' => 'dri_object_embed',
+    'page arguments' => array(2,1),
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+
+/**
+ * Loads a single DRI object.
+ *
+ * Can be used as a wildcard object loader by hook_menu().
+ *
+ * @param string $object_id
+ *   Object ID from DRI repository.
+ *
+ * @todo use &drupal_static ?
+ */
+function dri_object_load($object_id) {
+  $object = dri_api_get_objects(array($object_id));
+
+  return $object;
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function dri_object_theme($existing, $type, $theme, $path) {
+  return array(
+    'dri_object' => array(
+      'render element' => 'elements',
+      'template' => 'dri-object',
+    ),
+    'dri_iframe' => array(
+      'render element' => 'elements',
+      'template' => 'dri-iframe',
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_preprocess_dri_object().
+ *
+ * This is the system-level template_* preprocess function, called before any
+ * additional implementations in modules or themes.
+ *
+ * @param array $variables
+ *   $variables as passed into dri_object theme hook.
+ *
+ * @see dri_object_page().
+ */
+function template_preprocess_dri_object(&$variables) {
+  $variables['title'] = $variables['elements']['0']['metadata']['title']['0'];
+
+  // Get description from object metadata
+  $description = $variables['elements']['0']['metadata']['description'];
+  if (!empty($description)) {
+    // concatenate each value as a paragraph.
+    $variables['description'] = '';
+    foreach ($description as $text) {
+      $variables['description'] .= '<p>' . $text . '</p>';
+    }
+  }
+
+  // Prepare creator from object metadata
+  $creator = $variables['elements']['0']['metadata']['creator'];
+  // Don't allow 'n/a' to be displayed as a creator
+  foreach ($creator as $key => $value) {
+    if (preg_match('/^[nN][\/]*[aA]$/', $value)) {
+      unset($creator[$key]);
+    }
+  }
+  if (!empty($creator)) {
+    $variables['creator'] = implode(', ', $creator);
+  }
+
+  // Get main image
+  if (!empty($variables['elements']['0']['files'][0]['full_size_web_format'])) {
+    $variables['main_image'] = theme('image', array(
+      'path' => $variables['elements']['0']['files'][0]['full_size_web_format'],
+      'alt' => $variables['elements']['0']['metadata']['title']['0'],
+    ));
+  }
+
+  // clean up date formats
+  $dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['date']);
+  if (!empty($dates)) {
+    $variables['dates'] = implode(', ', $dates);
+  }
+
+  // parse out place names from geographical_coverage metadata
+  $places = $variables['elements']['0']['metadata']['geographical_coverage'];
+  if (!empty($places)) {
+    $places = _dri_object_parse_coverage_metadata($places);
+    $variables['places'] = implode(', ', $places);
+  }
+
+  // parse out era names from temporal_coverage metadata
+  $eras = $variables['elements']['0']['metadata']['temporal_coverage'];
+  if (!empty($eras)) {
+    $eras = _dri_object_parse_coverage_metadata($eras);
+    $variables['eras'] = implode(', ', $eras);
+  }
+
+  // Parse out human-names of languages.
+  $langs = $variables['elements']['0']['metadata']['language'];
+  if (!empty($langs)) {
+    foreach ($langs as &$langcode) {
+      $langcode = dri_language_get_label($langcode);
+    }
+    $variables['languages'] = implode(', ', $langs);
+  }
+
+  // Prepare format from object metadata
+  $formats = $variables['elements']['0']['metadata']['format'];
+  if (!empty($formats)) {
+    $variables['formats'] = implode(', ', $formats);
+  }
+
+  // Prepare institution from object metadata
+  if (!empty($variables['elements']['0']['metadata']['publisher'])) {
+    // We only want to display the first publisher, in case of multi-value.
+    $variables['institution'] = $variables['elements']['0']['metadata']['publisher'][0];
+  }
+
+  // Prepare all-publishers from object metadata
+  $publishers = $variables['elements']['0']['metadata']['publisher'];
+  if (!empty($publishers)) {
+    $variables['publishers'] = implode(', ', $publishers);
+  }
+
+  // Prepare rights from object metadata
+  $rights = $variables['elements']['0']['metadata']['rights'];
+  if (!empty($rights)) {
+    $variables['rights'] = implode(', ', $rights);
+  }
+
+  // Prepare type from object metadata
+  $types = $variables['elements']['0']['metadata']['type'];
+  if (!empty($types)) {
+    $variables['types'] = theme('item_list', array(
+      'items' => $types,
+      'type' => 'ul',
+      'attributes' => array(
+        'class' => 'od-item-list',
+      ),
+    ));
+  }
+
+  // Prepare subjects from object metadata
+  $subjects = $variables['elements']['0']['metadata']['subject'];
+  if (!empty($subjects)) {
+    $variables['subjects'] = theme('item_list', array(
+      'items' => $subjects,
+      'type' => 'ul',
+      'attributes' => array(
+        'class' => 'od-item-list',
+      ),
+    ));
+  }
+
+  // Prepare contributors from object metadata
+  $contributors = $variables['elements']['0']['metadata']['contributor'];
+  if (!empty($contributors)) {
+    $variables['contributors'] = implode(', ', $contributors);
+  }
+}
+
+
+/**
+ * Implements hook_preprocess_dri_iframe().
+ *
+ * Assumption: only one/first value is needed for each potentially multi-valued
+ * metadata field, since this is a summary pop-up box. Full details can be shown
+ * on the stand-alone object-detail page.
+ *
+ * This is the system-level template_* preprocess function, called before any
+ * additional implementations in modules or themes.
+ *
+ * @param array $variables
+ */
+function template_preprocess_dri_iframe(&$variables) {
+  $variables['title'] = $variables['elements']['0']['metadata']['title']['0'];
+  $variables['description'] = $variables['elements']['0']['metadata']['description']['0'];
+  $variables['creator'] = $variables['elements']['0']['metadata']['creator']['0'];
+  $variables['colorbox_image'] = theme('image', array(
+    'path' => $variables['elements']['0']['files'][0]['thumbnail_large'],
+    'alt' => $variables['elements']['0']['metadata']['title']['0'],
+  ));
+
+  // clean up date formats
+  $dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['date']);
+  $variables['date'] = $dates['0']; // assume only one
+}
+
+
+/**
+ * Page callback
+ *
+ * path: object-detail/%dri_object
+ *
+ * @param array $object
+ *   Array representing a DRI object.
+ *
+ * @param $langcode
+ *   (optional) A language code to use for rendering. Defaults to the global
+ *   content language of the current request.
+ *
+ * @return
+ *   An array as expected by drupal_render().
+ */
+function dri_object_page($object, $langcode = NULL) {
+  if (!isset($langcode)) {
+    $langcode = $GLOBALS['language_content']->language;
+  }
+
+  $build = $object;
+
+  // get related object metadata
+  $related_query = dri_api_get_related_objects($object[0]['pid'], 4);
+
+  $related_ids = array();
+  foreach ($related_query as $result) {
+    $related_ids[] = $result['id'];
+  }
+
+  // @todo maybe pass in second arg, array of metadata field names we want
+  $related_objects = dri_api_get_objects($related_ids);
+
+  // final array
+  $build += array(
+    '#theme' => 'dri_object',
+    '#language' => $langcode,
+    'related_objects' => $related_objects,
+  );
+
+  return render($build);
+}
+
+
+
+/**
+ * Page callback
+ *
+ * Path: dri/object/%dri_object/%
+ *
+ * @param array $object
+ *   Array representing a DRI object.
+ *
+ * @param string $embed_type
+ *   Method of embedding content.
+ *
+ * @param $langcode
+ *   (optional) A language code to use for rendering. Defaults to the global
+ *   content language of the current request.
+ *
+ * @return
+ *   An array as expected by drupal_render().
+ */
+function dri_object_embed($object, $embed_method = DRI_EMBED_METHOD_IFRAME, $langcode = NULL) {
+  if (!isset($langcode)) {
+    $langcode = $GLOBALS['language_content']->language;
+  }
+
+  $build = $object;
+
+  $build += array(
+    '#language' => $langcode,
+  );
+
+  // set correct theme handler
+  switch ($embed_method) {
+    case DRI_EMBED_METHOD_IFRAME:
+      $build['#theme'] = 'dri_iframe';
+      break;
+    default:
+      $build['#theme'] = 'dri_iframe';
+      break;
+  }
+
+  return render($build);
+}
+
+
+/**
+ * Implements hook_preprocess_page().
+ *
+ * Use page--raw.tpl.php for the iFrame content.
+ * Prevent admin_menu from appearing.
+ */
+function dri_object_preprocess_page(&$variables) {
+  if (substr(current_path(), 0, 4) === 'dri/') {
+    switch (arg(1)) {
+      case DRI_EMBED_METHOD_IFRAME:
+        $variables['theme_hook_suggestions'][] = 'page__raw';
+        admin_menu_suppress(TRUE);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+
+/**
+ * Implements hook_js_alter().
+ *
+ * We don't want the EU cookie pop-up in the iFrame.
+ */
+function dri_object_js_alter(&$javascript) {
+  if (substr(current_path(), 0, 4) === 'dri/') {
+    switch (arg(1)) {
+      case DRI_EMBED_METHOD_IFRAME:
+        $cookie_js = drupal_get_path('module', 'eu_cookie_compliance') . '/js/eu_cookie_compliance.js';
+        unset($javascript[$cookie_js]);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+
+/**
+ * Extract prose name of era from temporal or geographical coverage string.
+ *
+ * DRI JSON contains metadata strings in the forms:
+ *   "name=17th century; start=1600-01-01; end=1699-12-31"
+ *   "name=Iveragh; north=51.8961 ; east=-10.0289",
+ *
+ * This function takes an array of metadata string and returns an array of just
+ * the names. A few instances are unstructured; i.e. Just a plain name string.
+ * These will be left as they are.
+ *
+ * @param array $values
+ *   Array of Temporal or Geographical Coverage strings.
+ *
+ * @return array
+ *   Array of strings.
+ */
+function _dri_object_parse_coverage_metadata($values) {
+  $names = array();
+  foreach ($values as $value) {
+    // Catch unstructured instances.
+    if (substr($value, 0, 5) != 'name=') {
+      $names[] = $value;
+      continue;
+    }
+
+    $parts = explode(';', $value);
+    $name = array_shift($parts); // first part only
+    $name = substr($name, 5); // after 'name='
+    $name = trim($name);
+    $names[] = $name;
+  }
+  return $names;
+}
+
+
+/**
+ * Convert some date string formats found in DRI Object 'date' metadata field.
+ *
+ * During development, the DRI Object JSON always had a maximum of one date,
+ * but wrapped as a JS array. We'll continue to treat this as *potentially*
+ * multi-valued, for robustness.
+ *
+ * @param array $values
+ *   Array of DRI date strings.
+ *
+ * @return array
+ *   Array of strings.
+ */
+function _dri_object_parse_date_metadata($values) {
+  $dates = array();
+  foreach ($values as $value) {
+
+    //catch slash-delimited year-pairs first
+    if (preg_match('/^[0-9]{2,4}\/[0-9]{2,4}$/', $value)) {
+      $dates[] = str_replace('/', '-', $value);
+    }
+    // Catch 'N/A'. Bizarrely, this actually passes date_parse() as a timezone!
+    else if (preg_match('/^[nN][\/]*[aA]$/', $value)) {
+      continue; // treat as empty
+    }
+    // let other formats pass through, as long as they pass generic date_parse
+    else if (date_parse($value)) {
+      $dates[] = $value;
+    }
+    // N.B. value 'N/A' should not pass, and we treat this as empty!
+  }
+  return $dates;
+}

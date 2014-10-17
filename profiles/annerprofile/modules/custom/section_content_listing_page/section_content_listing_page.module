@@ -1,0 +1,272 @@
+<?php
+/**
+ * @file
+ * Code for the Section Content Listing Page feature.
+ */
+
+include_once 'section_content_listing_page.features.inc';
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function section_content_listing_page_form_node_type_form_alter(&$form, $form_state) {
+  $type = $form['#node_type']->type;
+  if ($type == 'section_content_listing_page') {
+    $options = menu_get_menus();
+    $form['menu']['section_content_listing_page_menu'] = array(
+      '#type' => 'select',
+      '#title' => t('Section content listing page menu'),
+      '#default_value' => variable_get('section_content_listing_page_menu_' . $type, FALSE),
+      '#options' => $options,
+      '#description' => t('Choose the menu to use for generating the content listing from'),
+      '#attributes' => array('class' => array('menu-title-select')),
+    );
+  }
+}
+
+/**
+ * Get child menu links.
+ */
+function section_content_listing_page_get_child_menu_links($menu_name, $current_path, $list = TRUE) {
+  $tree = array();
+  $itself = array();
+
+  // First get all the menu item links.
+  $menu_links = menu_load_links($menu_name);
+  // Loop through them all until we find the one for this path.
+  foreach ($menu_links as $menu_link) {
+    // When matching menu item found, get its children.
+    if ($menu_link['link_path'] == $current_path) {
+      $mlid = $menu_link['mlid'];
+      $depth = $menu_link['depth'] + 1;
+      $tree = menu_build_tree($menu_name, array('min_depth' => $depth, 'max_depth' => $depth, 'conditions' => array('ml.plid' => $mlid)));
+      $itself = $menu_link;
+      break;
+    }
+  }
+  
+  if (!$list) {
+    return $tree;
+  }
+
+  // If we have child menu items, display them as a list.
+  $links = array();
+  if (!empty($tree)) {
+    foreach ($tree as $menu_item) {
+      $link = array(
+        'title' => $menu_item['link']['link_title'],
+        'href' => $menu_item['link']['link_path'],
+      );
+      $links[] = $link;
+    }
+  }
+  // No child menu items and in menu tree, so just display itself.
+  elseif (!empty($itself)) {
+    $link = array(
+      'title' => $itself['link_title'],
+      'href' => $itself['link_path'],
+    );
+    $links[] = $link;
+  }
+
+  return $links;
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function section_content_listing_page_node_view($node, $view_mode, $langcode) {
+  $menu_name = variable_get('section_content_listing_page_menu_section_content_listing_page', FALSE);
+
+  // Get child menu items and display in a bullet point list.
+  if ($view_mode == 'child_menu_list') {
+    $links = section_content_listing_page_get_child_menu_links($menu_name, 'node/' . $node->nid);
+
+    // Extra safeguard, if not in a menu - should never happen.
+    if (empty($links)) {
+      $link = array(
+        'title' => $node->title,
+        'href' => 'node/' . $node->nid,
+      );
+      $links[] = $link;
+    }
+
+    // Add it to the node output.
+    $node->content['section_content_listing_page'] = array(
+      '#theme' => 'links', 
+      '#links' => $links,
+      '#weight' => 10,
+    );
+  }
+
+
+  // Generate the landing page listing based on the menu structure.
+  elseif ($view_mode == 'full' && $node->type == 'section_content_listing_page' && node_is_page($node)) {
+    $tree = section_content_listing_page_get_child_menu_links($menu_name, 'node/' . $node->nid, FALSE);
+    if (!empty($tree)) {
+      $i = 0;
+      $items = array();
+      $nodes = array();
+      $node_info = array();
+
+      // Loop through menu items.
+      foreach ($tree as $id => $item) {
+        $path = $item['link']['link_path'];
+        $title = $item['link']['link_title'];
+        $router_path = $item['link']['router_path'];
+        
+        switch ($router_path) {
+          // Nodes - get the list of nids.
+          case 'node/%':
+            $child_nid = substr($path, 5);
+            if (is_numeric($child_nid)) {
+              $nodes[$i] = $child_nid;
+              $node_info[$child_nid]['title'] = $title;
+              $node_info[$child_nid]['path'] = $path;
+            }
+            else {
+              $items[$i]['unknown']['title'] = $title;
+              $items[$i]['unknown']['path'] = $path;
+              $items[$i]['unknown']['child_links'] = array(
+                '#theme' => 'links',
+                '#links' => section_content_listing_page_get_child_menu_links($menu_name, $path),
+              );
+            }
+            break;
+
+          // Other menu items for which we just display the title.
+          default:
+            // If it's a View, get the Views display header text.
+            $unknown_item = menu_get_item($path);
+            if ($unknown_item['page_callback'] == 'views_page') {
+              $args = $unknown_item['page_arguments'];
+              $view_name = array_shift($args);
+              $display_id = array_shift($args);
+              $view = views_get_view($view_name);
+              if (is_object($view)) {
+                $text = $view->display[$display_id]->display_options['header']['area']['content'];
+                $format = $view->display[$display_id]->display_options['header']['area']['format'];
+                $items[$i]['views']['title'] = $title;
+                $items[$i]['views']['path'] = $path;
+                $items[$i]['views']['text'] = $text;
+                $items[$i]['views']['format'] = $format;
+                $items[$i]['views']['child_links'] = array(
+                  '#theme' => 'links',
+                  '#links' => section_content_listing_page_get_child_menu_links($menu_name, $path),
+                );
+              }
+              else {
+                $items[$i]['unknown']['title'] = $title;
+                $items[$i]['unknown']['path'] = $path;
+                $items[$i]['unknown']['child_links'] = section_content_listing_page_get_child_menu_links($menu_name, $path);
+                $items[$i]['unknown']['child_links'] = array(
+                  '#theme' => 'links',
+                  '#links' => section_content_listing_page_get_child_menu_links($menu_name, $path),
+                );
+              }
+            }
+
+            // Otherwise just output a link.
+            else {
+              $items[$i]['unknown']['title'] = $title;
+              $items[$i]['unknown']['path'] = $path;
+              $items[$i]['unknown']['child_links'] = section_content_listing_page_get_child_menu_links($menu_name, $path);
+              $items[$i]['unknown']['child_links'] = array(
+                '#theme' => 'links',
+                '#links' => section_content_listing_page_get_child_menu_links($menu_name, $path),
+              );
+            }
+            break;
+        }
+        $i++;
+      }
+
+      // Load all nodes together for performance reasons.
+      if (!empty($nodes)) {
+        $child_nodes = node_load_multiple($nodes);
+        $rendered_nodes = node_view_multiple($child_nodes, 'child_menu_list');
+        // Loop through node menu items and insert rendered node teasers into
+        // appropriate position in $items array.
+        foreach ($nodes as $i => $child_nid) {
+          $items[$i]['node'] = $rendered_nodes['nodes'][$child_nid];
+
+        }
+      }
+
+      // Add children items to $node->content for theming.
+      $node->content['section_content_listing_page'] = array(
+        '#prefix' => '<div class="section-link-content">',
+        '#suffix' => '</div>',
+        '#theme' => 'section_content_listing_page', 
+        '#items' => $items,
+        '#weight' => 10
+      );
+
+    }
+  }
+
+  return $node;
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function section_content_listing_page_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes']['child_menu_list'] = array(
+    'label' => t('Child menu list'),
+    'custom settings' => TRUE,
+  );
+} 
+
+/**
+ * Implements hook_theme().
+ */
+function section_content_listing_page_theme() {
+  return array(
+    'section_content_listing_page' => array(
+      'variables' => array('items' => array()), 
+    ),
+  );
+}
+
+/**
+ * Theme function to output content listing.
+ */
+function theme_section_content_listing_page($variables) {
+  $items = $variables['items'];
+  $output = '';
+
+  if (!empty($items)) {
+    $count = count($items);
+    // Loop through the menu items.
+    for ($i = 0; $i < $count; $i++) {
+      $item = $items[$i];
+      // Fetch out the type and data for this item.
+      foreach ($item as $type => $data) {
+
+        switch ($type) {
+          case 'node':
+            $node = $data;
+            $output .= drupal_render($node);
+            break;
+
+          case 'views':
+            $link = l($data['title'], $data['path']);
+            $output .= '<h3 class="title">' . $link . '</h3>';
+            $output .= check_markup($data['text'], $data['format']);
+            $output .= drupal_render($data['child_links']);
+            break;
+
+          case 'unknown':
+            $link = l($data['title'], $data['path']);
+            $output .= '<h3 class="title">' . $link . '</h3>';
+            $output .= drupal_render($data['child_links']);
+            break;
+        }
+      }
+    }
+  }
+
+  return $output;
+}
+

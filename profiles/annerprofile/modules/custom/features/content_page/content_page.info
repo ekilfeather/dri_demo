@@ -1,0 +1,16 @@
+name = Content page (old version - new one has correct naming convention)
+description = Content page
+core = 7.x
+package = Content Types
+dependencies[] = features
+dependencies[] = image
+dependencies[] = media
+dependencies[] = strongarm
+datestamp = 1353427168
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features_exclude[field_base][body] = body
+features_exclude[field_base][field_image] = field_image
+features_exclude[field_base][field_page_files] = field_page_files
+features_exclude[dependencies][ctools] = ctools
+project path = profiles/annerprofile/modules/custom/features

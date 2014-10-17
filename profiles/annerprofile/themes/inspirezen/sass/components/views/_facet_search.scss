@@ -1,0 +1,199 @@
+/**
+ * Styling for the facet search results page(s)
+ */
+
+.page-search-collections {
+  #content-inset-left {
+    @include zen-grid-item(3,1);
+    // phone
+    @include responsive(phone) {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+  }
+  #content-main-area {
+    @include zen-grid-item(9,1,right);
+    // phone
+    @include responsive(phone) {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+  }
+  #block-facetapi-5yehnzco1igll3iekufsppggjxeuzdzp,
+  #block-facetapi-l0femuxz9xndzv5pv0csbrxms4y1v576,
+  #block-facetapi-sl4w1x0poar4lt1jr0ul1dukl3bzanni,
+  #block-facetapi-hvcq3ktffksi4l0xtojfj0kdaysfltpz,
+  #block-facetapi-y1fsezkzyvvaxbxfjvqyaaxetf9zuj05 {
+    .block-title {
+      @include rem(line-height, .5rem);
+      @extend %f16;
+      color: $grey-credits;
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+    .facet-title-unclicked {
+      &:before {
+        @include font-size(35px);
+        @include rem(padding-right, 1rem);
+        content: "+";
+        font-weight: 300;
+        position: relative;
+        top: -1px;
+        vertical-align: middle;
+      }
+    }
+    .facet-title-clicked {
+      &:before {
+        @include font-size(35px);
+        @include rem(padding-right, 1rem);
+        content: "-";
+        font-weight: 300;
+        position: relative;
+        top: -3px;
+        vertical-align: middle;
+      }
+    }
+    // Hiding the more/less link as it looks confusing - until I know what its function is
+    // of else we just set display all links and then there is no need for this.
+    .facetapi-limit-link {
+      // @extend %hide-text;
+    }
+    .facetapi-facetapi-checkbox-links {
+      list-style: none;
+      li {
+        @include rem(padding, .5rem 0);
+        a {
+          color: $fontcol;
+          position: relative;
+          top: 1px;
+          &:focus,
+          &:hover {
+            color: $purple;
+          }
+        }
+      }
+    }
+    ul {
+        padding: 0;
+      }
+    input[type="checkbox"] {
+      height: 20px;
+      width: 20px;
+      vertical-align: middle;
+    }
+    @include responsive (tablet) {
+    }
+    @include responsive (phone) {
+
+    }
+  }
+  .view-dri-object-search {
+    @extend %transition;
+    .view-content {
+      .views-row {
+        @extend %transition;
+        float: left;
+        margin: 0 1.5% 2rem 1.5%;
+        width: 30%;
+        &:nth-child(3n+1) {
+         clear: left;
+        }
+      }
+    }
+    .views-field-title-1 {
+      font-weight: 600;
+    }
+    .pager {
+      border-top: 1px solid $grey-news-border;
+    }
+  }
+  @include responsive (tablet) {
+    .view-dri-object-search {
+      .view-content {
+        .views-row {
+          float: left;
+          margin: 0 1.5% 2rem 1.5%;
+          width: 47%;
+          &:nth-child(3n+1) {
+            clear: none;
+          }
+          &:nth-child(2n+1) {
+            clear: left;
+          }
+        }
+      }
+    }
+  }
+  @include responsive (phone) {
+    .view-dri-object-search {
+      @include zen-clear();
+      @include zen-grid-item(10,2,right);
+      @include rem(padding-top, 2rem);
+      border-top: 1px solid $grey-news-border;
+      .view-content {
+        .views-row {
+          float: left;
+          margin: 0 1.5% 2rem 1.5%;
+          width: 47%;
+          &:nth-child(3n+1) {
+            clear: none;
+          }
+          &:nth-child(2n+1) {
+            clear: left;
+          }
+        }
+      }
+    }
+  }
+}
+
+#block-views-exp-dri-object-search-page {
+  @extend %transition;
+  input[type="text"] {
+    @include zen-clear();
+    @include zen-grid-item (12,1);
+    @include rem(padding, .5rem 3rem .5rem 1rem);
+    background: $grey-light;
+    border: none;
+    height: 43px;
+    min-height: 39px;
+    width: 100%;
+  }
+  label {
+    visibility: hidden;
+  }
+  .views-exposed-form .views-exposed-widget {
+    padding: 0;
+  }
+  .form-submit {
+    @include replace-text-with-dimensions('header/header-search-block-icon.png');
+    border: none;
+    // @include rem(padding, 0 1rem);
+    height: 39px;
+    min-height: 39px;
+    position: relative;
+    left: -34px;
+    top: 2px;
+  }
+  select {
+    background: $grey-light;
+    border: none;
+    @include rem(padding, 0 1rem);
+    min-height: 39px;
+  }
+  .form-item-sort-order {
+    float: right;
+  }
+  .form-item-sort-by {
+    @extend %hide-text;
+  }
+ @include responsive (tablet) {}
+  @include responsive (phone) {
+    @include zen-clear();
+    @include zen-grid-item(10,2);
+  }
+}
+
+.nth-child-3np1 {
+  clear: left;
+}

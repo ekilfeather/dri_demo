@@ -1,0 +1,8 @@
+name = Commerce Calculate Weight
+description = Calculates the total weight of a Drupal Commerce order
+core = "7.x"
+package = commerce contrib
+dependencies[] = commerce
+dependencies[] = physical
+dependencies[] = commerce_physical
+dependencies[] = rules

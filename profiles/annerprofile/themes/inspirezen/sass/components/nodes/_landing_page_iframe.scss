@@ -1,0 +1,140 @@
+/**
+ * Styling for the iframe pop up on the isotope landign pages
+ */
+#cboxLoadedContent {
+    background: $white;
+    height: auto;
+    position: relative;
+    z-index: 100;
+    @include responsive(tablet-large) {
+      max-width: 780px;
+    }
+    @include responsive(tablet) {
+      max-width: 580px;
+    }
+    @include responsive(phone) {
+      max-width: 380px;
+    }
+}
+#cboxClose {
+  @extend %f30;
+  background: $white;
+  color: $grey-search-type;
+  border: none;
+  position: absolute;
+  top: 0;
+  right: 25px;
+  z-index: 1000;
+}
+
+.iframe-object-wrapper {
+  // @include zen-grid-item(10,2);
+  @include rem(padding, 2rem);
+  // background: $white;
+  position: relative;
+  max-width: 840px;
+  z-index: 100000;
+  .iframe-object-image {
+    @include rem(margin-right, 2rem);
+    // background: $white;
+    float: left;
+    width: 280px;
+    height: auto;
+  }
+  .iframe-object-inner {
+    @include zen-grid-item (8, 1);
+    // background: $white;
+  }
+  .iframe-object-title {
+    @include zen-clear();
+    @include rem(padding-bottom, 2rem);
+    @extend %f20;
+    text-transform: uppercase;
+  }
+  .iframe-object-label {
+    @include zen-clear(left);
+    @include zen-grid-item(2,1);
+    color: $grey-credits;
+    font-weight: 600;
+  }
+  .iframe-object-creator {
+    @include zen-grid-item(7,3);
+    color: $grey-credits;
+  }
+  .iframe-object-date {
+    @include zen-grid-item(7,3);
+    color: $grey-credits;
+  }
+  .iframe-object-description {
+    @include zen-clear();
+    @include rem(padding, 1rem 3rem 2rem 0);
+  }
+  .iframe-object-link {
+    @extend %button;
+    a {
+      color: $white;
+      &:focus,
+      &:hover {
+        color: $white;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+@include responsive(tablet-large) {
+  .iframe-object-wrapper {
+    max-width: 660px;
+    .iframe-object-image {
+      @include rem(margin-right, 2rem);
+    }
+    .iframe-object-inner {
+      @include zen-grid-item (8, 1);
+      max-width: 360px;
+    }
+  }
+}
+
+@include responsive(tablet) {
+  .iframe-object-wrapper {
+    // max-width: 660px;
+    .iframe-object-image {
+      @include rem(margin-right, 2rem);
+      width: 200px;
+    }
+    .iframe-object-inner {
+      @include zen-grid-item (8, 1);
+      max-width: 260px;
+    }
+    .iframe-object-creator {
+    @include zen-grid-item(7,4);
+    }
+    .iframe-object-date {
+      @include zen-grid-item(7,4);
+    }
+  }
+}
+
+@include responsive(phone) {
+  .iframe-object-wrapper {
+    .iframe-object-image {
+      @include zen-clear();
+      @include rem(margin-right, 2rem);
+    }
+    .iframe-object-inner {
+      @include zen-clear();
+      @include zen-grid-item (8, 1);
+    }
+    .iframe-object-creator {
+    @include zen-grid-item(7,4);
+    }
+    .iframe-object-date {
+      @include zen-grid-item(7,4);
+    }
+  }
+}
+
+.cboxIframe {
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,6 @@
+name = Annertech Webforms
+description = Provides standard webform manipulate and traversal.
+core = 7.x
+package = Annertech
+php = 5.2
+dependencies[] = webform

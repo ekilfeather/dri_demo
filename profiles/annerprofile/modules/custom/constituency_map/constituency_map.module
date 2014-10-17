@@ -1,0 +1,225 @@
+<?php
+
+/**
+ * @file
+ * Code for the Constituency Map feature.
+ */
+include_once 'constituency_map.features.inc';
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function constituency_map_form_activism_letter_activism_cta_form_alter(&$form, &$form_state) {
+  $node = $form_state['node'];
+  $node_wrapper = entity_metadata_wrapper('node', $node);
+  if (!empty($node->field_campaign_mapping_entry)) {
+    if ($node_wrapper->field_campaign_mapping_entry->value()) {
+
+      // Load in the constituency details.
+      $representatives = constituency_map_get_all_constituencies_details();
+      if (empty($representatives)) {
+        return;
+      }
+
+      // Remove existing form submits.
+      foreach ($form['#submit'] as $key => $value) {
+        if ($value == 'activism_letter_activism_cta_form_submit') {
+          unset($form['#submit'][$key]);
+        }
+      }
+      $form['#submit'][] = 'constituency_map_activism_letter_activism_cta_form_submit';
+
+      // Make the county / state field non-required.
+      if (!empty($form['addressfield'])) {
+        $form['addressfield']['activism_signup_state']['#required'] = FALSE;
+      }
+
+      // Create a list of constituencies.
+      $constituencies = array_keys($representatives);
+      sort($constituencies);
+      $constituencies_form_options = array();
+      $constituencies_form_options[''] = t('Please select');
+      foreach ($constituencies as $key => $value) {
+        $constituencies_form_options[$value] = $value;
+      }
+
+      // Constituency drop-down
+      $form['activism_signup_map_constituencies'] = array(
+        '#type'       => 'select',
+        '#options'    => $constituencies_form_options,
+        '#title'      => t('Constituency'),
+        '#weight'     => -6,
+        '#required'   => TRUE,
+      );
+
+      // Fieldset to contain the representatives.
+      $form['activism_letter_recipient_map_fieldset'] = array(
+        '#type'       => 'fieldset',
+        '#title'      => t('Contact settings'),
+        '#weight'     => -5,
+        '#attributes' => array('id' => 'hidden-map-radiogroups'),
+      );
+
+      // Loop through the constituencies represenatives.
+      $count = 0;
+      $recipients_array = array();
+      foreach ($representatives as $constituency_name => $recipients) {
+
+        // Get a full list of recipients and their info so we don't have to do a
+        // db query whem the form is submitted.
+        $recipients_array['map' . $count] = $recipients;
+
+        // Prepare options array.
+        $options = array();
+        foreach ($recipients as $item_id => $info) {
+          $options[$item_id] = $info['name'];
+        }
+
+        // Add checkboxes for the representatives of current constituency.
+        $constituency_name_id = drupal_html_id($constituency_name);
+        $form['activism_letter_recipient_map_fieldset']['map' . $count] = array(
+          '#prefix'        => '<h3>' . check_plain($constituency_name) . '</h3><div id="' . $constituency_name_id . '" class="hidden-radio-map">',
+          '#suffix'        => '</div>',
+          '#type'          => 'checkboxes',
+          '#options'       => $options,
+        );
+
+        $count++;
+      }
+
+      $form_state['recipients'] = $recipients_array;
+      $form_state['num_constituencies'] = count($representatives);
+
+    }
+  }
+}
+
+/**
+ * Submit handler for activism_letter_activism_cta_form.
+ */
+function constituency_map_activism_letter_activism_cta_form_submit($form, &$form_state) {
+  $recipients = $form_state['recipients'];
+
+  // From the values submitted find the TD selected.
+  // We need to iterate through the groups of recipients and find the selected
+  // values.
+  for ($i = 0; $i < $form_state['num_constituencies']; $i++) {
+    // 'map' . $i is the form_key for the constituency checkboxes set.
+    foreach ($form_state['values']['map' . $i] as $key => $value) {
+      if ($value != 0) {
+        $emails[] = $recipients['map' . $i][$value]['email'];
+        $names[] = $recipients['map' . $i][$value]['name'];
+      }
+    }
+  }
+
+  $email_list = implode(', ', $emails);
+  $name_list = implode(', ', $names);
+
+  constituency_map_send_email($form, $form_state, $email_list, $name_list);
+}
+
+/**
+ * Retrieve representative names for each constituency.
+ */
+function constituency_map_get_all_constituencies_details() {
+  $constituencies = array();
+
+  // Retrieve all constituency nodes.
+  $nids = db_query("SELECT nid FROM {node} WHERE type = 'constituency' AND status = 1")->fetchCol();
+  $nodes = node_load_multiple($nids);
+
+  foreach ($nodes as $nid => $node) {
+    $representives = array();
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+
+    // Pull out the field collection containing the representative information.
+    $field_collection = $node_wrapper->field_representative->value();
+
+    // For each representative, add their info (name and email) to an array.
+    foreach ($field_collection as $i => $item) {
+      $item_wrapper = entity_metadata_wrapper('field_collection_item', $item);
+      $name = $item_wrapper->field_representative_name->value();
+      $email = $item_wrapper->field_representative_email->value();
+      $representives[$item->item_id] = array(
+        'name' => $name,
+        'email' => $email,
+      );
+    }
+
+    // Add the representative array to the constituencies array, keyed on
+    // constituency name.
+    $constituencies[$node->title] = $representives;
+  }
+
+  return $constituencies;
+}
+
+
+/**
+ * Custom function to send mail
+ * Most of it is from the activism letter module submit
+ */
+function constituency_map_send_email($form, $form_state, $email, $name) {
+  $params['node'] = $form['#node'];
+
+  // Build up the parameters that we're going to send to drupal_mail().
+  foreach (array('activism_signup_first_name', 'activism_signup_last_name', 'activism_signup_mail', 'activism_letter_recipient_subject', 'activism_letter_recipient_message_body') as $param) {
+    $params[$param] = $form_state['values'][$param];
+  }
+
+  if (!flood_is_allowed('activism_letters_sent', 10)) { // only continue if we're less than 10/hr.
+    drupal_set_message(t('You cannot send more than 10 mails per hour. Please try again later.'));
+    return;
+  }
+
+  // Override the dummy recipient details.
+  $params['activism_letter_recipient_name'] = $name;
+  $params['activism_letter_recipient_mail'] = $email;
+
+  // Send the email.
+  $result = drupal_mail('activism_letter', 'activism_letters_sent', $params['activism_letter_recipient_mail'], language_default(), $params, $params['activism_signup_mail']);
+  if ($result['result']) {
+    drupal_set_message(t('E-mail sent to %name successfully.', array('%name' => $params['activism_letter_recipient_name'])));
+    flood_register_event('activism_letters_sent'); // only ten per hour, thanks.
+  }
+}
+
+/**
+ * Implements template_preprocess_node().
+ */
+function constituency_map_preprocess_node(&$vars) {
+  if ($vars['node']->type == 'campaign') {
+    $vars['is_map_campaign_submitted'] = FALSE;
+    $vars['is_map_campaign'] = FALSE;
+    $node_wrapper = entity_metadata_wrapper('node', $vars['node']);
+    $mapping_entry = $node_wrapper->field_campaign_mapping_entry->value();
+    if ($mapping_entry) {
+      $vars['theme_hook_suggestions'][] = 'node__campaign__map';
+      $vars['classes_array'][] = 'node-campaign-map';
+
+      $vars['is_map_campaign'] = TRUE;
+      $module_path = drupal_get_path('module', 'constituency_map');
+
+      drupal_add_css($module_path . '/includes/maps.css');
+      drupal_add_js($module_path . '/includes/jquery.maphilight.min.js');
+      drupal_add_js($module_path . '/includes/script.js');
+
+      $vars['maps_ui'] = _constituency_map_template($module_path . '/includes/maps.php');
+    }
+  }
+}
+
+/**
+ * Helper function for constituency_map_preprocess_node().
+ */
+function _constituency_map_template($tpl_file) {
+  ob_start();
+  require($tpl_file);
+
+  $applied_template = ob_get_contents();
+  ob_end_clean();
+
+  return $applied_template;
+}
+

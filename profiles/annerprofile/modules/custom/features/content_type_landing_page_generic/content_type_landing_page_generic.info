@@ -1,0 +1,12 @@
+name = Content Type - Landing Page Generic
+description = Content Type - Landing Page Generic
+core = 7.x
+package = Features
+dependencies[] = ctools
+dependencies[] = features
+dependencies[] = image
+dependencies[] = link
+dependencies[] = strongarm
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+project path = profiles/annerprofile/modules/custom/features

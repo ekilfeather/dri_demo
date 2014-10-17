@@ -1,0 +1,18 @@
+{
+  "collections": [
+  {
+    "id": "<pid1>",
+    "title": "<title1>",
+    "description": "<description1>",
+    "publisher": "<publisher1>",
+    "objectcount": "<objectcount1>"
+  },
+  {
+    "id": "<pid2>",
+    "title": "<title2>",
+    "description": "<description2>",
+    "publisher": "<publisher2>",
+    "objectcount": "<objectcount2>"
+  }
+]
+}

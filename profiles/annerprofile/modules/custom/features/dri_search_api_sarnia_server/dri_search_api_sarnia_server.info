@@ -1,0 +1,9 @@
+name = DRI - Search API Sarnia server
+description = Search API server using a Sarnia service class for use with DRI Solr server.
+core = 7.x
+package = Search
+dependencies[] = entity
+dependencies[] = sarnia
+dependencies[] = search_api
+features[features_api][] = api:2
+features[search_api_server][] = dri_solr_server

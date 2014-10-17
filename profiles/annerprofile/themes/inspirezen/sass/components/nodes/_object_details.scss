@@ -1,0 +1,354 @@
+/**
+ * Styling for the object details page
+ */
+
+.page-object-detail {
+  .page__title {
+    @extend %hide-text;
+  }
+  .od-image-wrapper {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-main-wrapper-outer {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+    // border-bottom: 1px solid $grey-news-border;
+    // @include rem(padding-bottom, 3.5rem);
+  }
+  .od-main-wrapper {
+    @include zen-clear();
+    @include zen-grid-item(8,1);
+  }
+  .od-title {
+    @include zen-clear();
+    @include zen-grid-item(9,1);
+  }
+  .od-object-id {
+    @include zen-clear();
+    @include zen-grid-item(11,1);
+  }
+  .od-description {
+    @include zen-clear();
+    @include zen-grid-item(11,1);
+  }
+  .od-back {
+    @include zen-grid-item(2,10);
+    color: $grey-credits;
+    position: relative;
+    top: 17px;
+    @extend %f14;
+    @extend %transition;
+    background: image-url('object-details/od-back.png') $white no-repeat -0px -0px;
+    font-weight: 300;
+    height: 33px;
+    @include rem(padding, .4rem 0 0 2.2rem);
+    text-transform: uppercase;
+    &:hover {
+      background: image-url('object-details/od-back.png') $white no-repeat -3px -0px;
+    }
+  }
+  .od-object-details-wrapper{
+    @include zen-grid-item(4,9);
+  }
+  .od-object-details-block-title {
+    @extend %object-details-block-title;
+  }
+  .od-object-details-block-content {
+    ul {
+      padding-left: 0;
+    }
+    .od-object-details-block-content-less {
+      @include zen-clear();
+    }
+    .od-object-details-block-content-more {
+      @include zen-clear();
+    }
+    .od-items-more {
+      @include zen-clear();
+      @include rem(padding, .65rem 2rem);
+      background: $grey-footer;
+    }
+    .od-items-more-unclicked {
+      @extend %transition;
+      background: image-url('object-details/od-more.png') $grey-footer no-repeat 70px 8px;
+    }
+    .od-items-more-clicked {
+      background: image-url('object-details/od-more-clicked.png') $grey-footer no-repeat 70px 13px;
+    }
+    .od-item-label {
+      @include zen-clear(left);
+      @include zen-grid-item(4,1);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .od-item-content {
+      @include zen-clear(right);
+      @include zen-grid-item(8,5);
+    }
+    .od-item-list {
+      @include zen-clear(right);
+      @include zen-grid-item(8,5);
+      float: none;
+      li {
+        float: left;
+        list-style: none;
+        width: 100%;
+      }
+    }
+  }
+  .od-related-objects-wrapper {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+    @include rem(padding-top, 1.7rem);
+    @include rem(margin-top, 3.5rem);
+    @extend %object-details-block-title;
+    border-top: 1px solid $grey-news-border;
+    h2 {
+      color: $grey-credits;
+    }
+  }
+  .od-related-wrapper-1 {
+    @include zen-grid-item(3,1);
+  }
+  .od-related-wrapper-2 {
+    @include zen-grid-item(3,4);
+  }
+  .od-related-wrapper-3 {
+    @include zen-grid-item(3,7);
+  }
+  .od-related-wrapper-4 {
+    @include zen-grid-item(3,10);
+  }
+  .od-related-image {}
+  .od-related-title {
+    font-weight: 600;
+  }
+  .od-related-description {}
+
+  // Tablet Large
+  @include responsive(tablet-large) {
+
+    .od-main-wrapper {
+      @include zen-clear();
+      @include zen-grid-item(6.7,1);
+    }
+    .od-object-details-wrapper{
+      @include zen-grid-item(5.3,7.7);
+    }
+    .od-object-details-block-title {
+    }
+    .od-object-details-block-content {
+      ul {
+      }
+      .od-object-details-block-content-less {
+        @include zen-clear();
+      }
+      .od-object-details-block-content-more {
+        @include zen-clear();
+      }
+      .od-items-more {
+        @include zen-clear();
+        @include rem(padding, .65rem 2rem);
+      }
+      .od-items-more-unclicked {
+      }
+      .od-items-more-clicked {
+      }
+      .od-item-label {
+        @include zen-clear(left);
+        @include zen-grid-item(4,1);
+      }
+      .od-item-content {
+        @include zen-clear(right);
+        @include zen-grid-item(8,5);
+      }
+      .od-item-list {
+        @include zen-clear(right);
+        @include zen-grid-item(8,5);
+        float: none;
+        li {
+
+        }
+      }
+    }
+  }
+
+  // Tablet
+  @include responsive(tablet) {
+    .od-image-wrapper {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+  .od-main-wrapper-outer {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-main-wrapper {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-title {
+    @include zen-clear();
+    @include zen-grid-item(9,1);
+  }
+  .od-object-id {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-description {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-back {
+    // @include zen-clear();
+    @include zen-grid-item(3,10);
+  }
+  .od-object-details-wrapper{
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-object-details-block-title {
+  }
+  .od-object-details-block-content {
+    .od-object-details-block-content-less {
+      @include zen-clear();
+    }
+    .od-object-details-block-content-more {
+      @include zen-clear();
+    }
+    .od-items-more {
+      @include zen-clear();
+    }
+    .od-items-more-unclicked {}
+    .od-items-more-clicked {}
+    .od-item-label {
+      @include zen-clear(left);
+      @include zen-grid-item(3,1);
+      font-weight: 600;
+    }
+    .od-item-content {
+      @include zen-clear(right);
+      @include zen-grid-item(9,4);
+    }
+  }
+  .od-related-objects-wrapper {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-related-objects-title {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+  .od-related-wrapper-1 {
+    @include zen-clear(left);
+    @include zen-grid-item(6,1);
+  }
+  .od-related-wrapper-2 {
+    @include zen-clear(right);
+    @include zen-grid-item(6,7);
+  }
+  .od-related-wrapper-3 {
+    @include zen-clear(left);
+    @include zen-grid-item(6,1);
+  }
+  .od-related-wrapper-4 {
+    @include zen-clear(right);
+    @include zen-grid-item(6,7);
+  }
+  .od-related-image {}
+  .od-related-title {}
+  .od-related-description {}
+}
+
+  // Phones
+  @include responsive(phone) {
+    .od-image-wrapper {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-main-wrapper-outer {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+    .od-main-wrapper {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-title {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-object-id {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-description {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-back {
+      // @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-object-details-wrapper{
+      @include zen-clear();
+      @include zen-grid-item(10,1);
+    }
+    .od-object-details-block-title {
+    }
+    .od-object-details-block-content {
+      .od-object-details-block-content-less {
+        @include zen-clear();
+      }
+      .od-object-details-block-content-more {
+        @include zen-clear();
+      }
+      .od-items-more {
+        @include zen-clear();
+      }
+      .od-items-more-unclicked {
+        @include zen-grid-item (10,2);
+      }
+      .od-items-more-clicked {
+        @include zen-grid-item (10,2);
+      }
+      .od-item-label {
+        @include zen-clear(left);
+        @include zen-grid-item(6,2);
+        font-weight: 600;
+      }
+      .od-item-content {
+        @include zen-clear(right);
+        @include zen-grid-item(7,7);
+      }
+    }
+    .od-related-objects-wrapper {
+      @include zen-clear();
+      @include zen-grid-item(12,1);
+    }
+    .od-related-objects-title {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+    .od-related-wrapper-1 {
+      @include zen-clear(left);
+      @include zen-grid-item(5,2);
+    }
+    .od-related-wrapper-2 {
+      @include zen-clear(right);
+      @include zen-grid-item(5,7);
+    }
+    .od-related-wrapper-3 {
+      @include zen-clear(left);
+      @include zen-grid-item(5,2);
+    }
+    .od-related-wrapper-4 {
+      @include zen-clear(right);
+      @include zen-grid-item(5,7);
+    }
+    .od-related-image {}
+    .od-related-title {}
+    .od-related-description {}
+    }
+}

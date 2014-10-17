@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DRI - Search API Sarnia server feature.
+ */
+
+include_once 'dri_search_api_sarnia_server.features.inc';

@@ -1,0 +1,27 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Installation file for commerce banded shipping gbp feature.
+ */
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function commerce_banded_shipping_gbp_uninstall() {
+  $status = '';
+}
+
+
+/**
+ * Sets up initial GBP flat rate shipping services.
+ */
+function commerce_banded_shipping_gbp_install() {
+  $a = serialize(array());
+  $sql = "INSERT INTO {commerce_flat_rate_service} (name, title, display_title, description, rules_component, amount, currency_code, data) VALUES ('eu_over_1900g_gbp', 'EU over 1900g GBP', 'Shipping', '', 0, 1645, 'GBP', :array), ('eu_under_1900g_gbp', 'EU under 1900g GBP', 'Shipping', '', 0, 800, 'GBP', :array), ('eu_under_220g_gbp', 'EU under 220g GBP', 'Shipping', '', 0, 160, 'GBP', :array), ('eu_under_40g_gbp', 'EU under 40g GBP', 'Shipping', '', 0, 80, 'GBP', :array), ('eu_under_470g_gbp', 'EU under 470g GBP', 'Shipping', '', 0, 245, 'GBP', :array), ('eu_under_950g_gbp', 'EU under 950g GBP', 'Shipping', '', 0, 600, 'GBP', :array), ('ie_over_1900g_gbp', 'IE over 1900g GBP', 'Shipping', '', 0, 455, 'GBP', :array), ('ie_under_1900g_gbp', 'IE under 1900g GBP', 'Shipping', '', 0, 600, 'GBP', :array), ('ie_under_220g_gbp', 'IE under 220g GBP', 'Shipping', '', 0, 120, 'GBP', :array), ('ie_under_40g_gbp', 'IE under 40g GBP', 'Shipping', '', 0, 40, 'GBP', :array), ('ie_under_470g_gbp', 'IE Under 470g GBP', 'Shipping', '', 0, 160, 'GBP', :array), ('ie_under_950g_gbp', 'IE under 950g GBP', 'Shipping', '', 0, 325, 'GBP', :array), ('world_over_1900g_gbp', 'World over 1900g GBP', 'Shipping', '', 0, 1835, 'GBP', :array), ('world_under_1900g_gbp', 'World under 1900g GBP', 'Shipping', '', 0, 1300, 'GBP', :array), ('world_under_220g_gbp', 'World under 220g GBP', 'Shipping', '', 0, 325, 'GBP', :array), ('world_under_40g_gbp', 'World under 40g GBP', 'Shipping', '', 0, 120, 'GBP', :array), ('world_under_470g_gbp', 'World under 470g GBP', 'Shipping', '', 0, 345, 'GBP', :array), ('world_under_950g_gbp', 'World under 950g GBP', 'Shipping', '', 0, 800, 'GBP', :array), ('free_shipping_gbp', 'Free Shipping GBP', 'Shipping', '', 0, 0, 'GBP', :array)";
+  db_query($sql, array(':array' => $a));
+}
+
+

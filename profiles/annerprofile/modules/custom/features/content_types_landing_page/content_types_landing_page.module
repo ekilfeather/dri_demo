@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content Types - Landing Page feature.
+ */
+
+include_once 'content_types_landing_page.features.inc';

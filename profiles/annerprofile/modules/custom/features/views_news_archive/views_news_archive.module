@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Views - News Archive feature.
+ */
+
+include_once 'views_news_archive.features.inc';

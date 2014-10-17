@@ -1,0 +1,70 @@
+/**
+ * Header Styling
+ */
+
+#header {
+  //@include zen-grid-item(12,1);
+  padding-bottom: 2rem;
+  @include responsive(tablet) {
+  @include zen-grid-item (12,1);
+  }
+  @include responsive(phone) {
+    @include zen-grid-item (12,1);
+    @include rem(padding-bottom, .5rem);
+    // padding-bottom: .5rem;
+  }
+  ul.menu li {
+    display: inline-block;
+  }
+}
+
+// Make header wrapper 100%
+// This is the outside wrapper that fills the full screen
+.header-wrapper {
+    //border-bottom: 2px solid $grey-footer-border;
+    @include background-image(linear-gradient($white 95%, $white 96%, $header-shadow-top 97%, $header-shadow-bottom 100%));
+    @include rem(margin-top, 2rem);
+    // margin-top: 2rem;
+    height: 115px;
+    width: 100%;
+}
+
+// Center align header elements.
+// This is the inner wrapper that spans the content area
+.header-outer {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+// Site Name (logo)
+#site-name {
+    a {
+      display: block;
+      @include replace-text-with-dimensions('header/logo-960.png');
+      @include responsive(phone) {
+        //@include zen-grid-item(4,2);
+        @include replace-text-with-dimensions('header/logo-480.png');
+    }
+  }
+}
+
+#navigation {
+  // @include zen-clear();
+  // @include zen-grid-item(9,3);
+  /* Move the navbar up inside #main's padding. */
+  // position: absolute;
+  // top: 58px;
+  // z-index: 100;
+  // height: $nav-height;
+  // width: $zen-grid-width;
+  // @include responsive(tablet) {
+  //   @include zen-grid-item (10,2);
+  //   position: absolute;
+  //   top: 17px;
+  // }
+  // @include responsive(phone) {
+  //   @include zen-grid-item (10,2);
+  //   position: absolute;
+  //   top: 17px;
+  // }
+}

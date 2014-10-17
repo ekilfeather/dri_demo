@@ -1,0 +1,123 @@
+// Main Menu
+// Main Menu Level 1+ - being used for phones/tablets ONLY
+
+#block-menu-block-3 {
+  display: none;
+  z-index: 1;
+  li {
+    background: $white;
+    @include rem(padding, .5rem 0);
+    a {
+      @extend %main-menu-item;
+    }
+  }
+  .block__title {
+    display: block;
+    @include replace-text-with-dimensions('header/menu-toggle.png');
+  }
+  @include responsive(tablet) {
+    @include zen-grid-item(2,11,left);
+    position: relative;
+    top: -55px;
+    display: block;
+    .menu-block-3 {
+      ul {
+        li {
+          float: right;
+          text-align: right;
+          width: 320px;
+          .is-leaf {
+            @include rem(padding-right, 1rem);
+            &:after {
+              content: "-";
+            }
+          }
+        }
+      }
+    }
+  }
+  @include responsive(phone) {
+    @include zen-grid-item(2,11);
+    display: block;
+    position: relative;
+    top: -45px;
+    left: 10px;
+    .menu-block-3 {
+      ul {
+        li {
+          float: right;
+          text-align: right;
+          width: 320px;
+          .is-leaf {
+            @include rem(padding-right, 1rem);
+            &:after {
+              content: "-";
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Main Menu as Menu Blocks
+#block-menu-block-1,
+#block-menu-block-main-links-1 {
+  @include zen-grid-item (7,4);
+  @extend %transition;
+  position: relative;
+  top: -65px;
+  @include rem(padding, 0 0 0.6rem 0);
+  ul {
+    text-align: right;
+  }
+    li a {
+      @extend %main-menu-item;
+    }
+  .block__title {
+    @extend %element-invisible;
+  }
+  @include responsive(tablet-large) {
+    @include zen-grid-item(7,4);
+  }
+  @include responsive(tablet) {
+    display: none;
+  }
+  @include responsive(phone) {
+    display: none;
+  }
+}
+
+#block-menu-block-main-links-1 {
+  @include zen-grid-item(9,4);
+  border-top: 1px solid $grey-footer-border;
+  position: relative;
+  top: -23px;
+  @include rem(padding-top, .1rem);
+  ul {
+    float: right;
+    margin-left: -87.5%;
+    margin-right: 20%;
+    text-align: right;
+    width: 100%;
+    li {
+      &:after {
+        @include rem(padding, 0 1rem);
+        content: "|";
+      }
+      &.last {
+        &:after {
+          @include rem(padding, 0 0 0 1rem);
+          content: "";
+        }
+      }
+    }
+  }
+  a {
+    color: $purple;
+    @include rem(padding-left, 1.6rem);
+  }
+  .menu-level-2 {
+    font-size: 85%;
+  }
+}

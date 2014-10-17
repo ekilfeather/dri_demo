@@ -1,0 +1,14 @@
+name = Commerce Banded Shipping Multicurrency
+description = Extends 'Commerce Banded Shipping' module with the ability to have different rates by currency.
+core = 7.x
+package = Annertech
+php = 5.2.4
+dependencies[] = commerce
+dependencies[] = commerce_calculate_weight
+dependencies[] = commerce_banded_shipping
+dependencies[] = commerce_flat_rate
+dependencies[] = commerce_multicurrency
+dependencies[] = commerce_order
+dependencies[] = commerce_physical
+dependencies[] = commerce_shipping
+dependencies[] = physical

@@ -1,0 +1,11 @@
+name = Feed Importer - DRI Object JSON
+description = JSONpath imorter for DRI Object content type.
+core = 7.x
+package = DRI Objects
+dependencies[] = content_types_dri_object
+dependencies[] = ctools
+dependencies[] = feeds
+dependencies[] = feeds_jsonpath_parser
+features[ctools][] = feeds:feeds_importer_default:1
+features[features_api][] = api:2
+features[feeds_importer][] = dri_object_json_importer

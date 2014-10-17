@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * @file
+ * Some language handling helper functions for DRI Objects.
+ */
+
+
+/**
+ * Get info about language codes.
+ *
+ * These are ISO-639-2/B codes found in the DRI Object JSON data. (3-letter
+ * 'bibliographic legacy' codes, derived from the English name of the language.)
+ *
+ * This is not a make-do set of info to help us display better labels for the
+ * languages.
+ *
+ * @return array
+ *  array of info about thelanguage, keyed by ISO-639-2/b code.
+ *
+ * @todo This may need updating if other languages appear at a later date.
+ * @todo Or, we could just go ahead and fill out all known ISO-639-2/B codes
+ *   in anticipation of their use.
+ */
+function dri_language_info() {
+  $languages = array(
+    'ara' => array(
+      'label_en' => 'Arabic'
+    ),
+    'chi' => array(
+      'label_en' => 'Chinese'
+    ), 
+    'cop' => array(
+      'label_en' => 'Coptic'
+    ),
+    'eng' => array(
+      'label_en' => 'English'
+    ),
+    'gle' => array(
+      'label_en' => 'Irish'
+    ),
+    'gre' => array(
+      'label_en' => 'Greek'
+    ),
+    'jpn' => array(
+      'label_en' => 'Japanese'
+    ),
+    'lat' => array(
+      'label_en' => 'Latin'
+    ),
+    'tha' => array(
+      'label_en' => 'Thai'
+    ),
+  );
+
+  return $languages;  
+} 
+
+
+/**
+ * Get human a human-readable label for a language.
+ *
+ * @param string $langcode
+ *   A 3-letter ISO-639-2 language code, for which we want a label.
+ *
+ * @param string $label_lang
+ *   A 2-letter ISO-639-1 language code, for the language we want the label in.
+ *
+ * @return string
+ *   A human-readable name for the language, in the language indicated by
+ *   $label_lang.
+ *   NOTE: If the human readable label could not be determined, the
+ *   original $langcode will be returned unchanged.
+ */
+function dri_language_get_label($langcode, $label_lang = 'en') {
+  $langs = dri_language_info();
+
+  if (isset($langs[$langcode]['label_' . $label_lang])) {
+    return $langs[$langcode]['label_' . $label_lang];
+  }
+  else {
+    // Leave this dpm() call in place, deliberately. Only admins will see it.
+    dpm('Could not determine human-readable language name for $langcode: ' . $langcode);
+    return $langcode;
+  }
+}

@@ -1,0 +1,16 @@
+<?php
+/**
+ * @file
+ * Code for the Annertech Slider feature.
+ */
+
+function annertech_slider_node_view($node, $view_mode, $langcode) {
+  if ($node->type == 'slide' && $view_mode =='full') {
+    drupal_goto("admin/slideradmin");
+    exit;
+  }
+}
+
+include_once('annertech_slider.features.inc');
+
+

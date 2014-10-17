@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content Types - Content Page feature.
+ */
+
+include_once 'content_types_content_page.features.inc';

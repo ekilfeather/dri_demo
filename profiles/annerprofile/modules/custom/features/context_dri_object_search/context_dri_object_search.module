@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Context - DRI Object Search feature.
+ */
+
+include_once 'context_dri_object_search.features.inc';

@@ -1,0 +1,16 @@
+name = Commerce Banded Shipping
+description = Shipping rules based on zones and weight bands.
+core = 7.x
+package = Annertech
+php = 5.2.4
+dependencies[] = commerce
+dependencies[] = commerce_calculate_weight
+dependencies[] = commerce_flat_rate
+dependencies[] = commerce_order
+dependencies[] = commerce_physical
+dependencies[] = commerce_shipping
+dependencies[] = physical
+datestamp = 1348051141
+features[features_api][] = api:1
+features[rules_config][] = rules_calculate_total_order_weight
+features[rules_config][] = rules_country_in_europe

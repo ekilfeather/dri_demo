@@ -1,0 +1,74 @@
+/**
+ * Styling for Webforms
+ */
+
+.node-type-webform {
+  .webform-client-form {
+    label {
+      font-weight: 400;
+      // position: absolute;
+      // left: 10px;
+      // top: 10px;
+    }
+  }
+  .webform-component-textfield {
+    input {
+      @extend %webform-input;
+    }
+  }
+  .webform-component-email {
+    input {
+      @extend %webform-input;
+    }
+  }
+  .form-textarea {
+    @extend %webform-input;
+    label {
+      @include zen-clear();
+    }
+  }
+  .form-submit {
+    @include zen-clear();
+    @include zen-grid-item(3,1);
+    @extend %button;
+    @include rem(margin-bottom, 2rem);
+    @include rem(height, 4.643rem);
+    letter-spacing: 3px;
+
+    // @include rem(padding, 1.5rem);
+    // // padding: 1.5rem;
+  }
+  #webform-component-contact-message {
+    label {
+      @include zen-clear();
+    }
+  }
+  // tablet
+  @include responsive(tablet) {}
+
+  // phone
+  @include responsive(phone) {
+    .webform-component-textfield {
+      input {
+        width: 100%;
+      }
+    }
+    .webform-component-email {
+      input {
+        width: 100%;
+      }
+    }
+    .form-textarea {
+      width: 100%;
+      label {}
+    }
+    .form-submit {
+      width: 240px;
+    }
+    #webform-component-contact-message {
+      label {
+        @include zen-clear();
+      }
+    }
+  }
+}

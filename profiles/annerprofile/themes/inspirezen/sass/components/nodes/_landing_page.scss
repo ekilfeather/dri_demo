@@ -1,0 +1,66 @@
+/**
+ * Styling for Landing Pages
+ */
+.node-type-landing-page {
+  .page__title {
+    @extend %hide-text;
+  }
+  .landing-page-wrapper {
+    color: $white;
+    position: relative;
+    top: 0;
+  }
+  .landing-page-text-wrapper {
+    @include zen-clear();
+    // @include zen-grid-item(8,3);
+    @extend %text-shadow;
+    @include rem(padding, 0 2rem 2rem 2rem);
+    background: rgba($black,.4);
+    margin-left: 13.6667%;
+    margin-right: -83.3333%;;
+    position: absolute;
+    pointer-events: none;
+    top: 90px;
+    width: 66.6667%;
+    z-index: 100;
+  }
+  .field-name-title-field {
+    @extend %f80h1;
+    h1 {
+      font-weight: 300;
+      letter-spacing: 0;
+      position: relative;
+      top: 6px;
+      text-transform: none;
+      @include responsive(phone) {
+        @include font-size(60px);
+      }
+    }
+  }
+  .field-name-body {
+    @extend %f18;
+    text-align: justify;
+  }
+  .field-name-field-lp-more-link {
+    pointer-events: all;
+    a {
+      @extend %button;
+      &:focus,
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+  .opaque {
+    @include transition-property(opacity);
+    @include transition-duration(.1s);
+    background: #000000;
+    opacity: 0.3;
+  }
+  .solid {
+    @include transition-property(opacity);
+    @include transition-duration(.3s);
+    opacity: 1;
+  }
+}
+

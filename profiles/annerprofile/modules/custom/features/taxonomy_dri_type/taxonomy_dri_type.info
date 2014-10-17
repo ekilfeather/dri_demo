@@ -1,0 +1,9 @@
+name = Taxonomy - DRI Type
+description = Vocabulary for DRI Type metadata. Includes multivalue field base.
+core = 7.x
+package = DRI Objects
+dependencies[] = features
+dependencies[] = taxonomy
+features[features_api][] = api:2
+features[field_base][] = field_dri_type
+features[taxonomy][] = dri_type

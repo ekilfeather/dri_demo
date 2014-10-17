@@ -1,0 +1,7 @@
+name = Inspiring Ireland Object Detail Page
+description = Provides page with object details from Digital Repository of Ireland.
+package = Annertech
+core = 7.x
+
+dependencies[] = dri_api
+dependencies[] = dri_language

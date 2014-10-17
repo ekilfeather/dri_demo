@@ -1,0 +1,11 @@
+name = Views - DRI Object index
+description = Search API view for DRI Objects
+core = 7.x
+package = DRI Objects
+dependencies[] = ctools
+dependencies[] = search_api_index_dri_objects
+dependencies[] = search_api_server_dri_objects
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = dri_object_search

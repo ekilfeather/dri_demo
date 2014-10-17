@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Search API Index - DRI Objects feature.
+ */
+
+include_once 'search_api_index_dri_objects.features.inc';

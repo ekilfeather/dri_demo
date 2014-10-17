@@ -1,0 +1,9 @@
+name = Annertech Addressfield
+description = Provides functions to replace county/country fields on other forms with an addressfield like set.
+package = Annertech
+core = 7.x
+php = 5.2
+
+dependencies[] = addressfield
+dependencies[] = ctools
+

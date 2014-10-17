@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Resources category pages views feature.
+ */
+
+include_once 'resources_category_pages_views.features.inc';

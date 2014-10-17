@@ -1,0 +1,80 @@
+/**
+ * General Styling for pages/nodes - titles, margins, etc
+ */
+
+/**
+ * Global Page items - macro things
+ */
+
+// Page
+#page {
+  margin-top: 25px;
+}
+
+/**
+ * Global Header items - items within the header area
+ */
+// Header
+
+/**
+ * Global Main area - items within the main div/content area
+ */
+// Page titles
+.page__title {
+  padding: 3rem 0 2rem 0;
+}
+
+/**
+ *  More link below slider
+ */
+#more {
+  @include zen-clear();
+  @extend %more;
+  .more-down-arrow {
+    @extend %more-down-arrow;
+  }
+  @include responsive(tablet) {
+    display: none;
+  }
+  @include responsive(phone) {
+    display: none;
+  }
+}
+
+// Border above footer on some content types
+.footer-bottom-border {
+  @extend %footer-border;
+  @include rem(margin, 2rem 0 3rem 0);
+  // margin: 2rem 0 3rem 0;
+}
+
+// Pagers
+.pager {
+  @include rem(padding, 2rem 0);
+  // padding: 2rem 0;
+  a {
+    color: $grey-credits;
+    &:focus,
+    &:hover {
+      color: $purple;
+      text-decoration: none;
+    }
+  }
+  .pager-item {
+    @extend %pager-dividers;
+  }
+  .pager-current {
+    @extend %pager-dividers;
+    color: $purple;
+  }
+}
+
+/**
+ * Global Footer area - items within the footer
+ */
+
+/**
+ * Global Sidebars area - items within the sidebars
+ */
+
+

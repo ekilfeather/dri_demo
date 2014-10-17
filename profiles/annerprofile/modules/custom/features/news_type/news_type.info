@@ -1,0 +1,16 @@
+name = News Type  (old version - new one has correct naming convention)
+description = News Content Type
+core = 7.x
+package = Content Types
+dependencies[] = annertech_field_bases
+dependencies[] = features
+dependencies[] = image
+dependencies[] = media
+dependencies[] = strongarm
+dependencies[] = taxonomy
+datestamp = 1353427168
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[taxonomy][] = show_feedback_form
+features_exclude[dependencies][ctools] = ctools
+project path = profiles/annerprofile/modules/custom/features

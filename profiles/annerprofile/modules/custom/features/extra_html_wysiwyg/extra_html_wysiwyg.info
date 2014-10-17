@@ -1,0 +1,15 @@
+name = Extra HTML wysiwyg
+description = Extra HTML wysiwyg profile
+core = 7.x
+package = Annertech
+dependencies[] = extra_html
+dependencies[] = features
+dependencies[] = filter
+dependencies[] = media
+dependencies[] = video_filter
+dependencies[] = wysiwyg
+datestamp = 1341576085
+features[features_api][] = api:2
+features[filter][] = extra_html
+features[wysiwyg][] = extra_html
+project path = profiles/annerprofile/modules/custom/features

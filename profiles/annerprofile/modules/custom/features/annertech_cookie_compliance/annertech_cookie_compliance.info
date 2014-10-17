@@ -1,0 +1,11 @@
+name = Annertech - Cookie Compliance
+description = A feature to create the cookie compliance settings.
+core = 7.x
+package = Annertech
+dependencies[] = ctools
+dependencies[] = eu_cookie_compliance
+dependencies[] = strongarm
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[variable][] = eu_cookie_compliance_en
+project path = profiles/annerprofile/modules/custom/features

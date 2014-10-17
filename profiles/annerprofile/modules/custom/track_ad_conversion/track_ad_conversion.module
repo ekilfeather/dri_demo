@@ -1,0 +1,321 @@
+<?php
+
+/**
+ * @file
+ * Module which adds ad conversion tracking functionality to Drupal Commerce, Ubercart and
+ * Payment API forms.
+ */
+
+/**
+ * @ingroup misc_core_hooks
+ * @{
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function track_ad_conversion_permission() {
+  return array(
+    'administer track ad conversions' => array(
+      'title' => t('administer track ad conversions'),
+      'description' => t('Allows user to add and modify javascript snippets to appear on payment thank you pages.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function track_ad_conversion_menu() {
+  $items = array();
+
+  $items['admin/config/system/track-ad-conversion'] = array(
+    'title' => 'Track ad conversions',
+    'description' => 'Add javascript snippets to header or footer of payment thank you pages to track conversions',
+    'page callback' => 'track_ad_conversion_list',
+    'access arguments' => array('administer track ad conversions'),
+    'file' => 'track_ad_conversion.admin.inc',
+  );
+
+  $items['admin/config/system/track-ad-conversion/list'] = array(
+    'title' => 'List',
+    'page callback' => 'track_ad_conversion_list',
+    'access arguments' => array('administer track ad conversions'),
+    'file' => 'track_ad_conversion.admin.inc',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 0,
+  );
+
+  $items['admin/config/system/track-ad-conversion/add'] = array(
+    'title' => 'Add method',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('track_ad_conversion_add_method_form'),
+    'access arguments' => array('administer track ad conversions'),
+    'file' => 'track_ad_conversion.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  $items['admin/config/system/track-ad-conversion/add'] = array(
+    'title' => 'Add method',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('track_ad_conversion_add_method_form'),
+    'access arguments' => array('administer track ad conversions'),
+    'file' => 'track_ad_conversion.admin.inc',
+    'type' => MENU_LOCAL_ACTION,
+  );
+
+  $items['admin/config/system/track-ad-conversion/%/edit'] = array(
+    'title' => 'Edit track ad conversion method',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('track_ad_conversion_edit_method_form', 4),
+    'access arguments' => array('administer track ad conversions'),
+    'file' => 'track_ad_conversion.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['admin/config/system/track-ad-conversion/%/delete'] = array(
+    'title' => 'Delete track ad conversion method',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('track_ad_conversion_delete_method_form', 4),
+    'access arguments' => array('administer track ad conversions'),
+    'file' => 'track_ad_conversion.admin.inc',
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * @} End of "misc_core_hooks".
+ */
+
+
+/**
+ * @ingroup helper_functions
+ * @{
+ */
+
+/**
+ * Retrieve a list of methods or a specified one.
+ */
+function track_ad_conversion_get_methods($method_id = NULL) {
+  $methods = array();
+
+  if ($method_id) {
+    $method = db_query("SELECT * FROM {track_ad_conversion_methods} WHERE method_id = :method_id", array(':method_id' => $method_id))->fetchObject();
+    $method->data = unserialize($method->data);
+    return $method;
+  }
+
+  $result = db_query("SELECT * FROM {track_ad_conversion_methods}");
+  while ($method = $result->fetchObject()) {
+    $method->data = unserialize($method->data);
+    $methods[$method->method_id] = $method;
+  }
+
+  return $methods;
+}
+
+/**
+ * @} End of "helper_functions".
+ */
+
+
+/**
+ * @ingroup form_integration
+ * @{
+ */
+
+/**
+ * Implements hook_commerce_checkout_complete().
+ */
+function track_ad_conversion_commerce_checkout_complete($order) {
+  $_SESSION['track_ad_conversion_commerce_order_id'] = $order->order_id;
+}
+
+/**
+ * Implements hook_uc_checkout_complete().
+ *
+ * Place enabled method code snippets on the thank you page.
+ */
+function track_ad_conversion_uc_checkout_complete($order, $account) {
+  $_SESSION['track_ad_conversion_uc_order_id'] = $order->order_id;
+}
+
+/**
+ * Implements hook_pay_transaction_complete().
+ *
+ * Place enabled method code snippets on the thank you page.
+ */
+function track_ad_conversion_pay_transaction_complete(&$transaction) {
+  $_SESSION['track_ad_conversion_pay_order_id'] = $transaction->pxid;
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function track_ad_conversion_page_build(&$page) {
+  $footer_output = track_ad_conversion_retrieve_page_snippet('footer', TRUE);
+  if ($footer_output) {
+    $page['page_bottom']['track_ad_conversion']= array(
+      '#type' => 'markup',
+      '#markup' => $footer_output,
+    );
+  }
+  $page_top_output = track_ad_conversion_retrieve_page_snippet('page_top', TRUE);
+  if ($page_top_output) {
+    $page['page_top']['track_ad_conversion']= array(
+      '#type' => 'markup',
+      '#markup' => $page_top_output,
+    );
+  }
+}
+
+/**
+ * Implements hook_init().
+ */
+function track_ad_conversion_init() {
+  $output = track_ad_conversion_retrieve_page_snippet('header');
+  if ($output) {
+    drupal_add_js($output, array('type' => 'inline'));
+  }
+
+  return;
+}
+
+/**
+ * Retrieves the output for the current page.
+ */
+function track_ad_conversion_retrieve_page_snippet($placement, $clear_session_variables = FALSE) {
+  $output = '';
+  $methods_used = array();
+  $params = new stdClass;
+
+  // Site is offline, so return.
+  if (_menu_site_is_offline()) {
+    return;
+  }
+
+  // Ensure user has access to this page.
+  $path = $_GET['q'];
+  if ($router_item = menu_get_item($path)) {
+    if (!$router_item['access']) {
+      return;
+    }
+  }
+  // Ensure path exists.
+  else {
+    return;
+  }
+
+  // Don't proceed if there's no processing to be done.
+  $methods = track_ad_conversion_get_methods();
+  if (empty($methods)) {
+    return;
+  }
+
+  // Specific pages.
+  $page_matches = array();
+  if (!empty($_SESSION['track_ad_conversion_generic_order_id'])) {
+    $params->order_id = $_SESSION['track_ad_conversion_generic_order_id'];
+  }
+  foreach ($methods as $method) {
+    if ($method->status && $method->placement == $placement && $method->data['track_pages'] && !in_array($method->method_id, $methods_used)) {
+      $path = drupal_get_path_alias($_GET['q']);
+      $page_match = drupal_match_path($path, $method->data['pages']);
+      if ($path != $_GET['q']) {
+        $page_match = $page_match || drupal_match_path($_GET['q'], $method->data['pages']);
+      }
+
+      if ($page_match) {
+        $page_matches[] = $method->method_id;
+        if ($method->data['track_pages_type'] != 'limit') {
+          // Have no order context to use, so just do 'site' replacement and
+          // generic order id replacement.
+          $output .= token_replace($method->snippet, array('site' => array(), 'track-ad-conversion' => $params));
+        }
+      }
+    }
+  }
+  if ($clear_session_variables && !empty($_SESSION['track_ad_conversion_generic_order_id'])) {
+    unset($_SESSION['track_ad_conversion_generic_order_id']);
+  }
+
+  // Payment API.
+  if (!empty($_SESSION['track_ad_conversion_pay_order_id'])) {
+    $transaction = pay_load_object('pay_transaction', $_SESSION['track_ad_conversion_pay_order_id']);
+    $params->order_id = $transaction->pxid;
+    $params->order_total =  $transaction->total * 100; // cents
+    $params->currency = $transaction->currency;
+    foreach ($methods as $method) {
+      if ($method->status && $method->placement == $placement && $method->data['payment_api'] && $method->data['payment_api_form_' . $transaction->pfid]) {
+        $track_pages_type = $method->data['track_pages_type'];
+        if (empty($track_pages_type) || $track_pages_type == 'extend' || ($track_pages_type == 'limit' && in_array($method->method_id, $page_matches))) {
+          $output .= token_replace($method->snippet, array('track-ad-conversion' => $params));
+          $methods_used[] = $method->method_id;
+        }
+      }
+    }
+    if ($clear_session_variables) {
+      unset($_SESSION['track_ad_conversion_pay_order_id']);
+    }
+  }
+
+  // Drupal Commerce.
+  if (!empty($_SESSION['track_ad_conversion_commerce_order_id'])) {
+    $order = commerce_order_load($_SESSION['track_ad_conversion_commerce_order_id']);
+    $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+    $params->order_id = $order->order_id;
+    $params->order_total = $order_wrapper->commerce_order_total->amount->value();
+    $params->currency = $order_wrapper->commerce_order_total->currency_code->value();
+
+    foreach ($methods as $method) {
+      if ($method->status && $method->placement == $placement && $method->data['drupal_commerce']) {
+        $track_pages_type = $method->data['track_pages_type'];
+        if (empty($track_pages_type) || $track_pages_type == 'extend' || ($track_pages_type == 'limit' && in_array($method->method_id, $page_matches))) {
+          $output .= token_replace($method->snippet, array('track-ad-conversion' => $params));
+          $methods_used[] = $method->method_id;
+        }
+      }
+    }
+    if ($clear_session_variables) {
+      unset($_SESSION['track_ad_conversion_commerce_order_id']);
+    }
+  }
+
+
+  // Ubercart.
+  if (!empty($_SESSION['track_ad_conversion_uc_order_id'])) {
+    $order = commerce_order_load($_SESSION['track_ad_conversion_uc_order_id']);
+
+    // Determine currency.
+    if (module_exists('uc_multiprice')) {
+      $currency = 'EUR';
+      if (isset($order->data['country_id'])) {
+        $country = db_query("SELECT * FROM {uc_multiprice_currencies} WHERE country_id = :country_id", array(':country_id' => $order->data['country_id']))->fetchObject();
+        $currency = (!empty($country) && !empty($country->currency_code)) ? $country->currency_code : 'EUR';
+      }
+    }
+
+    foreach ($methods as $method) {
+      if ($method->status && $method->placement == $placement && $method->data['ubercart']) {
+        $track_pages_type = $method->data['track_pages_type'];
+        if (empty($track_pages_type) || $track_pages_type == 'extend' || ($track_pages_type == 'limit' && in_array($method->method_id, $page_matches))) {
+          $output .= token_replace($method->snippet, array('track-ad-conversion' => $order));
+          $methods_used[] = $method->method_id;
+        }
+      }
+    }
+    if ($clear_session_variables) {
+      unset($_SESSION['track_ad_conversion_uc_order_id']);
+    }
+  }
+
+  return $output;
+}
+
+
+/**
+ * @} End of "form_integration".
+ */
+

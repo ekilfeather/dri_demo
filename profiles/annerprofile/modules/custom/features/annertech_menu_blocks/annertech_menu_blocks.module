@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Annertech - Menu Blocks feature.
+ */
+
+include_once 'annertech_menu_blocks.features.inc';

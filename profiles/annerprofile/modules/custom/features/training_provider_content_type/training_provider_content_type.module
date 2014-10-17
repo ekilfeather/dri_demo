@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Training Provider Content Type feature.
+ */
+
+include_once 'training_provider_content_type.features.inc';

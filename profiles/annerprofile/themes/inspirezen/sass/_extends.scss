@@ -1,0 +1,311 @@
+/**
+ * Extends used in the webstie
+ */
+
+/**
+ * Pie
+ */
+%pie {
+  behavior: url($pie-path);
+}
+/**
+ * Hide Text/ Element Invisible
+ */
+%hide-text {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  @if $legacy-support-for-ie6 or $legacy-support-for-ie7 {
+    clip: rect(1px 1px 1px 1px); // IE6 and IE7 use the wrong syntax.
+  }
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+/**
+ * Text Shadow
+ */
+
+%text-shadow {
+  @include text-shadow(0 0 1px $fontcol, 0 0 5px $fontcol, 0 0 1px $fontcol);
+}
+
+/**
+ * Letter Spacing(s)
+ */
+
+%letter-spacing-default {
+  letter-spacing: 1px;
+}
+
+/**
+ * Main Menu Items
+ */
+
+%main-menu-item {
+  color: $grey-dark;
+  font-weight: 400;
+  letter-spacing: 3px;
+  @include rem(padding, 0 .5rem 0 .4rem);
+  // padding: 0 .5rem 0 .4rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  &:focus,
+  &:hover,
+  &.active {
+    color: $purple;
+    //font-weight: 600;
+    text-shadow:0 0 .5px $purple, 0 0 .5px $purple, 0 0 .5px $purple;
+  }
+}
+/**
+ * Buttons - such as Search button on homepage slider
+ */
+
+%button {
+  @extend %transition;
+  @extend %f16;
+  @extend %pie;
+  background: $btn-off;
+  border: none;
+  color: $white;
+  font-weight: 600;
+  @include rem(padding, 1rem);
+  //padding: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  width: 200px;
+  &:focus,
+  &:hover {
+    background: $btn-over;
+  }
+}
+
+/**
+ * Webform Extends
+ */
+
+%webform-input {
+  background: $grey-light;
+  border: none;
+  @include rem(margin-bottom, 2rem);
+  // margin-bottom: 2rem;
+  padding: 10px;
+  width: 470px;
+  //max-width: 98%;
+}
+/**
+ * Doormats (on homepage)
+ */
+%doormat-inner-margin {
+  margin-left: 12.5%;
+}
+
+%doormat-title {
+  @extend %f30;
+  @extend %doormat-inner-margin;
+  @include rem(padding-top, 1.7rem);
+  // padding-top: 1.7rem;
+  font-weight: 300;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/**
+ * Search Buttons - used on homepage for Sense of Identity and Sense of Freedom blocks
+ */
+%btn-doormat-search {
+  @extend %doormat-inner-margin;
+  @extend %transition;
+  //@extend %pie;
+  background: $btn-off;
+  border-right: 1px solid $btn-over;
+  border-bottom: 1px solid $btn-over;
+  width: 50%;
+  @include rem(padding, .5rem);
+  //padding: .5rem;
+  text-align: center;
+  &:focus,
+  &:hover {
+    background: $btn-over;
+  }
+  a {
+    color: $white;
+    display: block;
+    text-decoration: none;
+    &:focus,
+    &:hover {}
+    &:active {
+      color: $btn-off;
+    }
+  }
+}
+
+%btn-doormat-search-position {
+  position: absolute;
+  bottom: 35px;
+  left: 0;
+}
+
+
+/**
+ * Font Sizes - in rems
+ */
+
+// Font size 12px
+%f12 {
+  @include font-size(12px);
+  //font-size: 0.857rem;
+}
+
+// Font size 14px
+%f14 {
+  @include font-size(14px);
+ // font-size: 1rem;
+}
+
+// Font size 16px
+%f16 {
+  @include font-size(16px);
+ // font-size: 1.143rem;
+}
+
+// Font size 16px for H2 tags
+%f16h2 {
+  @include font-size(9.33px);
+ // font-size: .66666rem;
+}
+
+// Font size 18px
+%f18 {
+  @include font-size(18px);
+ // font-size: 1.428rem;
+}
+
+// Font size 20px
+%f20 {
+  @include font-size(20px);
+ // font-size: 1.428rem;
+}
+
+// Font size 20px for H2 tags
+%f20h2 {
+  @include font-size(11.66px);
+ // font-size: .833rem;
+}
+
+// Font size 30px
+%f30 {
+  @include font-size(30px);
+ // font-size: 2.143rem;
+}
+
+// Font size 60px
+%f60 {
+  @include font-size(60px);
+  //font-size: 4.286rem;
+}
+// Font size 80px for H1 tags
+%f80h1 {
+  @include font-size(55.99px);
+  //font-size: 4.286rem;
+}
+
+/**
+ * More Smooth Scroll Link
+ */
+%more {
+  background: image-url('home/home-more.png') no-repeat 0 0;
+  display: block;
+  font-weight: 400;
+  height: 70px;
+  margin: 0 auto -20px auto;
+  padding-top: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 140px;
+  a {
+    color: $white;
+    text-decoration: none;
+  }
+}
+%more-down-arrow {
+  @extend %f30;
+  color: $white;
+  @include rotate(180deg);
+  margin-top: -15px;
+  @extend %transition;
+  &:focus,
+  &:hover {
+    margin-top: -12px;
+  }
+
+}
+/**
+ * Link Transitions
+ */
+
+%transition {
+  @include transition-duration(.4s);
+  transition-duration: .4s;
+  -webkit-transition-duration: .4s; /* Safari */
+}
+
+/**
+ * Footer Border
+ */
+
+%footer-border {
+  border-bottom: 1px solid $grey-footer-border;
+}
+
+/**
+ * Pagers
+ */
+
+%pager-dividers {
+    &:after {
+      content: "|";
+      font-weight: 400;
+      @include rem(padding-left, 1rem);
+      // padding-left: 1rem;
+    }
+  }
+/**
+ * Sidebar block titles
+ */
+
+%sidebar-block-title {
+    @extend %f16;
+    color: $grey-credits;
+    line-height: 2;
+    text-transform: uppercase;
+  }
+
+/**
+ * Sidebar links
+ */
+%sidebar-links {
+  a {
+    color: $fontcol;
+    text-transform: uppercase;
+    &:focus,
+    &:hover {
+      color: $purple;
+      text-decoration: none;
+    }
+  }
+}
+
+/**
+ * Block titles on the Object Details pager-dividers
+ */
+
+%object-details-block-title {
+  h2 {
+      @extend %f20;
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+}

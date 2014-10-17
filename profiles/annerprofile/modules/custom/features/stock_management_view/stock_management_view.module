@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Stock management view feature.
+ */
+
+include_once 'stock_management_view.features.inc';

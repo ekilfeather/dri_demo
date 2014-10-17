@@ -1,0 +1,83 @@
+/**
+ * Footer Styling
+ */
+
+#footer,
+#sub-footer-left,
+#sub-footer-right {
+  @extend %transition;
+  @extend %f12;
+  background: $grey-footer;
+  padding: 44px $zen-gutter-width;
+  .footer-divider {
+    color: #cccccc;
+    display: inline-block;
+    @include rem(margin, 0 2rem);
+    // margin: 0 2rem;
+    @include responsive(phone) {
+      margin: 0 .5rem;
+    }
+  }
+  @include responsive(phone) {
+    padding: 1rem 0;
+  }
+}
+#sub-footer {
+  @include zen-clear();
+  background: $grey-footer;
+  border-top: 1px solid $grey-footer-border;
+  overflow: hidden;
+  width: 100%;
+}
+.sub-footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  @include responsive(phone) {
+    @include zen-grid-item (10,2);
+
+  }
+}
+#sub-footer-left {
+  @include zen-grid-item(7,1);
+  .footer-terms,
+  .footer-contact {
+    display: inline-block;
+    //padding-right: 3rem;
+    @include responsive(phone) {
+      display: inline-block;
+      padding-right: none;
+    }
+  }
+  // phone
+  @include responsive(phone) {
+    @include zen-grid-item(12,1)
+  }
+  .footer-copyright {
+    clear: both;
+  }
+}
+
+#sub-footer-right {
+  @include zen-grid-item(5,8);
+  .footer-design-credits {
+    color: $grey-credits;
+    float: right;
+    a {
+      color: $grey-credits;
+      font-weight: 600;
+      text-decoration: none;
+      &:focus,
+      &:hover {
+        color: $purple;
+      }
+    }
+    @include responsive(phone) {
+      float: left;
+    }
+  }
+  // phone
+  @include responsive(phone) {
+    @include zen-clear();
+    @include zen-grid-item(12,1);
+  }
+}

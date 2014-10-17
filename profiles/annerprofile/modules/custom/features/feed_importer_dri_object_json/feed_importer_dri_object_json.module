@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Feed Importer - DRI Object JSON feature.
+ */
+
+include_once 'feed_importer_dri_object_json.features.inc';

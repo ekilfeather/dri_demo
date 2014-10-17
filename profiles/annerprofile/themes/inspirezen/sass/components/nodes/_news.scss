@@ -1,0 +1,40 @@
+/**
+ * News Details Page Styling
+ */
+
+.node-type-news-item,
+.node-type-content-page {
+  .field-name-field-image {
+    margin-bottom: 3rem;
+  }
+  .field-name-field-inline-image {
+    @include zen-clear();
+    //@include zen-grid-item(4,1, right);
+    float: right;
+    @include rem(padding-left, 1rem);
+    // padding-left: 1rem;
+  }
+  .field-name-body {
+    @include zen-clear;
+   // @include zen-grid-item(7.75,1);
+  }
+  .field-name-field-related-objects {
+    @include zen-clear();
+  }
+}
+
+// tablet
+@include responsive(tablet) {
+
+}
+
+// phone
+@include responsive(phone) {
+  .field-name-field-inline-image {
+      @include zen-clear();
+      float: left;
+      padding-left: 0rem;
+      text-align: center;
+      width: 100%;
+    }
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Annertech - Pathauto Settings feature.
+ */
+
+include_once 'annertech_pathauto_settings.features.inc';

@@ -1,0 +1,263 @@
+<?php
+
+/**
+ * @file
+ * Integrate Realex Payments gateway with Drupal Commerce.
+ */
+
+/**
+ * @todo
+ *   - abstract the helper functions some more for other method types
+ *   - add support for DCC transactions
+ *   - add support for 3D secure
+ *   - add Redirect integration
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function commerce_realex_menu() {
+  $items = array();
+
+  // Path to receive 3D Secure callback.
+  $items['commerce-realex/3d-secure-callback/%commerce_order'] = array(
+    'page callback' => 'commerce_realex_3dsecure_callback',
+    'page arguments' => array(2),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/commerce_realex_remote_3dsecure.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_commerce_payment_method_info().
+ */
+function commerce_realex_commerce_payment_method_info() {
+  $payment_methods = array();
+
+  $payment_methods['commerce_realex_remote'] = array(
+    'title' => t('Realex Remote'),
+    'short_title' => t('Realex'),
+    'display_title' => t('Realex'),
+    'description' => t('Integration with Realex using Remote API method.'),
+    'active' => TRUE,
+    'callbacks' => array(
+      'settings_form' => 'commerce_realex_remote_commerce_payment_method_settings_form',
+      'submit_form' => 'commerce_realex_remote_commerce_payment_method_submit_form',
+      'submit_form_validate' => 'commerce_realex_remote_commerce_payment_method_submit_form_validate',
+      'submit_form_submit' => 'commerce_realex_remote_commerce_payment_method_submit_form_submit',
+    ),
+    'file' => 'includes/commerce_realex_remote.inc',
+  );
+
+  return $payment_methods;
+}
+
+/**
+ * Implements hook_commerce_checkout_pane_info().
+ *
+ * Define checkout panes if DCC is enabled.
+ */
+/*
+function commerce_realex_commerce_checkout_pane_info() {
+  $checkout_panes = array();
+
+  $checkout_panes['commerce_realex_remote_dcc_pane'] = array(
+    'title' => t('Direct Currency Conversion'),
+    'file' => 'includes/commerce_realex_remote.checkout_pane.inc',
+    'page' => 'checkout',
+    'fieldset' => TRUE,
+    'callbacks' => array(
+      'checkout_form' => 'commerce_realex_remote_dcc_pane_checkout_form',
+      'checkout_form_submit' => 'commerce_realex_remote_dcc_pane_checkout_form_submit',
+    ),
+  );
+
+  return $checkout_panes;
+}
+*/
+
+/**
+ * Send the request to Realex Payments.
+ *
+ * @param $url
+ *   URL to send the request to.
+ * @param $data
+ *   XML request message to send.
+ * @return
+ *   Parsed response object.
+ */
+function _commerce_realex_send_request($url, $data) {
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_USERAGENT, 'payandshop.com php version 0.9');
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // this line makes it work under https
+  $response = curl_exec($ch);
+  curl_close($ch);
+
+  // Tidy it up.
+  $response = preg_replace('/\s+/', ' ', $response);
+  $response = preg_replace("/[\n\r]/", '', $response);
+
+  // Parse the XML response.
+  $response_obj = new RealexParser($response);
+  $result = $response_obj->record;
+
+  return $result;
+}
+
+/**
+ * Build SHA1 hash for request messages.
+ */
+function _commerce_realex_build_request_sha1hash($request, $type = 'auth') {
+  switch ($type) {
+    case '3ds-verifyenrolled':
+      // timestamp.merchantid.orderid.result.message.pasref.authcode
+      // but example only goes as far as message...
+      $hash = $request['timestamp'] . '.' . $request['merchantid'] . '.' . $request['orderid'] . '.' . $request['result'] . '.' . $request['message'];
+      break;
+
+    case '3ds-verifysig-response':
+      // timestamp.merchantid.orderid.result.message.pasref.authcode
+      $hash = $request['timestamp'] . '.' . $request['merchantid'] . '.' . $request['orderid'] . '.' . $request['result'] . '.' . $request['message'] . '.' . $request['pasref'] . '.' . $request['authcode'];
+      break;
+
+    case '3ds-verifysig':
+    case 'auth':
+    default:
+      // timestamp.merchantid.orderid.amount.currency.cardnumber
+      $hash = $request['timestamp'] . '.' . $request['merchantid'] . '.' . $request['orderid'] . '.' . $request['amount'] . '.' . $request['currency'] . '.' . $request['ccnumber'];
+      break;
+  }
+
+  $sha1hash = sha1($hash);
+  $hash = $sha1hash . '.' . $request['secret'];
+  return sha1($hash);
+}
+
+/**
+ * Map card types to codes expected by Realex.
+ *
+ * @param $card
+ *   Card name.
+ * @return
+ *   Realex card type code.
+ */
+function _commerce_realex_get_card_type($card) {
+  switch ($card) {
+    case 'mastercard':
+      return 'MC';
+    case 'amex':
+      return 'AMEX';
+    case 'solo':
+    case 'switch':
+    case 'maestro':
+      return 'SWITCH';
+    case 'laser':
+      return 'LASER';
+    case 'dc':
+      return 'DINERS';
+    case 'visa':
+    case 'delta':
+    default:
+      return 'VISA';
+  }
+}
+
+/**
+ * Retrieve list of card types supported by Realex.
+ */
+function _commerce_realex_supported_card_types() {
+  return array(
+    'visa' => t('Visa'),
+    'mastercard' => t('Mastercard'),
+    'amex' => t('American Express'),
+    'switch' => t('Switch'),
+    'solo' => t('Solo'),
+    'maestro' => t('Maestro'),
+    'delta' => t('Delta'),
+    'dc' => t("Diner's Club"),
+    'laser' => t('Laser'),
+  );
+}
+
+
+/**
+ * Parse the response XML and create and object.
+ *
+ * Code below is based on sample code provided by Realex at http://resource.realexpayments.com/m.php?ct=integration_oscode.php
+ */
+class RealexParser {
+
+  // Initialise variables.
+  var $parser;
+  var $parentElements = array();
+  var $currentElement = 0;
+  var $currentTSSCheck = "";
+  var $record = array();
+
+  function RealexParser($response) {
+    // Create and initialise XML parser
+    $this->parser = xml_parser_create();
+    xml_set_object($this->parser, $this);
+    xml_set_element_handler($this->parser, 'startElement', 'endElement');
+    xml_set_character_data_handler($this->parser, 'cDataHandler');
+
+    xml_parse($this->parser, $response);
+    xml_parser_free($this->parser);
+  }
+
+  /* The "startElement()" function is called when an open element tag is found.
+   * It creates a variable on the fly contructed of all the parent elements
+   * joined together with an underscore. So the following xml:
+   * <response><something>Owen</something></response>
+   * would create two variables: $RESPONSE and $RESPONSE_SOMETHING
+   */
+  function startElement($parser, $name, $attrs) {
+    $name = strtolower($name);
+    array_push($this->parentElements, $name);
+    $this->currentElement = join("_", $this->parentElements);
+
+    foreach ($attrs as $attr => $value) {
+      if ($this->currentElement == "response_tss_check" and $attr == "ID") {
+        $this->currentTSSCheck = $value;
+      }
+
+      if ($this->currentElement == 'response' and $attr == "TIMESTAMP") {
+        $this->record['timestamp'] = $value;
+      }
+    }
+
+    // Clean up the element names to remove the response_ prefix.
+    $this->currentElement = str_replace('response_', '', $this->currentElement);
+  }
+
+  /* The "cDataHandler()" function is called when the parser encounters any text that's
+     not an element. Simply places the text found in the variable that
+     was last created. So using the XML example above the text "Owen"
+     would be placed in the variable $RESPONSE_SOMETHING
+  */
+  function cDataHandler($parser, $cdata) {
+    if ( trim ( $cdata ) ) {
+      if ($this->currentTSSCheck != 0) {
+        $this->record['tsschecks']["$this->currentTSSCheck"] = $cdata;
+      }
+
+      $this->record[$this->currentElement] = $cdata;
+    }
+  }
+
+  //  The "endElement()" function is called when the closing tag of an element is found.
+  //  Just removes that element from the array of parent elements.
+  function endElement($parser, $name) {
+    $this->currentTSSCheck = 0;
+    array_pop($this->parentElements);
+  }
+
+}
+

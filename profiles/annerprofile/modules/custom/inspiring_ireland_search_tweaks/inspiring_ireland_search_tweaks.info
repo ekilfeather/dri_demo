@@ -1,0 +1,6 @@
+name = Inspiring Ireland Search Tweaks
+description = Extra behaviours to alter the faceted search of DRI Objects.
+core = 7.x
+package = DRI Objects
+
+dependencies[] = views

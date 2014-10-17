@@ -1,0 +1,27 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Installation file for commerce banded shipping feature.
+ */
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function commerce_banded_shipping_eur_uninstall() {
+  $status = '';
+}
+
+
+/**
+ * Sets up EUR shipping rates.
+ */
+function commerce_banded_shipping_eur_install() {
+  $a = serialize(array());
+  $sql = "INSERT INTO {commerce_flat_rate_service} (name, title, display_title, description, rules_component, amount, currency_code, data) VALUES ('eu_over_1900g_eur', 'EU over 1900g EUR', 'Shipping', '', 0, 2025, 'EUR', :array), ('eu_under_1900g_eur', 'EU under 1900g EUR', 'Shipping', '', 0, 1000, 'EUR', :array), ('eu_under_220g_eur', 'EU under 220g EUR', 'Shipping', '', 0, 200, 'EUR', :array), ('eu_under_40g_eur', 'EU under 40g EUR', 'Shipping', '', 0, 100, 'EUR', :array), ('eu_under_470g_eur', 'EU under 470g EUR', 'Shipping', '', 0, 300, 'EUR', :array), ('eu_under_950g_eur', 'EU under 950g EUR', 'Shipping', '', 0, 750, 'EUR', :array), ('ie_over_1900g_eur', 'IE over 1900g EUR', 'Shipping', '', 0, 560, 'EUR', :array), ('ie_under_1900g_eur', 'IE under 1900g EUR', 'Shipping', '', 0, 750, 'EUR', :array), ('ie_under_220g_eur', 'IE under 220g EUR', 'Shipping', '', 0, 150, 'EUR', :array), ('ie_under_40g_eur', 'IE under 40g EUR', 'Shipping', '', 0, 50, 'EUR', :array), ('ie_under_470g_eur', 'IE Under 470g EUR', 'Shipping', '', 0, 200, 'EUR', :array), ('ie_under_950g_eur', 'IE under 950g EUR', 'Shipping', '', 0, 400, 'EUR', :array), ('world_over_1900g_eur', 'World over 1900g EUR', 'Shipping', '', 0, 2260, 'EUR', :array), ('world_under_1900g_eur', 'World under 1900g EUR', 'Shipping', '', 0, 1600, 'EUR', :array), ('world_under_220g_eur', 'World under 220g EUR', 'Shipping', '', 0, 400, 'EUR', :array), ('world_under_40g_eur', 'World under 40g EUR', 'Shipping', '', 0, 150, 'EUR', :array), ('world_under_470g_eur', 'World under 470g EUR', 'Shipping', '', 0, 425, 'EUR', :array), ('world_under_950g_eur', 'World under 950g EUR', 'Shipping', '', 0, 1000, 'EUR', :array), ('free_shipping_eur', 'Free Shipping EUR', 'Shipping', '', 0, 0, 'EUR', :array)";
+  db_query($sql, array(':array' => $a));
+}
+
+

@@ -1,0 +1,11 @@
+name = Contexts - News Pages Blocks
+description = A feature to create place the news related blocks on news pages.
+core = 7.x
+package = Contexts
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = views
+features[context][] = news_pages_blocks
+features[ctools][] = context:context:3
+features[features_api][] = api:2
+project path = profiles/annerprofile/modules/custom/features

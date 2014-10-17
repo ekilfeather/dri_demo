@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Provides additional contexts for the Commerce module.
+ */
+/*
+  // Set the cart_has_contents context.
+  if ($plugin = context_get_plugin('condition', 'cart_has_contents')) {
+    $plugin->execute(FALSE);
+  }
+*/
+
+/**
+ * Implements hook_init().
+ */
+function commerce_context_init() {
+  if ($plugin = context_get_plugin('condition', 'commerce_cart_has_contents')) {
+    $plugin->execute();
+  }
+}
+
+/**
+ * Implements hook_context_plugins().
+ */
+function commerce_context_context_plugins() {
+  $plugins = array();
+  $plugins['commerce_cart_has_contents'] = array(
+    'handler' => array(
+      'path' => drupal_get_path('module', 'commerce_context') .'/plugins',
+      'file' => 'context_condition_commerce_cart_has_contents.inc',
+      'class' => 'context_condition_commerce_cart_has_contents',
+      'parent' => 'context_condition',
+    ),
+  );
+  return $plugins;
+}
+
+/**
+ * Implements hook_context_registry().
+ */
+function commerce_context_context_registry() {
+  $registry = array();
+  $registry['conditions'] = array();
+
+  if (module_exists('commerce_cart')) {
+    $registry['conditions']['commerce_cart_has_contents'] = array(
+      'title' => t('Cart is not empty'),
+      'description' => t("Set this context when the user's Drupal Commerce shopping cart contains at least one product."),
+      'plugin' => 'commerce_cart_has_contents',
+    );
+  }
+
+  return $registry;
+}
+

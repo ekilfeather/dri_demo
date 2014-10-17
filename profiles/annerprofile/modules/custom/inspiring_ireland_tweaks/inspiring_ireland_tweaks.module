@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * @file
+ * Provides small tweaks for Inspiring Ireland
+ */
+
+
+/**
+ * Implements hook_entity_info_alter().
+ *
+ * Provides an additional view mode for News Listing nodes.
+ */
+function inspiring_ireland_tweaks_entity_info_alter(&$entity_info) {
+  $entity_info['node']['view modes']['news_listing'] = array(
+    'label' => t('News Listing'),
+    'custom settings' => FALSE,
+  );
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Places Form Labels inside the input field.
+ */
+function inspiring_ireland_tweaks_form_webform_client_form_1_alter(&$form, &$form_state) {
+  $form['submitted']['contact_full_name']['#attributes'] = array('placeholder' => t('Full Name'), 'title' => t('Full Name'));
+  $form['submitted']['contact_email_address']['#attributes'] = array('placeholder' => t('Email Address'), 'title' => t('Email Address'));
+  $form['submitted']['contact_organisation_if_applicable']['#attributes'] = array('placeholder' => t('Organisation (if applicable)'), 'title' => t('Organisation (if applicable)'));
+  $form['submitted']['contact_message']['#attributes'] = array('placeholder' => t('Message'), 'title' => t('Message'));
+}
+
+/**
+ * Trim a string to a given number of words.
+ *
+ * IMPORTANT: this assumes plain-text, and will not work reliably if the string
+ * contains any HTML markup.
+ *
+ * @param $string
+ *   the original string
+ * @param $count
+ *   the word count
+ * @param $ellipsis
+ *   TRUE to add "..."
+ *   or use a string to define other character
+ *
+ * @return
+ *   trimmed string with ellipsis added if it was truncated
+ */
+function inspiring_ireland_tweaks_word_trim($string, $count, $ellipsis = FALSE){
+    $words = explode(' ', $string);
+    if (count($words) > $count){
+        array_splice($words, $count);
+        $string = implode(' ', $words);
+        if (is_string($ellipsis)){
+            $string .= $ellipsis;
+        }
+        elseif ($ellipsis){
+            $string .= '&hellip;';
+        }
+    }
+    return $string;
+}

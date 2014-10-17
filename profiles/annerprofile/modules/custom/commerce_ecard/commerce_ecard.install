@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * @file
+ * Installation file for the commerce_ecard module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function commerce_ecard_schema() {
+  $schema = array();
+
+  $schema['commerce_ecard_drafts'] = array(
+    'description' => 'A table containing the draft ecards which are waiting for payment.',
+    'fields' => array(
+      'order_id' => array('type' => 'int', 'size' => 'normal', 'unsigned' => TRUE, 'default' => 0, 'not null' => TRUE, 'description' => 'The primary identifier for the order.'),
+      'product_key' => array('type' => 'varchar', 'length' => '32', 'default' => '', 'not null' => TRUE, 'description' => 'Internal record identifier.'),
+      'hash' => array('type' => 'varchar', 'length' => '32', 'default' => '', 'not null' => TRUE, 'description' => 'Ecard record identifier.'),
+    ),
+    'primary key' => array('order_id', 'product_key'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_schema_alter().
+ */
+function commerce_ecard_schema_alter(&$schema) {
+  if (isset($schema['commerce_order'])) {
+    $schema['commerce_order']['fields']['commerce_ecard_order'] = array(
+      'type' => 'int',
+      'description' => 'Is this an ecard order?',
+      'not null' => TRUE,
+      'default' => 0,
+    );
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function commerce_ecard_install() {
+
+  $schema = array('commerce_order' => array());
+  commerce_ecard_schema_alter($schema);
+  $field = $schema['commerce_order']['fields']['commerce_ecard_order'];
+
+  db_add_field('commerce_order', 'commerce_ecard_order', $field);
+
+}
+
+/**
+ * Add a field for flagging whether it is an ecard order or not.
+ */
+function commerce_ecard_update_7001() {
+  $field = array(
+    'type' => 'int',
+    'description' => 'Is this an ecard order?',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  db_add_field('commerce_order', 'commerce_ecard_order', $field);
+}
+

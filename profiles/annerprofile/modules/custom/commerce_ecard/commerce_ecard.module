@@ -1,0 +1,245 @@
+<?php
+
+/**
+ * @file
+ * Declares commerce checkout pane, and handles sending of the ecard on checkout
+ * completion.
+ */
+
+/**
+ * Implements hook_views_api().
+ */
+function commerce_ecard_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'commerce_ecard') . '/views',
+  );
+}
+
+/**
+ * Implements hook_commerce_checkout_pane_info().
+ */
+function commerce_ecard_commerce_checkout_pane_info() {
+  $checkout_panes = array();
+
+  $checkout_panes['checkout_ecard'] = array(
+    'name' => t('Ecard widget'),
+    'title' => check_plain(variable_get('commerce_ecard_checkout_pane_title', t('Choose your card type'))),
+    'file' => 'includes/commerce_ecard.checkout_pane.inc',
+    'base' => 'commerce_ecard_checkout_pane',
+    'page' => 'checkout',
+    'fieldset' => TRUE,
+    'locked' => FALSE,
+  );
+
+  return $checkout_panes;
+}
+
+/**
+ * Customized e-card form.
+ */
+function commerce_ecard_send_ecard_form($product, $field, $id, $ecard = NULL) {
+  $require_message = $field['settings']['ecard_settings']['ecard_require_message'];
+  $notify = $field['settings']['notice']['ecard_notice_enabled'];
+
+  // Recipient's name.
+  $form['to_name'] = array(
+    '#title' => t('Name of recipient'),
+    '#type' => 'textfield',
+    '#default_value' => (!empty($ecard) ? $ecard['to_name'] : ''),
+    '#required' => TRUE,
+  );
+
+  // Display box to type recipients emails.
+  $form['to_email'] = array(
+    '#title' => t('E-mail address of recipient'),
+    '#type' => 'textfield',
+    '#default_value' => (!empty($ecard) ? $ecard['to_email'] : ''),
+    '#required' => TRUE,
+  );
+
+  // Display textarea to type message.
+  $form['message'] = array(
+    '#title' => t('Type your message'),
+    '#type' => 'textarea',
+    '#default_value' => (!empty($ecard) ? $ecard['message'] : ''),
+    '#required' => $require_message,
+  );
+
+  // Notification on pick up.
+  if ($notify) {
+    $form['notify'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Notify me when the card is picked up'),
+      '#default_value' => (!empty($ecard) ? $ecard['notify'] : 0),
+    );
+  }
+
+  $form['product_id'] = array(
+    '#type' => 'value',
+    '#value' => (!empty($ecard) ? $ecard['product_id'] : $product->product_id),
+  );
+
+  return $form;
+}
+
+/**
+ * Implements hook_commerce_checkout_complete().
+ */
+function commerce_ecard_commerce_checkout_complete($order) {
+  // Retrieve the hashes for this order.
+  $hashes = db_select('commerce_ecard_drafts', 'd')
+            ->fields('d', array('hash'))
+            ->condition('d.order_id', $order->order_id)
+            ->execute()
+            ->fetchCol();
+  if (empty($hashes)) {
+    return;
+  }
+
+  // Load the ecards for the hashes found.
+  $ecards = ecard_read($hashes);
+  if (!empty($ecards)) {
+    // For each ecard, put together the required information and send.
+    foreach ($ecards as $ecard) {
+      // Configure some useful variables used when sending the ecard.
+      $entities = entity_load($ecard->entity_type, array($ecard->entity_id));
+      $entity = array_shift($entities);
+      $entity_uri = entity_uri($ecard->entity_type, $entity);
+      $field = field_info_instance($ecard->entity_type, $ecard->field_name, $ecard->bundle);
+
+      $ecard->mail = $field['settings'];
+      $ecard->base_path = $entity_uri['path'];
+      if ($field['settings']['ecard_settings']['ecard_base_path'] == 'ecard') {
+        $ecard->base_path = 'ecard';
+      }
+      $ecard->ecard_url = url($ecard->base_path, array('query' => array('ecard' => $ecard->hash), 'absolute' => TRUE));
+      $ecard->ecard_copy_url = url($ecard->base_path, array('query' => array('ecard' => $ecard->hash, 'preview' => 1), 'absolute' => TRUE));
+      $ecard->site_name = variable_get('site_name', 'Default site name');
+
+      // Send the ecard.
+      $ecard->mail_from = $order->mail;
+      ecard_mail_send_ecard($ecard);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+/*
+// This code doesn't work when run on the ajax callback for toggling between
+// ecards and traditional cards.  Commenting out just in case I need to come
+// back to this again.
+function commerce_ecard_form_commerce_checkout_form_checkout_alter(&$form, $form_state) {
+  $order = $form_state['order'];
+  $ecard_product_count = $product_count = 0;
+
+  // For each line item on the order, find those with ecard fields.
+  $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+  foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
+
+    // Only interested in product line items.
+    if ($line_item_wrapper->type->value() == 'product') {
+      $product_count++;
+      $product = $line_item_wrapper->commerce_product->value();
+      $items = field_get_items('commerce_product', $product, 'field_ecard');
+      // Found an ecard field.
+      if (!empty($items)) {
+        $ecard_product_count++;
+      }
+    }
+  }
+
+  // Remove shipping informaton if all products in cart are ecards and card type
+  // selected is 'ecard'.
+  if ($ecard_product_count == $product_count && !empty($form_state['values']['checkout_ecard']['ecard_type']) && $form_state['values']['checkout_ecard']['ecard_type'] == 'ecard') {
+    if (!empty($form['customer_profile_shipping'])) {
+      unset($form['customer_profile_shipping']);
+    }
+  }
+}
+*/
+
+/**
+ * Implements hook_entity_load().
+ */
+function commerce_ecard_entity_load($entities, $type) {
+  if ($type == 'commerce_order') {
+    foreach ($entities as $entity) {
+      $result = db_select('commerce_ecard_drafts', 'e')
+                  ->fields('e')
+                  ->condition('order_id', $entity->order_id)
+                  ->execute();
+      if (!empty($result)) {
+        while ($row = $result->fetchObject()) {
+          $entity->commerce_ecard['items'][] = $row->hash;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function commerce_ecard_entity_view($entity, $type, $view_mode, $langcode) {
+  if ($type == 'commerce_order' && $view_mode == 'administrator' && !empty($entity->data['checkout_ecard'])) {
+    $card_type = $entity->data['checkout_ecard']['ecard_type'];
+    $entity->content['commerce_ecard_type'] = array(
+      '#title' => t('Card type'),
+    );
+    $entity->content['commerce_ecard_type'][0]['#markup'] = theme('commerce_ecard_order_card_type', array('card_type' => $card_type));
+
+    if ($card_type == 'ecard') {
+      $ecards = $entity->commerce_ecard['items'];
+      $path = ($entity->status != 'completed') ? 'admin/reports/ecards/checkout' : 'admin/reports/ecards/sent';
+
+      if (!empty($ecards)) {
+        foreach ($ecards as $i => $hash) {
+          $ecards[$i] = l($hash, $path, array('query' => array('hash' => $hash)));
+        }
+        $entity->content['commerce_ecard_ecards'] = array(
+          '#title' => t('Ecards'),
+        );
+        $entity->content['commerce_ecard_ecards'][0]['#markup'] = theme('commerce_ecard_order_ecards', array('ecards' => $ecards));
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function commerce_ecard_theme() {
+  return array(
+    'commerce_ecard_order_card_type' => array(
+      'variables' => array('card_type' => NULL),
+    ),
+    'commerce_ecard_order_ecards' => array(
+      'variables' => array('ecards' => NULL),
+    ),
+  );
+}
+
+/**
+ * Theme function to render markup for displaying the card type selected on the
+ * order page.
+ */
+function theme_commerce_ecard_order_card_type($variables) {
+  $card_type = $variables['card_type'];
+  $card_types = array(
+    'ecard' => t('Ecard'),
+    'traditional' => t('Traditional'),
+  );
+  return '<div class="commerce-ecard-card-type"><strong>' . t('Card type:') . '&nbsp;</strong>' . $card_types[$card_type] . '</div>';
+}
+
+/**
+ * Theme function to render markup for links to the ecards.
+ */
+function theme_commerce_ecard_order_ecards($variables) {
+  $ecards = $variables['ecards'];
+  return theme('item_list', array('items' => $ecards));
+}
+

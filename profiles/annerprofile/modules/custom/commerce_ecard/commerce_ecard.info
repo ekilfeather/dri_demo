@@ -1,0 +1,20 @@
+name = Commerce Ecard
+description = Provides a checkout page widget for entering ecard recipient information for ecard enabled products.
+core = 7.x
+package = Commerce (contrib)
+php = 5.2.4
+
+files[] = includes/commerce_ecard.checkout_pane.inc
+
+dependencies[] = ecard
+dependencies[] = commerce
+dependencies[] = commerce_cart
+dependencies[] = commerce_line_item
+dependencies[] = commerce_price
+dependencies[] = commerce_product
+dependencies[] = commerce_product_reference
+dependencies[] = commerce_customer
+dependencies[] = entity
+dependencies[] = field
+dependencies[] = options
+

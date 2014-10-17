@@ -1,0 +1,9 @@
+name = Taxonomy - DRI Format
+description = Vocabulary for DRI Format metadata. Includes multivalue field base.
+core = 7.x
+package = DRI Objects
+dependencies[] = features
+dependencies[] = taxonomy
+features[features_api][] = api:2
+features[field_base][] = field_dri_format
+features[taxonomy][] = dri_format

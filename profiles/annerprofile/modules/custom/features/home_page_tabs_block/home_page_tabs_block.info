@@ -1,0 +1,10 @@
+name = Home Page Tabs block
+description = Quicktabs block for home page with news, events, facebook
+core = 7.x
+package = Features
+php = 5.2.4
+dependencies[] = ctools
+dependencies[] = quicktabs
+features[ctools][] = quicktabs:quicktabs:1
+features[features_api][] = api:1
+features[quicktabs][] = home_page_tabs_block

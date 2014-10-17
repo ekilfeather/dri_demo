@@ -1,0 +1,159 @@
+<?php
+
+/**
+ * @file
+ * Provides addressfield like county/country fields for use in other forms.
+ */
+
+/**
+ * TODO: make $preferred_countries list configurable, or as an argument to
+ * annertech_addressfield_get_country_state_fields().
+ */
+
+/**
+ * Helper function to retrieve addressfield's country and state fields.
+ */
+function annertech_addressfield_get_country_state_fields(&$form, $country = 'IE', $state = '', $prefix = '') {
+  $address = array();
+
+  // Merge in default values to provide a value for every expected array key.
+  $countries = _addressfield_country_options_list();
+  if (function_exists('addressfield_sort_countries')) {
+    $preferred_countries = array('IE', 'GB');
+    $countries = addressfield_sort_countries($countries, $preferred_countries);
+  }
+  $address += addressfield_default_values($countries);
+  $address['country'] = $country;
+
+  //addressfield_format_address_generate
+  module_load_include('inc', 'ctools', 'includes/plugins');
+  if ($callback = ctools_plugin_load_function('addressfield', 'format', 'address', 'format callback')) {
+    $format = $context = array();
+    $context['mode'] = 'form';
+    $callback($format, $address, $context);
+
+    $form['addressfield'] = array(
+      '#type' => 'container',
+      '#attributes' => array('id' => array('annertech-addressfield')),
+      '#addressfield' => TRUE,
+    );
+
+    // Get the state field.
+    // A state field was returned.
+    if (!empty($format['locality_block']['administrative_area'])) {
+      $form['addressfield'][$prefix . 'state'] = $format['locality_block']['administrative_area'];
+      $form['addressfield'][$prefix . 'state']['#required'] = TRUE;
+      $form['addressfield'][$prefix . 'state']['#weight'] = -6;
+      $form['addressfield'][$prefix . 'state']['#prefix'] = '';
+      if (empty($form['addressfield'][$prefix . 'state']['#options'])) {
+        $form['addressfield'][$prefix . 'state']['#type'] = 'textfield';
+        $form['addressfield'][$prefix . 'state']['#size'] = 10;
+      }
+      else {
+        $form['addressfield'][$prefix . 'state']['#type'] = 'select';
+        $form['addressfield'][$prefix . 'state']['#size'] = 1;
+      }
+      if (!empty($form['addressfield'][$prefix . 'state']['#options'][''])) {
+        $title = $form['addressfield'][$prefix . 'state']['#title'];
+        $label = t('Select @title', array('@title' => strtolower($title)));
+        $form['addressfield'][$prefix . 'state']['#options'][''] = $label;
+      }
+    }
+    // No state field returned, so provide optional textfield.
+    else {
+      $form['addressfield'][$prefix . 'state'] = array(
+        '#type' => 'textfield',
+        '#title' => t('State / County'),
+        '#required' => FALSE,
+        '#weight' => -6,
+        '#default_value' => $state,
+        '#prefix' => '',
+      );
+    }
+
+    // Get the country field.
+    $form['addressfield'][$prefix . 'country'] = $format['country'];
+    $form['addressfield'][$prefix . 'country']['#type'] = 'select';
+    $form['addressfield'][$prefix . 'country']['#options'] = $countries;
+    $form['addressfield'][$prefix . 'country']['#size'] = 1;
+    $form['addressfield'][$prefix . 'country']['#required'] = TRUE;
+    $form['addressfield'][$prefix . 'country']['#default_value'] = $country;
+    $form['addressfield'][$prefix . 'country']['#weight'] = -7;
+    $form['addressfield'][$prefix . 'country']['#name_prefix'] = $prefix;
+    $form['addressfield'][$prefix . 'country']['#ajax'] = array(
+      'callback' => 'annertech_addressfield_standard_widget_refresh',
+      'wrapper' => 'annertech-addressfield',
+      'method' => 'replace',
+    );
+    $form['element_key'] = array(
+      '#type' => 'value',
+      '#value' => 'addressfield|0',
+    );
+  }
+}
+
+/**
+ * Ajax callback in response to a change of country in an address field.
+ */
+function annertech_addressfield_standard_widget_refresh($form, $form_state) {
+  // The target element is one element below the triggering country selector.
+  $array_parents = $form_state['triggering_element']['#array_parents'];
+  array_pop($array_parents);
+
+  $prefix = $form_state['triggering_element']['#name_prefix'];
+
+  // Iterate over the form parents to find the element.
+  $element = $form;
+  foreach ($array_parents as $name) {
+    $element = &$element[$name];
+    if (!empty($element['#addressfield'])) {
+      break;
+    }
+  }
+
+  // Return the address block, but remove the '_weight' element inserted
+  // by the field API.
+  unset($element['_weight']);
+  // Stop codes appearing in state textfield when no select is available.
+  unset($element[$prefix . 'state']['#value']);
+
+  return $element;
+}
+
+/**
+ * Helper function to retrieve states options.
+ */
+function _annertech_addressfield_get_states($country) {
+  $format = $context = $address = array();
+  $context['mode'] = 'render';
+  $address['country'] = $country;
+
+  module_load_include('inc', 'ctools', 'includes/plugins');
+  if ($callback = ctools_plugin_load_function('addressfield', 'format', 'address', 'format callback')) {
+    $callback($format, $address, $context);
+    return $format['locality_block']['administrative_area']['#options'];
+  }
+}
+
+/**
+ * Helper function to retrieve full country name.
+ */
+function annertech_addressfield_get_country_name($country_code) {
+  $countries = _addressfield_country_options_list();
+  if (!empty($countries[$country_code])) {
+    return $countries[$country_code];
+  }
+  return $country_code;
+}
+
+/**
+ * Helper function to retrieve full state name.
+ */
+function annertech_addressfield_get_state_name($country_code, $state_code) {
+  if (in_array($country_code, array('US', 'IT', 'BR', 'CA', 'AU', 'IE')) && !empty($state_code)) {
+    $states = _annertech_addressfield_get_states($country_code);
+    return $states[$state_code];
+  }
+  return $state_code;
+}
+

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Languages Config feature.
+ */
+
+include_once 'languages_config.features.inc';

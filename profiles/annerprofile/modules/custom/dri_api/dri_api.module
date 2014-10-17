@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * @file
+ * Provides integration with the Digital Repository of Ireland API
+ *
+ * @todo do we need a _to_arg() function?
+ *
+ * @todo provide equivalent dri_object_load_multiple()
+ *  For same developer experience as node_load(), user_load(), etc?
+ *
+ * @todo would benefit from admin settings page for variables.We have auth_token and REST endpoint URI
+ */
+
+
+/**
+ * Get object details form the DRI.
+ *
+ * @param array $object_ids
+ *   Array of Object IDs to request from the DRI.
+ *
+ * @param array $metadata
+ *   Array of metadata fields to request for each object. If empty or NULL,
+ *   all metadata fields will be returned.
+ *
+ * @param boolean $specimen
+ *   If TRUE, no API call wil be made. Specimen data will be returned instead.
+ *
+ * @return array
+ *   Array of items, each having an objectID and the metadata requested.
+ *
+ * @see DriApiClient::getObjects().
+ *
+ * @see _dri_api_get_objects_specimen()
+ *   Helper function to provide specimen data.
+ */
+function dri_api_get_objects(array $object_ids, array $metadata = NULL, $specimen = FALSE) {
+  $objects = array();
+  if ($specimen) {
+    module_load_include('inc', 'dri_api', 'includes/dri_api.specimen');
+    $objects = _dri_api_get_objects_specimen();
+  }
+  else { // make a real REST API call
+    $dri = new DriApiClient();
+    $objects = $dri->getObjects($object_ids, $metadata);
+  }
+  return $objects;
+}
+
+
+/**
+ * Get a list of files for one or more DRI objects.
+ *
+ * @param array $object_ids
+ *   Array of Object IDs to request from the DRI.
+ *
+ * @param boolean $specimen
+ *   If TRUE, no API call wil be made. Specimen data will be returned instead.
+ *
+ * @return array
+ *   Nested array of objects, and their associated file asset URLs.
+ *
+ * @see DriApiClient::getAssets().
+ *
+ * @see _dri_api_get_assets_specimen()
+ *   Helper function to provide specimen data.
+ */
+function dri_api_get_assets(array $object_ids, $specimen = FALSE) {
+  $assets = array();
+  if ($specimen) {
+    module_load_include('inc', 'dri_api', 'includes/dri_api.specimen');
+    $assets = _dri_api_get_assets_specimen();
+  }
+  else { // make a real REST API call
+    $dri = new DriApiClient();
+    $assets = $dri->getAssets($object_ids);
+  }
+  return $assets;
+}
+
+
+/**
+ * Get related object IDs for a given object.
+ *
+ * @param string $id
+ *   DRI Object ID for which we want to find related objects.
+ *
+ * @param int $count
+ *   Number of related object IDs to retrieve.
+ *
+ * @param boolean $specimen
+ *   If TRUE, no API call wil be made. Specimen data will be returned instead.
+ *
+ * @return array
+ *   Nested array containing DRI Object IDs and relevance scores.
+ *
+ * @see DriApiClient::getRelatedObjects().
+ *
+ * @see _dri_api_get_related_objects_specimen()
+ *   Helper function to provide specimen data.
+ */
+function dri_api_get_related_objects($id, $count = 3, $specimen = FALSE) {
+  $objects = array();
+  if ($specimen) {
+    module_load_include('inc', 'dri_api', 'includes/dri_api.specimen');
+    $objects = _dri_api_get_related_objects_specimen();
+  }
+  else { // make a real REST API call
+    $dri = new DriApiClient();
+    $objects = $dri->getRelatedObjects($id, $count);
+  }
+  return $objects;
+}
+
+
+/**
+ * Get Collections.
+ *
+ * @param boolean $specimen
+ *   If TRUE, no API call wil be made. Specimen data will be returned instead.
+ *
+ * @return array
+ *   Array of DRI Objects representing collections.
+ *
+ * @see DriApiClient::getCollections().
+ *
+ * @see _dri_api_get_collections_specimen()
+ *   Helper function to provide specimen data.
+ *
+ * @todo This one is UNTESTED - DRI API returns 404.
+ */
+function dri_api_get_collections($specimen = FALSE) {
+  $collections = array();
+  if ($specimen) {
+    module_load_include('inc', 'dri_api', 'includes/dri_api.specimen');
+    $collections = _dri_api_get_collections_specimen();
+  }
+  else { // make a real REST API call
+    $dri = new DriApiClient();
+    $collections = $dri->getCollections();
+  }
+  return $collections;
+}

@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for the DRI API module.
+ *
+ * @todo confirm API endpoint URL
+ *  This is liable to change.
+ *
+ * @todo Set dri_api_auth_token here? Easy to assign in settings.php
+ */
+
+
+/**
+ * Implements hook_install().
+ */
+function dri_api_install() {
+  variable_set('dri_api_endpoint_base_url', 'http://repository.dri.ie/00D9DB5F-0CC1-4AE1-B014-968AFA0371AC/');
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function dri_api_uninstall() {
+  variable_del('dri_api_endpoint_base_url');
+  variable_del('dri_api_auth_token');
+}

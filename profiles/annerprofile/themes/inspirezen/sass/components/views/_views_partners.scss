@@ -1,0 +1,78 @@
+/**
+ * Theming for the Partners Landing Page
+ */
+
+.view-partners {
+  .views-row {
+    @extend %transition;
+    @include rem(padding, 2rem 0 2.2rem 0);
+    // padding: 2rem 0 2.2rem 0;
+    border-top: 1px solid $grey-light;
+  }
+  .view-header {
+    @include rem(padding, 0 0 1rem 0);
+    // padding: 0 0 1rem 0;
+  }
+  .views-row-last {
+    @extend %transition;
+      border-bottom: 1px solid $grey-light;
+      @include rem(margin-bottom, 1.5rem);
+      // margin-bottom: 1.5rem;
+    }
+  .node-title {
+    @include element-invisible;
+  }
+  .field-name-title-field {
+    @extend %transition;
+    @extend %f16h2;
+    font-weight: 600;
+    color: $fontcol;
+  }
+  .field-name-field-partners-image-listing-pg {
+    @extend %transition;
+    //background: $grey-partners-bg;
+    float: left;
+    @include rem(margin-right, 2rem);
+    height: 150px;
+    width: 230px;
+    text-align: center;
+  }
+  .field-name-body {
+    @extend %transition;
+    overflow: hidden;
+  }
+  .field-name-field-partners-website {
+    @extend %transition;
+    margin-left: 214px;
+  }
+  // tablet
+  @include responsive(tablet) {}
+
+  // phone
+  @include responsive(phone) {
+    .views-row {
+      border-top: 1px solid $grey-light;
+    }
+    .views-row-last {
+      border-bottom: 1px solid $grey-light;
+      margin-bottom: 1.5rem;
+    }
+    .field-name-title-field {
+      padding-top: 5%;
+    }
+    .field-name-field-partners-image-listing-pg {
+      @include zen-grid-item(5,2);
+    }
+    .field-name-title-field {
+      @include zen-grid-item(5,7);
+    }
+    .field-name-body {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+    .field-name-field-partners-website {
+      @include zen-clear();
+      @include zen-grid-item(10,2);
+    }
+  }
+}

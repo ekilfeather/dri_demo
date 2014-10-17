@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Find a course set of views feature.
+ */
+
+include_once 'find_a_course_set_of_views.features.inc';

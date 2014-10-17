@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Views - Partners Homepage List feature.
+ */
+
+include_once 'views_partners_homepage_list.features.inc';

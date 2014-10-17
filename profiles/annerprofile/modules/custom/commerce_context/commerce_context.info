@@ -1,0 +1,9 @@
+name = Commerce Context
+description = Provides Drupal Commerce related contexts to the Context module.
+core = 7.x
+package = Commerce (contrib)
+php = 5.2.4
+
+dependencies[] = commerce
+dependencies[] = context
+

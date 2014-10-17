@@ -1,0 +1,157 @@
+diff --git a/handlers/handler_field.inc b/handlers/handler_field.inc
+index e75fdac..a01d4b1 100644
+--- a/handlers/handler_field.inc
++++ b/handlers/handler_field.inc
+@@ -94,7 +94,7 @@ class SarniaViewsHandlerField extends views_handler_field {
+ 
+     // Multivalue property settings
+     $server = search_api_server_load($this->sarnia_type_info['search_api_server']);
+-    $solr_fields = $server->getFields();
++    $solr_fields = $server->getRemoteFields();
+     if (!empty($solr_fields[$this->options['solr_property']]) && $solr_fields[$this->options['solr_property']]->isMultivalued()) {
+       $form['multivalue'] = array(
+         '#type' => 'fieldset',
+@@ -194,7 +194,7 @@ class SarniaViewsHandlerField extends views_handler_field {
+     // Check whether the field we're saving is multivalue, so that we don't have
+     // to check every single time we render the field.
+     $server = search_api_server_load($this->sarnia_type_info['search_api_server']);
+-    $solr_fields = $server->getFields();
++    $solr_fields = $server->getRemoteFields();
+     $solr_property = $form_state['values']['options']['solr_property'];
+     $form_state['values']['options']['is_multivalue'] = !empty($solr_fields[$solr_property]) && $solr_fields[$solr_property]->isMultivalued();
+   }
+diff --git a/sarnia.entities.inc b/sarnia.entities.inc
+index 8c74637..c4f460f 100644
+--- a/sarnia.entities.inc
++++ b/sarnia.entities.inc
+@@ -134,7 +134,7 @@ function sarnia_entity_manage_form($form, &$form_state, $server) {
+   // sarnia_index_get_options() does the same thing, but expects an index
+   // machine name, which we don't have at this point.
+   $options = array();
+-  foreach ($server->getFields() as $key => $field) {
++  foreach ($server->getRemoteFields() as $key => $field) {
+     if ($field->isPossibleKey()) {
+       $options[$key] = $key . ' (' . $field->getType() . ')';
+     }
+@@ -264,11 +264,11 @@ function sarnia_entity_cache_form($form, &$form_state, $server) {
+ /**
+  * Submit function for the confirm form from sarnia_entity_cache_form().
+  *
+- * Runs SearchApiSolrService::getFields() with $reset = TRUE.
++ * Runs SearchApiSolrService::getRemoteFields() with $reset = TRUE.
+  */
+ function sarnia_entity_cache_form_submit($form, &$form_state) {
+   $server = $form_state['values']['server'];
+-  $server->getFields(TRUE);
++  $server->getRemoteFields(TRUE);
+ 
+   // Tell the user what just happened.
+   drupal_set_message(t('Refreshed the server field cache for the %server_name server.', array('%server_name' => $server->name)));
+@@ -291,7 +291,7 @@ function sarnia_entity_properties_form($form, &$form_state, $server) {
+ 
+ function sarnia_entity_properties_table($server, $fields = NULL) {
+   if (!isset($fields)) {
+-    $fields = $server->getFields();
++    $fields = $server->getRemoteFields();
+   }
+ 
+   $header = array('Property name', 'DynamicBase', 'Type', 'Schema', 'Uses');
+diff --git a/sarnia.module b/sarnia.module
+index 67254a7..2b627ca 100644
+--- a/sarnia.module
++++ b/sarnia.module
+@@ -446,9 +446,9 @@ function sarnia_entity_property_info() {
+     $info[$machine_name]['properties'] = array();
+ 
+     // Add only fulltext fields as 'text' properties for Search API. If we
+-    // wanted all fields, we would use $server->getFields(), but that could
+-    // significantly increase the size of stored Search API index settings and
+-    // other caches; indexes can easily have over a hundred fields.
++    // wanted all fields, we would use $server->getRemoteFields(), but that
++    // could significantly increase the size of stored Search API index settings
++    // and other caches; indexes can easily have over a hundred fields.
+     // @see http://drupal.org/node/1308638
+     $server = search_api_server_load($entity_info['search_api_server']);
+     foreach ($server->getFulltextFields() as $key => $field) {
+@@ -787,7 +787,7 @@ function sarnia_entity_load($entities, $type) {
+       // If this entity is associated with a sarnia type, override the index 'fields'.
+       if ($entity->server() && $sarnia_type = sarnia_entity_type_load_by_index($entity->machine_name)) {
+         $entity->options['fields'] = array();
+-        foreach ($entity->server()->getFields() as $key => $field) {
++        foreach ($entity->server()->getRemoteFields() as $key => $field) {
+           $entity->options['fields'][$key] = array(
+             'name' => $key,
+             'indexed' => $field->isIndexed(),
+diff --git a/service.inc b/service.inc
+index a76423b..a741f29 100644
+--- a/service.inc
++++ b/service.inc
+@@ -53,7 +53,7 @@ class SarniaSolrService extends SearchApiSolrService {
+    * The special fields "search_api_id" and "search_api_relevance" are also
+    * included.
+    */
+-  protected function getFieldNames(SearchApiIndex $index, $reset = FALSE) {
++  public function getFieldNames(SearchApiIndex $index, $reset = FALSE) {
+     $ret = array();
+ 
+     // Initially, map property Solr field names to themselves.
+@@ -68,7 +68,7 @@ class SarniaSolrService extends SearchApiSolrService {
+     //@TODO these probably shouldn't override.
+     $ret = array_merge($ret, array(
+       // local property name => solr doc property name
+-      'search_api_id' => 'is_search_api_id',
++      'search_api_id' => 'id',
+       'search_api_relevance' => 'score',
+       'search_api_item_id' => $sarnia_entity_info['id_field'],
+       'search_api_random' => 'random_' . rand(1, 200),
+@@ -125,7 +125,7 @@ class SarniaSolrService extends SearchApiSolrService {
+   /**
+    * Stash the results as loaded entities.
+    */
+-  protected function postQuery(array &$results, SearchApiQueryInterface $query, Apache_Solr_Response $response) {
++  protected function postQuery(array &$results, SearchApiQueryInterface $query, $response) {
+     parent::postQuery($results, $query, $response);
+     $sarnia_entity_type = sarnia_entity_server_name_load($this->server->machine_name);
+     entity_get_controller($sarnia_entity_type)->stash($results['results']);
+@@ -153,7 +153,7 @@ class SarniaSolrService extends SearchApiSolrService {
+    * @param boolean $reset
+    *   Reload the cached data?
+    */
+-  public function getFields($reset = FALSE) {
++  public function getRemoteFields($reset = FALSE) {
+     $cid = 'search_api_solr:fields:' . $this->server->machine_name;
+ 
+     // If the data hasn't been retrieved before and we aren't refreshing it, try
+@@ -231,7 +231,7 @@ class SarniaSolrService extends SearchApiSolrService {
+     // Use methods on the SolrField class for basic filtering.
+     $filter_method = $this->getFieldFilterMethod($filter);
+     if ($filter_method) {
+-      foreach ($this->getFields($reset) as $name => $field) {
++      foreach ($this->getRemoteFields($reset) as $name => $field) {
+         if ($field->{$filter_method}()) {
+           $fields[$name] = $field;
+         }
+@@ -254,7 +254,7 @@ class SarniaSolrService extends SearchApiSolrService {
+   var $schema;
+   function schemaApplyRules(&$fields, $filter) {
+     $result_fields = array();
+-    $all_fields = $this->getFields();
++    $all_fields = $this->getRemoteFields();
+     foreach ($fields as $name => $field) {
+       $result_fields[$name] = $field;
+       if ($rule = $this->schemaGetRule($field, $filter)) {
+diff --git a/solr_field.inc b/solr_field.inc
+index 836e3f6..b9860d7 100644
+--- a/solr_field.inc
++++ b/solr_field.inc
+@@ -17,8 +17,8 @@ class SarniaSearchApiSolrField extends SearchApiSolrField {
+    * @param stdClass $field
+    *   A field object from Solr's "Luke" servlet.
+    */
+-  public function __construct($field, $name = NULL) {
+-    $this->field = $field;
++  public function __construct(SearchApiSolrField $field, $name = NULL) {
++    $this->field = $field->field;
+     $this->name = $name;
+   }
+ 

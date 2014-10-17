@@ -1,0 +1,301 @@
+[
+  {
+    "pid": "dri:1n79h822k",
+    "files": [],
+    "metadata": {
+      "title": [
+        "Each Day."
+      ],
+      "subject": [
+        "A Sense of Identity",
+        "The West",
+        "Celtic Revival",
+        "Manners and customs",
+        "Boats and boating",
+        "Cloaks",
+        "Hand"
+      ],
+      "type": [
+        "Image",
+        "Bronzes (visual works)"
+      ],
+      "rights": [
+        "info@eilisoconnell.com"
+      ],
+      "description": [
+        "An abstract bronze sculpture inspired by great cloak, boat forms, hands.\n\t"
+      ],
+      "creator": [
+        "O'Connell, Eilis, 1953-"
+      ],
+      "publisher": [
+        "Crawford Art Gallery, Cork"
+      ],
+      "date": [
+        "2003"
+      ],
+      "format": [
+        "Sculpture"
+      ],
+      "temporal_coverage": [
+        "name=21st century; start=2000-01-01; end=2099-12-31"
+      ],
+      "geographical_coverage": [
+        "name=Cork; north=51.8972; east=-8.47",
+        "name=Ireland; north=53.3333 ; east=-8"
+      ],
+      "geocode_point": [
+        {
+          "type": "Point",
+          "coordinates": [
+            -8.47,
+            51.8972
+          ],
+          "properties": {
+            "name": "Cork"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            -8,
+            53.3333
+          ],
+          "properties": {
+            "name": "Ireland"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "pid": "dri:1n79h8180",
+    "files": [
+      {
+        "crop16_9_width_200_thumbnail": "http://objects.dri.ie/1n79h8180/dri:x059c742j_crop16_9_width_200_thumbnail.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=1qe2A5I4p%2F7%2F%2B21d9m3XKITqanE%3D",
+        "crop16_9_width_228_thumbnail": "http://objects.dri.ie/1n79h8180/dri:x059c742j_crop16_9_width_228_thumbnail.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=JbkHjI%2BKJ8lV%2FXaaPzVVRzBqEY8%3D",
+        "full_size_web_format": "http://objects.dri.ie/1n79h8180/dri:x059c742j_full_size_web_format.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=1Vy5F6LGbrFoSD2hi2Idp0BuLfc%3D",
+        "lightbox_format": "http://objects.dri.ie/1n79h8180/dri:x059c742j_lightbox_format.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=0ReQqXrNEcaafsuv%2BlYJ9%2FNHIOU%3D",
+        "thumbnail_large": "http://objects.dri.ie/1n79h8180/dri:x059c742j_thumbnail_large.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=%2FMbi8tvcNc6o52DzF5U%2Ff53sbgA%3D",
+        "thumbnail_medium": "http://objects.dri.ie/1n79h8180/dri:x059c742j_thumbnail_medium.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=P%2FI2vA4XrGebdcgvn%2FrqO0EMQeE%3D",
+        "thumbnail_small": "http://objects.dri.ie/1n79h8180/dri:x059c742j_thumbnail_small.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=69eOuaCKUAB1VRjoe8RcwhHXN%2BE%3D"
+      }
+    ],
+    "metadata": {
+      "title": [
+        "Off the Donegal coast."
+      ],
+      "subject": [
+        "A Sense of Place",
+        "Manners and customs",
+        "Boats and boating",
+        "Fishers",
+        "Currachs",
+        "The West"
+      ],
+      "type": [
+        "Image",
+        "Oil paintings",
+        "Seascapes"
+      ],
+      "rights": [
+        "Contact the Design and Artists Copyright Society. https://www.dacs.org.uk/"
+      ],
+      "description": [
+        "\n\tIslanders row out in currachs to meet a ship bringing supplies to the\n\tisland."
+      ],
+      "creator": [
+        "Yeats, Jack Butler, 1871-1957"
+      ],
+      "publisher": [
+        "Crawford Art Gallery, Cork"
+      ],
+      "date": [
+        "1922"
+      ],
+      "format": [
+        "Paintings"
+      ],
+      "temporal_coverage": [
+        "name=20th century; start=1900-01-01; end=1999-12-31"
+      ],
+      "geographical_coverage": [
+        "name=Donegal; north=54.860801; east=-7.993412",
+        "name=Sligo; north=54.25; east=-8.66667"
+      ],
+      "geocode_point": [
+        {
+          "type": "Point",
+          "coordinates": [
+            -7.993412,
+            54.860801
+          ],
+          "properties": {
+            "name": "Donegal"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            -8.66667,
+            54.25
+          ],
+          "properties": {
+            "name": "Sligo"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "pid": "dri:1n79h8198",
+    "files": [
+      {
+        "crop16_9_width_200_thumbnail": "http://objects.dri.ie/1n79h8198/dri:x059c743t_crop16_9_width_200_thumbnail.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=baNIPM910suwapVNpJjf1lVAGWc%3D",
+        "crop16_9_width_228_thumbnail": "http://objects.dri.ie/1n79h8198/dri:x059c743t_crop16_9_width_228_thumbnail.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=mpzf2P9P3beFI4U1bPrGIPOWHJ8%3D",
+        "full_size_web_format": "http://objects.dri.ie/1n79h8198/dri:x059c743t_full_size_web_format.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=INgYRbBkXvnEkduAM1HZskHEoSw%3D",
+        "lightbox_format": "http://objects.dri.ie/1n79h8198/dri:x059c743t_lightbox_format.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=QBygwV%2FHPvKtTocim92zBGVb350%3D",
+        "thumbnail_large": "http://objects.dri.ie/1n79h8198/dri:x059c743t_thumbnail_large.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=vkOH1UxS0F%2Bks5IP6zMIuqc3CH8%3D",
+        "thumbnail_medium": "http://objects.dri.ie/1n79h8198/dri:x059c743t_thumbnail_medium.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=VRX6RfqxkOHFfv7a3rmaSVTo3GQ%3D",
+        "thumbnail_small": "http://objects.dri.ie/1n79h8198/dri:x059c743t_thumbnail_small.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=ykrh5gO5j5G0CzIvCK7k7Zn8bj0%3D"
+      }
+    ],
+    "metadata": {
+      "title": [
+        "Arts and crafts casket."
+      ],
+      "subject": [
+        "A Sense of Identity",
+        "Handicraft",
+        "Design",
+        "Enamel and enameling",
+        "Metalwork",
+        "Celtic Revival",
+        "Celtic influences",
+        "Decorative arts"
+      ],
+      "type": [
+        "Image",
+        "Containers",
+        "Boxes",
+        "Enamel boxes"
+      ],
+      "rights": [
+        "© Fred Archer"
+      ],
+      "description": [
+        "\n\tMetal casket ornamented with enamel and metalwork in a Celtic Revival\n\tstyle."
+      ],
+      "creator": [
+        "Archer, James"
+      ],
+      "publisher": [
+        "Crawford Art Gallery, Cork"
+      ],
+      "date": [
+        "1927"
+      ],
+      "format": [
+        "Objects"
+      ],
+      "temporal_coverage": [
+        "name=20th century; start=1900-01-01; end=1999-12-31"
+      ],
+      "geographical_coverage": [
+        "name=Cork; north=51.8972; east=-8.47",
+        "name=Ireland; north=53.3333 ; east=-8"
+      ],
+      "geocode_point": [
+        {
+          "type": "Point",
+          "coordinates": [
+            -8.47,
+            51.8972
+          ],
+          "properties": {
+            "name": "Cork"
+          }
+        },
+        {
+          "type": "Point",
+          "coordinates": [
+            -8,
+            53.3333
+          ],
+          "properties": {
+            "name": "Ireland"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "pid": "dri:1n79h8201",
+    "files": [
+      {
+        "crop16_9_width_200_thumbnail": "http://objects.dri.ie/1n79h8201/dri:x059c7443_crop16_9_width_200_thumbnail.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=50lW%2FSJk4ru5hLRBrlZtEZZu8Ss%3D",
+        "crop16_9_width_228_thumbnail": "http://objects.dri.ie/1n79h8201/dri:x059c7443_crop16_9_width_228_thumbnail.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=quZaK%2BmamtibEGmBZ7H%2FvqaCfjw%3D",
+        "full_size_web_format": "http://objects.dri.ie/1n79h8201/dri:x059c7443_full_size_web_format.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=ZupyGFUhdxdvY%2F0GhNkHrQbavYU%3D",
+        "lightbox_format": "http://objects.dri.ie/1n79h8201/dri:x059c7443_lightbox_format.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=7VRRHGJyew9d2PZyU0YDxobY%2FqY%3D",
+        "thumbnail_large": "http://objects.dri.ie/1n79h8201/dri:x059c7443_thumbnail_large.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=PhUj1O9QAheZ0RZ56jHrNR5u%2FSA%3D",
+        "thumbnail_medium": "http://objects.dri.ie/1n79h8201/dri:x059c7443_thumbnail_medium.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=M%2BCnovG2ufYqBwRLv3Ye8YbGPO0%3D",
+        "thumbnail_small": "http://objects.dri.ie/1n79h8201/dri:x059c7443_thumbnail_small.png?AWSAccessKeyId=OMZPBA7D6U3MZ6MBVJZQ&Expires=1396534113&Signature=fQnlTGeyRYKaryHdl1k6CKPz4EA%3D"
+      }
+    ],
+    "metadata": {
+      "title": [
+        "Siren."
+      ],
+      "subject": [
+        "A Sense of Identity",
+        "Manners and customs",
+        "Women",
+        "Singing",
+        "Mythology",
+        "Sirens (Mythology)",
+        "Celtic Revival"
+      ],
+      "type": [
+        "Image",
+        "Bronzes (visual works)",
+        "Figurines"
+      ],
+      "rights": [
+        "© Crawford Art Gallery, Cork."
+      ],
+      "description": [
+        "Depiction of a woman singing."
+      ],
+      "creator": [
+        "Connor, Jerome, 1874-1943"
+      ],
+      "publisher": [
+        "Crawford Art Gallery, Cork"
+      ],
+      "date": [
+        "1936"
+      ],
+      "format": [
+        "Sculpture"
+      ],
+      "temporal_coverage": [
+        "name=20th century; start=1900-01-01; end=1999-12-31"
+      ],
+      "geographical_coverage": [
+        "name=Ireland; north=53.3333 ; east=-8"
+      ],
+      "geocode_point": [
+        {
+          "type": "Point",
+          "coordinates": [
+            -8,
+            53.3333
+          ],
+          "properties": {
+            "name": "Ireland"
+          }
+        }
+      ]
+    }
+  }
+]

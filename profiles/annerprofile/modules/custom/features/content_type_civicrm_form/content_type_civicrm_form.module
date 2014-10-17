@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Content type CiviCRM Form feature.
+ */
+
+include_once 'content_type_civicrm_form.features.inc';

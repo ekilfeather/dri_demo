@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Annertech - Date Formats feature.
+ */
+
+include_once 'annertech_date_formats.features.inc';

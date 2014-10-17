@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Annertech - Cookie Compliance feature.
+ */
+
+include_once 'annertech_cookie_compliance.features.inc';
