@@ -203,6 +203,7 @@ dependencies[] = views_taxonomy_terms
 dependencies[] = views_partners
 dependencies[] = views_partners_homepage_list
 dependencies[] = views_custom_search
+dependencies[] = views_demo_page
 
 ; Custom features (Search)
 ;dependencies[] = dri_search_api_sarnia_server
