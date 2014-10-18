@@ -12,14 +12,14 @@
     <header class="header" id="header" role="banner">
 
         <?php if ($logo): ?>
-          <a href="<?php print $front_page; ?>" title="<?php print t('Inspiring Ireland'); ?>" rel="home" class="header__logo" id="logo"><img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" class="header__logo-image" /></a>
+          <a href="<?php print $front_page; ?>" title="<?php print $site_name; ?>" rel="home" class="header__logo" id="logo"><img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" class="header__logo-image" /></a>
         <?php endif; ?>
 
         <?php if ($site_name || $site_slogan): ?>
           <div class="header__name-and-slogan" id="name-and-slogan">
             <?php if ($site_name): ?>
               <h1 class="header__site-name" id="site-name">
-                <a href="<?php print $front_page; ?>" title="<?php print t('Inspiring Ireland'); ?>" class="header__site-link" rel="home"><span><?php print $site_name; ?></span></a>
+                <a href="<?php print $front_page; ?>" title="<?php print $site_name; ?>" class="header__site-link" rel="home"><span><?php print $site_name; ?></span></a>
               </h1>
             <?php endif; ?>
 
@@ -137,7 +137,7 @@
 <div id="sub-footer" class="clearfix">
   <div class="sub-footer-inner">
     <div id="sub-footer-left">
-      <div class="footer-copyright"><?php print t('Department of Arts, Heritage & the Gaeltacht') . ' ' . '&copy;'; ?> <?php print date("Y"); ?></div>
+      <div class="footer-copyright"><?php print t('Digital Repository of Ireland') ?></div>
       <!-- <div class="footer-divider">|
       </div> -->
       <div class="footer-terms"><a href="/terms">Terms & Conditions</a></div>
