@@ -7,8 +7,6 @@
  * @see https://drupal.org/node/1728148
  */
 ?>
-<?php global $language ;
-$lang_name = $language->language ; ?>
 <div class="header-wrapper clearfix">
   <div class="header-outer clearfix">
     <header class="header" id="header" role="banner">

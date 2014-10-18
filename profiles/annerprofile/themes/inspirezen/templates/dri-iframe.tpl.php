@@ -15,6 +15,7 @@
  */
 ?>
 <?php global $base_url; ?>
+
 <div class="iframe-object-wrapper">
   <div class="iframe-object-image">
   	<?php if ($colorbox_image): ?>
@@ -24,6 +25,7 @@
 	</div>
   <div class="iframe-object-inner">
     <div class="iframe-object-title"><?php print $title; ?></div>
+      	<?php print $video_player; ?>  
     <div class="iframe-object-label"><?php print t('Creator:'); ?></div>
     <div class="iframe-object-creator"><?php print $creator; ?></div>
     <div class="iframe-object-label"><?php print t('Date:'); ?></div>
