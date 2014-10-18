@@ -126,6 +126,31 @@ function template_preprocess_dri_object(&$variables) {
       'alt' => $variables['elements']['0']['metadata']['title']['0'],
     ));
   }
+  
+  //check to see if there is an audio file and if so create an audio player using the mediaelement module
+  if ($variables['elements']['0']['files']['0']['mp3']) {
+    // set up the attributes to be sent to theme_mediaelement_audio()
+    $audio_attrs = array(
+      // the audio src, e.g. public://audio.mp3
+      'src' => $variables['elements']['0']['files']['0']['mp3'],
+      // set the width to whatever is appropriate for your site
+      //'width' => '100%',
+    );
+    // create the HTML to insert in the template file using theme_mediaelement_audio()
+    $variables['audio_player'] = theme('mediaelement_audio', array('attributes' => $audio_attrs, 'settings' => array()));
+  }
+  //check to see if there is an video file and if so create an audio player using the mediaelement module
+  if ($variables['elements']['0']['files']['0']['webm']) {
+    // set up the attributes to be sent to theme_mediaelement_video()
+    $video_attrs = array(
+      // the audio src, e.g. public://audio.mp3
+      'src' => $variables['elements']['0']['files']['0']['webm'],
+      // set the width to whatever is appropriate for your site
+      //'width' => '100%',
+    );
+    // create the HTML to insert in the template file using theme_mediaelement_video()
+    $variables['video_player'] = theme('mediaelement_video', array('attributes' => $video_attrs, 'settings' => array()));
+  }
 
   // clean up date formats
   $dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['date']);
@@ -234,6 +259,7 @@ function template_preprocess_dri_iframe(&$variables) {
 	    'alt' => $variables['elements']['0']['metadata']['title']['0'],
 	  ));
   }
+  //check to see if there is an audio file and if so create an audio player using the mediaelement module
   if ($variables['elements']['0']['files']['0']['mp3']) {
     // set up the attributes to be sent to theme_mediaelement_audio()
     $audio_attrs = array(
@@ -244,6 +270,18 @@ function template_preprocess_dri_iframe(&$variables) {
     );
     // create the HTML to insert in the template file using theme_mediaelement_audio()
     $variables['audio_player'] = theme('mediaelement_audio', array('attributes' => $audio_attrs, 'settings' => array()));
+  }
+  //check to see if there is an video file and if so create an audio player using the mediaelement module
+  if ($variables['elements']['0']['files']['0']['webm']) {
+    // set up the attributes to be sent to theme_mediaelement_video()
+    $video_attrs = array(
+      // the audio src, e.g. public://audio.mp3
+      'src' => $variables['elements']['0']['files']['0']['webm'],
+      // set the width to whatever is appropriate for your site
+      //'width' => '100%',
+    );
+    // create the HTML to insert in the template file using theme_mediaelement_video()
+    $variables['video_player'] = theme('mediaelement_video', array('attributes' => $video_attrs, 'settings' => array()));
   }
 
   // clean up date formats

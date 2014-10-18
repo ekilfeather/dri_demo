@@ -30,6 +30,12 @@
     <?php if ($main_image): ?>
       <?php print $main_image ?>
     <?php endif; ?>
+    <?php if ($audio_player): ?>
+      <?php print $audio_player ?>
+    <?php endif; ?>
+    <?php if ($video_player): ?>
+      <?php print $video_player ?>
+    <?php endif; ?>
   </div>
 
   <div class="od-main-wrapper-outer">
