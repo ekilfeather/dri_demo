@@ -186,12 +186,14 @@ dependencies[] = content_types_news
 dependencies[] = content_types_partners
 dependencies[] = content_types_homepage
 dependencies[] = content_types_landing_page
+dependencies[] = demo_page
 
 ; Custom features (Pages)
 
 ; Custom features (Contexts)
 dependencies[] = contexts_news_pages_blocks
 dependencies[] = contexts_sitewide
+dependencies[] = demo_page_page
 
 ; Custom features (Views)
 dependencies[] = views_news
