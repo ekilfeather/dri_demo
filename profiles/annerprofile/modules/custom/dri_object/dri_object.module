@@ -228,10 +228,12 @@ function template_preprocess_dri_iframe(&$variables) {
   $variables['title'] = $variables['elements']['0']['metadata']['title']['0'];
   $variables['description'] = $variables['elements']['0']['metadata']['description']['0'];
   $variables['creator'] = $variables['elements']['0']['metadata']['creator']['0'];
-  $variables['colorbox_image'] = theme('image', array(
-    'path' => $variables['elements']['0']['files'][0]['thumbnail_large'],
-    'alt' => $variables['elements']['0']['metadata']['title']['0'],
-  ));
+  if ($variables['elements']['0']['files'][0]['thumbnail_large']) {
+	  $variables['colorbox_image'] = theme('image', array(
+	    'path' => $variables['elements']['0']['files'][0]['thumbnail_large'],
+	    'alt' => $variables['elements']['0']['metadata']['title']['0'],
+	  ));
+  } 
 
   // clean up date formats
   $dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['date']);
