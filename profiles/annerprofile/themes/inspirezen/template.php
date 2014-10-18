@@ -85,6 +85,8 @@ function inspirezen_preprocess_node(&$variables, $hook) {
  * @param $vars
  *   An array of variables to pass to the theme template.
  */
+ 
+
 function inspirezen_preprocess_field(&$vars){
   // Preprocess the main slider on homepage.
   if ($vars['element']['#field_name'] == 'field_home_slider_id') {
@@ -248,7 +250,11 @@ function inspirezen_preprocess_block(&$variables, $hook) {
  */
 function inspirezen_preprocess_dri_iframe(&$variables) {
 
+
+
   $query_params = drupal_get_query_parameters();
+  global $language ;
+  $lang_name = $language->language;
 
   if (is_numeric($query_params['fc_item_id']) && intval($query_params['fc_item_id'])) {
 
@@ -256,7 +262,7 @@ function inspirezen_preprocess_dri_iframe(&$variables) {
 
     if (get_class($fc_item) == 'FieldCollectionItemEntity') {
       $variables['fc_item'] = $fc_item;
-      $curated_text = field_get_items('field_collection_item', $fc_item, 'field_lp_fc_curated_text');
+      $curated_text = field_get_items('field_collection_item', $fc_item, 'field_lp_fc_curated_text', 'ga');
       $variables['curated_text'] = $curated_text[0]['safe_value'];
     }
   }
