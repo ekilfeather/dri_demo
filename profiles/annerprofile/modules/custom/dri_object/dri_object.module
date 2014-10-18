@@ -238,7 +238,7 @@ function template_preprocess_dri_iframe(&$variables) {
     // set up the attributes to be sent to theme_mediaelement_audio()
     $audio_attrs = array(
       // the audio src, e.g. public://audio.mp3
-      'src' => $elements['0']['files']['0']['mp3'],
+      'src' => $variables['elements']['0']['files']['0']['mp3'],
       // set the width to whatever is appropriate for your site
       'width' => '100%',
     );

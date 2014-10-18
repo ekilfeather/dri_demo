@@ -18,17 +18,12 @@
 <div class="iframe-object-wrapper">
   <div class="iframe-object-image">
   	<?php if ($colorbox_image): ?>
-  	<?php print $colorbox_image; ?>      
+	  	<?php print $colorbox_image; ?>      
 	<?php endif; ?>
   	<?php print $audio_player; ?>  
 	</div>
   <div class="iframe-object-inner">
     <div class="iframe-object-title"><?php print $title; ?></div>
-    <div class="iframe-object-title">
-    	<audio>
-    		<source src="<?php print $elements['0']['files']['0']['mp3']; ?>" type="audio/mpeg">
-    	</audio>
-    </div>
     <div class="iframe-object-label"><?php print t('Creator:'); ?></div>
     <div class="iframe-object-creator"><?php print $creator; ?></div>
     <div class="iframe-object-label"><?php print t('Date:'); ?></div>

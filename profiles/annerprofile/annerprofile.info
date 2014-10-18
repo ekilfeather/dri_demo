@@ -91,6 +91,8 @@ dependencies[] = media_internet
 dependencies[] = media_youtube
 dependencies[] = smartcrop
 dependencies[] = imagecache_external
+dependencies[] = mediaelement
+
 
 ; Feeds
 dependencies[] = feeds
