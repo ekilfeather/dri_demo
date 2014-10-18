@@ -76,13 +76,12 @@ function languages_config_strongarm() {
       ),
       'file' => 'includes/locale.inc',
     ),
-    'locale-session' => array(
+    'locale-browser' => array(
       'callbacks' => array(
-        'language' => 'locale_language_from_session',
-        'switcher' => 'locale_language_switcher_session',
-        'url_rewrite' => 'locale_language_url_rewrite_session',
+        'language' => 'locale_language_from_browser',
       ),
       'file' => 'includes/locale.inc',
+      'cache' => 0,
     ),
     'language-default' => array(
       'callbacks' => array(
@@ -102,14 +101,6 @@ function languages_config_strongarm() {
         'language' => 'locale_language_from_url',
         'switcher' => 'locale_language_switcher_url',
         'url_rewrite' => 'locale_language_url_rewrite_url',
-      ),
-      'file' => 'includes/locale.inc',
-    ),
-    'locale-session' => array(
-      'callbacks' => array(
-        'language' => 'locale_language_from_session',
-        'switcher' => 'locale_language_switcher_session',
-        'url_rewrite' => 'locale_language_url_rewrite_session',
       ),
       'file' => 'includes/locale.inc',
     ),
