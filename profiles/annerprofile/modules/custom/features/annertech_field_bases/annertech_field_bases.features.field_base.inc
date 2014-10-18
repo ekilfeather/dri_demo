@@ -446,7 +446,7 @@ function annertech_field_bases_field_default_field_bases() {
       'title_value' => '',
       'url' => 0,
     ),
-    'translatable' => 0,
+    'translatable' => 1,
     'type' => 'link_field',
   );
 
@@ -690,7 +690,7 @@ function annertech_field_bases_field_default_field_bases() {
     'settings' => array(
       'entity_translation_sync' => FALSE,
     ),
-    'translatable' => 0,
+    'translatable' => 1,
     'type' => 'text_long',
   );
 
@@ -870,7 +870,7 @@ function annertech_field_bases_field_default_field_bases() {
       'hide_blank_items' => 1,
       'path' => '',
     ),
-    'translatable' => 0,
+    'translatable' => 1,
     'type' => 'field_collection',
   );
 
