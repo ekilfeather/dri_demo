@@ -738,7 +738,7 @@ function content_types_homepage_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_home_wii_text',
-    'label' => 'What is Inspriing Ireland - Text',
+    'label' => 'What is DRI Demo - Text',
     'required' => 0,
     'settings' => array(
       'entity_translation_sync' => FALSE,
@@ -779,7 +779,7 @@ function content_types_homepage_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_home_wii_title',
-    'label' => 'What is Inspriing Ireland - Title',
+    'label' => 'What is DRI Demo - Title',
     'required' => 0,
     'settings' => array(
       'entity_translation_sync' => FALSE,
@@ -860,8 +860,8 @@ function content_types_homepage_field_default_field_instances() {
   t('Slider Title');
   t('The latest news post is automatically pulled in. <strong>You should not need to edit this field.</strong>');
   t('Title');
-  t('What is Inspriing Ireland - Text');
-  t('What is Inspriing Ireland - Title');
+  t('What is DRI Demo - Text');
+  t('What is DRI Demo - Title');
 
   return $field_instances;
 }

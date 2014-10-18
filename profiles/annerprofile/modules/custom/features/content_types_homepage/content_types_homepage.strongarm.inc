@@ -101,6 +101,9 @@ function content_types_homepage_strongarm() {
         'redirect' => array(
           'weight' => '9',
         ),
+        'language' => array(
+          'weight' => '5',
+        ),
       ),
       'display' => array(),
     ),

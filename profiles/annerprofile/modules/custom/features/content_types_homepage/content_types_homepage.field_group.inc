@@ -56,10 +56,10 @@ function content_types_homepage_field_group_info() {
     'label' => 'Center Block',
     'weight' => '6',
     'children' => array(
-      0 => 'field_home_center_link',
-      1 => 'field_home_center_object_id',
-      2 => 'field_home_center_title',
-      3 => 'field_home_center_image',
+      0 => 'field_home_center_image',
+      1 => 'field_home_center_link',
+      2 => 'field_home_center_object_id',
+      3 => 'field_home_center_title',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
@@ -172,10 +172,10 @@ function content_types_homepage_field_group_info() {
     'label' => 'Left Block',
     'weight' => '5',
     'children' => array(
-      0 => 'field_home_left_link',
-      1 => 'field_home_left_object_id',
-      2 => 'field_home_left_title',
-      3 => 'field_home_left_image',
+      0 => 'field_home_left_image',
+      1 => 'field_home_left_link',
+      2 => 'field_home_left_object_id',
+      3 => 'field_home_left_title',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
@@ -357,10 +357,10 @@ function content_types_homepage_field_group_info() {
     'weight' => '4',
     'children' => array(
       0 => 'field_home_slider_id',
-      1 => 'field_home_slider_link',
-      2 => 'field_home_slider_text',
-      3 => 'field_home_slider_title',
-      4 => 'field_home_slider_image',
+      1 => 'field_home_slider_image',
+      2 => 'field_home_slider_link',
+      3 => 'field_home_slider_text',
+      4 => 'field_home_slider_title',
     ),
     'format_type' => 'tab',
     'format_settings' => array(
