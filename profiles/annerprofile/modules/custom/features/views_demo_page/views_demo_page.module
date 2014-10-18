@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Views Demo Page feature.
+ */
+
+include_once 'views_demo_page.features.inc';
