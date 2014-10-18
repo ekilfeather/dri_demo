@@ -63,7 +63,7 @@
   <?php
     print render($content['group_home_left']);
     print render($content['group_home_center']);
-    print render($content['group_home_news']);
+    //print render($content['group_home_news']);
     print render($content['group_home_partners']);
 
     //print render($content);
