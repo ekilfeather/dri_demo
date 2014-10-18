@@ -16,6 +16,29 @@
   ul.menu li {
     display: inline-block;
   }
+  
+  //stop the padding on search from overlaping language selector
+  .views-exposed-widget {
+    padding: 0 1em 0 0;
+  }
+  
+  //language selector
+  .language-switcher-locale-url {
+    list-style-type: none;
+    float: right;
+    display: flex;
+    margin: 0;
+    li.first {
+      padding-right: 10px;
+    }
+    li.first :after {
+      padding-left: 10px;
+      content: "|";
+    }
+    li.active > a {
+      font-weight: bold;
+    }
+  }
 }
 
 // Make header wrapper 100%

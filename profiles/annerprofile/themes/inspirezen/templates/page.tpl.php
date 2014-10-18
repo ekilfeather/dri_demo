@@ -7,6 +7,8 @@
  * @see https://drupal.org/node/1728148
  */
 ?>
+<?php global $language ;
+$lang_name = $language->language ; ?>
 <div class="header-wrapper clearfix">
   <div class="header-outer clearfix">
     <header class="header" id="header" role="banner">
@@ -42,18 +44,26 @@
                 'class' => array('element-invisible'),
               ),
             )); ?>
+
           </nav>
         <?php endif; ?>
 
         <?php print render($page['header']); ?>
+		<?php
+			$block = module_invoke('locale', 'block_view', 'language');
+			print $block['content'];
+		?>
 
         <div id="navigation">
 
           <?php if ($main_menu): ?>
-            <nav id="main-menu" role="navigation" tabindex="-1"></nav>
+            <nav id="main-menu" role="navigation" tabindex="-1">
+
+            </nav>
           <?php endif; ?>
 
           <?php print render($page['navigation']); ?>
+          
 
         </div>
 
@@ -153,6 +163,8 @@
       <div class="footer-design-credits"><?php print t('Powered by <a href="@url">Digital Repository of Ireland</a>', array('@url' => url('http://www.dri.ie/'))); ?><br >
         <?php print t('Designed by') . ' '; ?><a href="http://www.daracreative.ie">dara creative</a> | <?php print t('Built by') . ' '; ?> <a href="http://www.annertech.com">Annertech</a>
       </div>
+
+
     </div>
   </div>
 </div>

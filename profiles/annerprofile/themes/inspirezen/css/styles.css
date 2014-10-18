@@ -2808,8 +2808,32 @@ tr.selected td {
 #header ul.menu li {
   display: inline-block;
 }
+/* line 21, ../sass/components/regions/_header.scss */
+#header .views-exposed-widget {
+  padding: 0 1em 0 0;
+}
+/* line 26, ../sass/components/regions/_header.scss */
+#header .language-switcher-locale-url {
+  list-style-type: none;
+  float: right;
+  display: flex;
+  margin: 0;
+}
+/* line 31, ../sass/components/regions/_header.scss */
+#header .language-switcher-locale-url li.first {
+  padding-right: 10px;
+}
+/* line 34, ../sass/components/regions/_header.scss */
+#header .language-switcher-locale-url li.first :after {
+  padding-left: 10px;
+  content: "|";
+}
+/* line 38, ../sass/components/regions/_header.scss */
+#header .language-switcher-locale-url li.active > a {
+  font-weight: bold;
+}
 
-/* line 23, ../sass/components/regions/_header.scss */
+/* line 46, ../sass/components/regions/_header.scss */
 .header-wrapper {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSI5NSUiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz48c3RvcCBvZmZzZXQ9Ijk2JSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjxzdG9wIG9mZnNldD0iOTclIiBzdG9wLWNvbG9yPSIjZDZkNmQ2Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZjhmOGY4Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
   background-size: 100%;
@@ -2831,13 +2855,13 @@ tr.selected td {
   width: 100%;
 }
 
-/* line 34, ../sass/components/regions/_header.scss */
+/* line 57, ../sass/components/regions/_header.scss */
 .header-outer {
   max-width: 960px;
   margin: 0 auto;
 }
 
-/* line 41, ../sass/components/regions/_header.scss */
+/* line 64, ../sass/components/regions/_header.scss */
 #site-name a {
   display: block;
   text-indent: -119988px;
@@ -2851,7 +2875,7 @@ tr.selected td {
   height: 62px;
 }
 @media only screen and (max-width: 480px) {
-  /* line 41, ../sass/components/regions/_header.scss */
+  /* line 64, ../sass/components/regions/_header.scss */
   #site-name a {
     text-indent: -119988px;
     overflow: hidden;
@@ -2865,7 +2889,7 @@ tr.selected td {
   }
 }
 
-/* line 51, ../sass/components/regions/_header.scss */
+/* line 74, ../sass/components/regions/_header.scss */
 #navigation {
   /* Move the navbar up inside #main's padding. */
 }
