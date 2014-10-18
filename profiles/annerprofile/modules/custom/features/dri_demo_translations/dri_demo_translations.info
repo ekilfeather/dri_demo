@@ -1,0 +1,10 @@
+name = DRI Demo Translations
+description = Strings which have been translated in the i18n UI can be exported to code using this feature.
+core = 7.x
+package = Translation Features
+dependencies[] = features
+dependencies[] = features_translations
+features[features_api][] = api:2
+features[translations][] = ga:default
+features[translations][] = ga:field
+features[translations][] = ga:menu

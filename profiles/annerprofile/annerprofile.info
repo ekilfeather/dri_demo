@@ -159,6 +159,8 @@ dependencies[] = variable_store
 dependencies[] = entity_translation
 dependencies[] = title
 dependencies[] = dnl
+; Translated Strings to code
+dependencies[] = features_translations
 
 ; Search modules
 dependencies[] = search_api
