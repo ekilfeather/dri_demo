@@ -64,7 +64,7 @@ function views_partners_views_default_views() {
   $handler->display->display_options['header']['area']['id'] = 'area';
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
-  $handler->display->display_options['header']['area']['content'] = 'Inspiring Ireland is a large scale, unprecedented collaborative project between the Department of Arts, Heritage and the Gaeltacht, the Digital Repository of Ireland, and eight of Ireland’s national cultural institutions. Visit the partner sites below:';
+  $handler->display->display_options['header']['area']['content'] = 'DRI Demo is a collaborative project between the Digital Repository of Ireland, and collection holders. Visit the partner sites below:';
   $handler->display->display_options['header']['area']['format'] = 'extra_html';
   $handler->display->display_options['path'] = 'about/partners';
   $translatables['partners'] = array(
@@ -78,7 +78,7 @@ function views_partners_views_default_views() {
     t('Desc'),
     t('Page: Partners Listing'),
     t('Our Partners'),
-    t('Inspiring Ireland is a large scale, unprecedented collaborative project between the Department of Arts, Heritage and the Gaeltacht, the Digital Repository of Ireland, and eight of Ireland’s national cultural institutions. Visit the partner sites below:'),
+    t('DRI Demo is a collaborative project between the Digital Repository of Ireland, and collection holders. Visit the partner sites below:'),
   );
   $export['partners'] = $view;
 
