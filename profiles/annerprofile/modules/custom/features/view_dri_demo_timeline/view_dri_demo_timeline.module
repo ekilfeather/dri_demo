@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the DRI Demo Timeline View feature.
+ */
+
+include_once 'view_dri_demo_timeline.features.inc';
