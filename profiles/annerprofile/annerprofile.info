@@ -236,3 +236,6 @@ dependencies[] = annertech_menu_blocks
 
 dependencies[] = languages_config
 
+;Timeline
+dependencies[] = views_timelinejs
+
