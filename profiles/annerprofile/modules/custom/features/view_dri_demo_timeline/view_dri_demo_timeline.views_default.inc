@@ -67,9 +67,7 @@ function view_dri_demo_timeline_views_default_views() {
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'timelinejs';
   $handler->display->display_options['style_options']['timeline_fields']['media'] = 'field_timeline_image';
-  $handler->display->display_options['style_options']['timeline_fields']['tag'] = 'field_tag';
   $handler->display->display_options['style_options']['timeline_fields']['date'] = 'field_timeline_date';
-  $handler->display->display_options['style_options']['timeline_fields']['bodytext'] = 'body';
   $handler->display->display_options['style_options']['timeline_fields']['headline'] = 'title';
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
