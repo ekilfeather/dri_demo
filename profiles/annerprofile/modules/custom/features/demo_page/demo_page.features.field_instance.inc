@@ -102,16 +102,9 @@ function demo_page_field_default_field_instances() {
   // Exported field_instance: 'node-demo_page-field_tag'
   $field_instances['node-demo_page-field_tag'] = array(
     'bundle' => 'demo_page',
-    'default_value' => array(
-      0 => array(
-        'tid' => 'autocreate',
-        'vid' => 4,
-        'name' => 'KDW',
-        'vocabulary_machine_name' => 'dri_institute',
-      ),
-    ),
+    'default_value' => array(),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Select the theme that this Demo page belongs to. This will be used to group Demo pages from the same theme onto a Timeline.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -129,7 +122,7 @@ function demo_page_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_tag',
-    'label' => 'Tag',
+    'label' => 'Theme Tag',
     'required' => 0,
     'settings' => array(
       'entity_translation_sync' => FALSE,
@@ -137,12 +130,12 @@ function demo_page_field_default_field_instances() {
     ),
     'widget' => array(
       'active' => 0,
-      'module' => 'taxonomy',
+      'module' => 'options',
       'settings' => array(
         'autocomplete_path' => 'taxonomy/autocomplete',
         'size' => 60,
       ),
-      'type' => 'taxonomy_autocomplete',
+      'type' => 'options_select',
       'weight' => 36,
     ),
   );
@@ -308,7 +301,8 @@ function demo_page_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Body');
   t('Objects - Fill in only one image field');
-  t('Tag');
+  t('Select the theme that this Demo page belongs to. This will be used to group Demo pages from the same theme onto a Timeline.');
+  t('Theme Tag');
   t('Timeline Date');
   t('Timeline Image');
   t('Title');
