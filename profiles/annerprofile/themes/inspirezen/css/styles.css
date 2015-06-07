@@ -3706,7 +3706,7 @@ tr.selected td {
 /* line 84, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-slider-wrapper {
   position: absolute;
-  top: 100px;
+  top: 200px;
 }
 @media only screen and (max-width: 480px) {
   /* line 84, ../sass/components/nodes/_homepage.scss */
