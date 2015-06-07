@@ -3706,7 +3706,7 @@ tr.selected td {
 /* line 84, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-slider-wrapper {
   position: absolute;
-  top: 180px;
+  top: 100px;
 }
 @media only screen and (max-width: 480px) {
   /* line 84, ../sass/components/nodes/_homepage.scss */
@@ -4750,10 +4750,6 @@ tr.selected td {
   }
 }
 @media only screen and (min-width: 481px) and (max-width: 760px) {
-  /* line 99, ../sass/components/nodes/_landing_page_iframe.scss */
-  .iframe-object-wrapper {
-    max-width: 100%;
-  }
   /* line 101, ../sass/components/nodes/_landing_page_iframe.scss */
   .iframe-object-wrapper .iframe-object-image {
     /* 3 */
@@ -4792,11 +4788,7 @@ tr.selected td {
   }
 }
 @media only screen and (max-width: 480px) {
-  /* line 119, ../sass/components/nodes/_landing_page_iframe.scss */
-  .iframe-object-wrapper {
-    max-width: 100%;
-  }
-  /* line 121, ../sass/components/nodes/_landing_page_iframe.scss */
+  /* line 120, ../sass/components/nodes/_landing_page_iframe.scss */
   .iframe-object-wrapper .iframe-object-image {
     clear: left;
     /* 3 */
@@ -4810,7 +4802,7 @@ tr.selected td {
     margin-right: 2rem;
     /* 9 */
   }
-  /* line 125, ../sass/components/nodes/_landing_page_iframe.scss */
+  /* line 124, ../sass/components/nodes/_landing_page_iframe.scss */
   .iframe-object-wrapper .iframe-object-inner {
     clear: left;
     float: left;
@@ -4818,14 +4810,14 @@ tr.selected td {
     margin-left: 0%;
     margin-right: -66.66667%;
   }
-  /* line 129, ../sass/components/nodes/_landing_page_iframe.scss */
+  /* line 128, ../sass/components/nodes/_landing_page_iframe.scss */
   .iframe-object-wrapper .iframe-object-creator {
     float: left;
     width: 58.33333%;
     margin-left: 25%;
     margin-right: -83.33333%;
   }
-  /* line 132, ../sass/components/nodes/_landing_page_iframe.scss */
+  /* line 131, ../sass/components/nodes/_landing_page_iframe.scss */
   .iframe-object-wrapper .iframe-object-date {
     float: left;
     width: 58.33333%;
@@ -4833,7 +4825,7 @@ tr.selected td {
     margin-right: -83.33333%;
   }
 }
-/* line 138, ../sass/components/nodes/_landing_page_iframe.scss */
+/* line 137, ../sass/components/nodes/_landing_page_iframe.scss */
 .cboxIframe {
   width: 100%;
   height: 100%;

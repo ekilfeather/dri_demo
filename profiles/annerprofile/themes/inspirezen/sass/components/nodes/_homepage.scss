@@ -85,7 +85,7 @@
     @extend %letter-spacing-default;
     @extend %text-shadow;
     position: absolute;
-    top: 180px;
+    top: 100px;
     @include responsive(phone) {
       @include text-shadow(0 0 0 $white, 0 0 0 $white, 0 0 0 $white);
     }
