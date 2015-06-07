@@ -4002,7 +4002,6 @@ tr.selected td {
   }
   /* line 296, ../sass/components/nodes/_homepage.scss */
   .node-type-homepage .group-home-slider {
-    clear: left;
     float: left;
     width: 100%;
     margin-left: 0%;

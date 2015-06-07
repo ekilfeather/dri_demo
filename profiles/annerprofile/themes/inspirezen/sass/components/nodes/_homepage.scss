@@ -294,7 +294,7 @@
     // Main Homepage slider
   .field-name-field-home-slider-id {}
   .group-home-slider {
-    @include zen-clear();
+    //@include zen-clear();
     @include zen-grid-item(12,1);
     .field-name-field-home-slider-title {
       @include zen-clear();
