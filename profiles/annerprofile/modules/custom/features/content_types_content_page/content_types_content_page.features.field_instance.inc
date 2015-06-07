@@ -216,16 +216,6 @@ function content_types_content_page_field_default_field_instances() {
       'active' => 1,
       'module' => 'image',
       'settings' => array(
-        'insert' => 0,
-        'insert_absolute' => FALSE,
-        'insert_class' => '',
-        'insert_default' => array(
-          0 => 'auto',
-        ),
-        'insert_styles' => array(
-          0 => 'auto',
-        ),
-        'insert_width' => '',
         'preview_image_style' => 'thumbnail',
         'progress_indicator' => 'throbber',
       ),
@@ -352,6 +342,47 @@ function content_types_content_page_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-content_page-field_tag'
+  $field_instances['node-content_page-field_tag'] = array(
+    'bundle' => 'content_page',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 6,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_tag',
+    'label' => 'Theme Tag',
+    'required' => 0,
+    'settings' => array(
+      'entity_translation_sync' => FALSE,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'taxonomy',
+      'settings' => array(
+        'autocomplete_path' => 'taxonomy/autocomplete',
+        'size' => 60,
+      ),
+      'type' => 'taxonomy_autocomplete',
+      'weight' => 10,
+    ),
+  );
+
   // Exported field_instance: 'node-content_page-title_field'
   $field_instances['node-content_page-title_field'] = array(
     'bundle' => 'content_page',
@@ -402,6 +433,7 @@ function content_types_content_page_field_default_field_instances() {
   t('Inline Image');
   t('Manual Images');
   t('Related Objects');
+  t('Theme Tag');
   t('This image will float to the right hand side under the banner image and beside the text.');
   t('This image will scale across the top of the webpage.
 ');
