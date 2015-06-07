@@ -3720,10 +3720,6 @@ tr.selected td {
     text-shadow: 0 0 0 white, 0 0 0 white, 0 0 0 white;
   }
 }
-/* line 96, ../sass/components/nodes/_homepage.scss */
-.node-type-homepage .group-home-slider {
-  clear: left;
-}
 /* line 99, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-slider .field-name-field-home-slider-title {
   float: left;

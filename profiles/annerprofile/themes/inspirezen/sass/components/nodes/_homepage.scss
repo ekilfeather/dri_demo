@@ -95,7 +95,7 @@
   }
   .group-home-slider {
     @extend %transition;
-    @include zen-clear();
+    //@include zen-clear();
     .field-name-field-home-slider-title {
       @include zen-grid-item (6,2);
       @extend %f60;
