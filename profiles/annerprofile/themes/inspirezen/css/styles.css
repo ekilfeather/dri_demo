@@ -3665,12 +3665,11 @@ tr.selected td {
 }
 /* line 28, ../sass/components/views/_views_dri_homepages.scss */
 .view-dri-homepages .views-field-title .field-content > a {
-  font-weight: 600;
   color: white;
-  font-weight: 600;
+  font-weight: 300;
   line-height: initial;
 }
-/* line 38, ../sass/components/views/_views_dri_homepages.scss */
+/* line 37, ../sass/components/views/_views_dri_homepages.scss */
 .view-dri-homepages .views-field-field-home-slider-image {
   position: relative;
   top: 0px;
@@ -3687,16 +3686,16 @@ tr.selected td {
   /* 9 */
 }
 @media only screen and (max-width: 480px) {
-  /* line 55, ../sass/components/views/_views_dri_homepages.scss */
+  /* line 54, ../sass/components/views/_views_dri_homepages.scss */
   .view-dri-homepages .views-row {
     border-top: 1px solid #f2f2f3;
   }
-  /* line 58, ../sass/components/views/_views_dri_homepages.scss */
+  /* line 57, ../sass/components/views/_views_dri_homepages.scss */
   .view-dri-homepages .views-row-last {
     border-bottom: 1px solid #f2f2f3;
     margin-bottom: 1.5rem;
   }
-  /* line 62, ../sass/components/views/_views_dri_homepages.scss */
+  /* line 61, ../sass/components/views/_views_dri_homepages.scss */
   .view-dri-homepages .views-field-title {
     padding-top: 5%;
   }
