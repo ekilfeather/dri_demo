@@ -57,7 +57,7 @@ function view_dri_demo_timeline_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'timeline_date' => 'timeline_date',
+    'demo_page' => 'demo_page',
   );
 
   /* Display: Timeline Filtered by Tag */
