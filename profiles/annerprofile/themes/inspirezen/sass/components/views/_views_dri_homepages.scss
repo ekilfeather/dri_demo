@@ -1,0 +1,68 @@
+/**
+ * Theming for the Demonstrator Homepages Landing Page View - dri-homepages
+ */
+
+.view-dri-homepages {
+  .views-row {
+    @include zen-float();
+    @include zen-clear();
+    @extend %transition;
+    @include rem(padding, 2rem 0 2.2rem 0);
+    border-top: 1px solid $grey-light;
+    position: relative;
+  }
+
+  .views-row-last {
+    @extend %transition;
+      border-bottom: 1px solid $grey-light;
+      @include rem(margin-bottom, 1.5rem);
+    }
+
+  .views-field-title {
+
+    position: absolute;
+    top: 15%;
+    left: 10%;
+    width: 60%;
+    z-index: 1;
+    .field-content > a {
+      @extend %transition;
+      @extend %f30;
+      @extend %text-shadow;
+      font-weight: 600;
+      color: $white;
+      font-weight: 600;
+      line-height:initial;
+    }
+  }
+  .views-field-field-home-slider-image {
+    @extend %transition;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    @include rem(margin-right, 2rem);
+  }
+
+  // tablet
+  @include responsive(tablet) {
+    .views-field-title {
+      
+    }
+  }
+
+  // phone
+  @include responsive(phone) {
+    .views-row {
+      border-top: 1px solid $grey-light;
+    }
+    .views-row-last {
+      border-bottom: 1px solid $grey-light;
+      margin-bottom: 1.5rem;
+    }
+    .views-field-title {
+      padding-top: 5%;
+    }
+    .views-field-field-home-slider-image {
+  }
+}
+}
