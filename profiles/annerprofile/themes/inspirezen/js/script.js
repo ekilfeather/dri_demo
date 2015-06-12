@@ -156,9 +156,9 @@ Drupal.behaviors.inspirezen = {
         // options
         itemSelector : '.field-items',
         layoutMode : 'masonry',
-        masonry: { columnWidth: 192 },
+        masonry: { columnWidth: 100 },
         });
-        $('.field-name-field-lp-object-id').isotope( 'reLayout', callback );
+        //$('.field-name-field-lp-object-id').isotope( 'reLayout', callback );
     });
     // End code to turn object id field to isotope
 
