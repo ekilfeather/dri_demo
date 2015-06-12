@@ -158,9 +158,8 @@
       <div class="footer-contact"><a href="/contact"><?php print t('Contact'); ?></a></div>
     </div>
     <div id="sub-footer-right">
-      <div class="footer-design-credits"><?php print t('Powered by <a href="@url">Digital Repository of Ireland</a>', array('@url' => url('http://www.dri.ie/'))); ?><br >
-        <?php print t('Designed by') . ' '; ?><a href="http://www.daracreative.ie">dara creative</a> | <?php print t('Built by') . ' '; ?> <a href="http://www.annertech.com">Annertech</a>
-      </div>
+      <div class="footer-design-credits"><?php print t('Powered by <a href="@url">Digital Repository of Ireland</a>', array('@url' => url('http://www.dri.ie/'))); ?>
+             </div>
 
 
     </div>
