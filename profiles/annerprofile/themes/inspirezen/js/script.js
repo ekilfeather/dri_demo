@@ -156,7 +156,7 @@ Drupal.behaviors.inspirezen = {
         // options
         itemSelector : '.field-items',
         layoutMode : 'masonry',
-        masonry: { columnWidth: 100 },
+        masonry: { columnWidth: 200,  gutterWidth: 10 },
         });
         //$('.field-name-field-lp-object-id').isotope( 'reLayout', callback );
     });

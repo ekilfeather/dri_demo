@@ -3726,6 +3726,10 @@ tr.selected td {
   margin-right: -20px;
   float: right;
 }
+/* line 30, ../sass/components/nodes/_demo_page.scss */
+.node-type-demo-page .field-item img, .node-type-content-page .field-item img {
+  padding: 4px;
+}
 
 /**
  * Homepage Styling
