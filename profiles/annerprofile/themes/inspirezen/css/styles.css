@@ -3702,6 +3702,32 @@ tr.selected td {
 }
 
 /**
+ * Styling for Landing Pages
+ */
+/* line 7, ../sass/components/nodes/_demo_page.scss */
+.node-type-demo-page blockquote a, .node-type-content-page blockquote a {
+  color: #333333;
+}
+/* line 12, ../sass/components/nodes/_demo_page.scss */
+.node-type-demo-page blockquote:before, .node-type-content-page blockquote:before {
+  content: open-quote;
+  font-weight: bold;
+  font-size: 100px;
+  color: #889c0b;
+  margin-left: -20px;
+  float: left;
+}
+/* line 20, ../sass/components/nodes/_demo_page.scss */
+.node-type-demo-page blockquote:after, .node-type-content-page blockquote:after {
+  content: close-quote;
+  font-weight: bold;
+  font-size: 100px;
+  color: #889c0b;
+  margin-right: -20px;
+  float: right;
+}
+
+/**
  * Homepage Styling
  */
 /* line 6, ../sass/components/nodes/_homepage.scss */

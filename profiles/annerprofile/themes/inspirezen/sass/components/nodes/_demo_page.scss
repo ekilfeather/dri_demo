@@ -1,0 +1,29 @@
+/**
+ * Styling for Landing Pages
+ */
+.node-type-demo-page, .node-type-content-page {
+
+blockquote {
+  a {
+    color: $fontcol;
+  }
+}
+
+blockquote:before { 
+    content: open-quote;
+    font-weight: bold;
+    font-size:100px;
+    color:#889c0b;
+    margin-left: -20px;
+    float: left;
+} 
+blockquote:after { 
+    content: close-quote;
+    font-weight: bold;
+    font-size:100px;
+    color:#889c0b;
+    margin-right: -20px;
+    float:right;
+}
+}
+
