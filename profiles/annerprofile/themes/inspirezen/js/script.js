@@ -202,9 +202,9 @@ Drupal.behaviors.inspirezen = {
     $('.view-dri-object-search .view-content .views-row:nth-child(3n +1)').addClass('nth-child-3np1');
 
     // Remove right-click functionality from images
-    $('img').bind('contextmenu', function(e) {
-        return false;
-    });
+    //$('img').bind('contextmenu', function(e) {
+    //    return false;
+    //});
 
       // When the user hovers inside the landing page content make image opaque
       $(".field-type-image").hover(function() {
