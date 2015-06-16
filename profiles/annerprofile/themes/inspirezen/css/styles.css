@@ -84,8 +84,8 @@
 #block-menu-block-main-links-1 li a:focus, #block-menu-block-3 li a:hover, #block-menu-block-1 li a:hover,
 #block-menu-block-main-links-1 li a:hover, #block-menu-block-3 li a.active, #block-menu-block-1 li a.active,
 #block-menu-block-main-links-1 li a.active {
-  color: #90993d;
-  text-shadow: 0 0 0.5px #90993d, 0 0 0.5px #90993d, 0 0 0.5px #90993d;
+  color: #00948f;
+  text-shadow: 0 0 0.5px #00948f, 0 0 0.5px #00948f, 0 0 0.5px #00948f;
 }
 
 /**
@@ -377,7 +377,7 @@
 }
 /* line 294, ../sass/_extends.scss */
 #block-views-news-archive-block a:focus, #block-views-news-tags-block a:focus, #block-views-news-archive-block a:hover, #block-views-news-tags-block a:hover {
-  color: #90993d;
+  color: #00948f;
   text-decoration: none;
 }
 
@@ -522,13 +522,13 @@ body {
  */
 /* line 138, ../sass/_normalize.scss */
 a:link {
-  color: #90993d;
+  color: #00948f;
   text-decoration: none;
 }
 
 /* line 142, ../sass/_normalize.scss */
 a:visited {
-  color: #90993d;
+  color: #00948f;
 }
 
 /* line 146, ../sass/_normalize.scss */
@@ -539,7 +539,7 @@ a:focus {
 
 /* line 149, ../sass/_normalize.scss */
 a:active {
-  color: #90993d;
+  color: #00948f;
 }
 
 /* Address `outline` inconsistency between Chrome and other browsers. */
@@ -1508,7 +1508,7 @@ a.tabs-primary__tab-link {
 
 /* line 352, ../sass/components/_misc.scss */
 a.tabs-primary__tab-link.is-active {
-  color: #90993d;
+  color: #00948f;
 }
 
 /* Secondary tabs. */
@@ -2499,7 +2499,7 @@ tr.selected td {
 }
 /* line 116, ../sass/components/_menus.scss */
 #block-menu-block-main-links-1 a {
-  color: #90993d;
+  color: #00948f;
   /* 3 */
   /* 3 */
   /* 4 */
@@ -2601,12 +2601,12 @@ tr.selected td {
 }
 /* line 58, ../sass/components/_globals.scss */
 .pager a:focus, .pager a:hover {
-  color: #90993d;
+  color: #00948f;
   text-decoration: none;
 }
 /* line 66, ../sass/components/_globals.scss */
 .pager .pager-current {
-  color: #90993d;
+  color: #00948f;
 }
 
 /**
@@ -2752,7 +2752,7 @@ tr.selected td {
 }
 /* line 70, ../sass/components/regions/_footer.scss */
 #sub-footer-right .footer-design-credits a:focus, #sub-footer-right .footer-design-credits a:hover {
-  color: #90993d;
+  color: #00948f;
 }
 @media only screen and (max-width: 480px) {
   /* line 62, ../sass/components/regions/_footer.scss */
@@ -2816,26 +2816,29 @@ tr.selected td {
 }
 /* line 26, ../sass/components/regions/_header.scss */
 #header .language-switcher-locale-url {
+  position: absolute;
+  top: 10px;
+  right: 40px;
   list-style-type: none;
   float: right;
   display: flex;
   margin: 0;
 }
-/* line 31, ../sass/components/regions/_header.scss */
+/* line 34, ../sass/components/regions/_header.scss */
 #header .language-switcher-locale-url li.first {
   padding-right: 10px;
 }
-/* line 34, ../sass/components/regions/_header.scss */
+/* line 37, ../sass/components/regions/_header.scss */
 #header .language-switcher-locale-url li.first :after {
   padding-left: 10px;
   content: "|";
 }
-/* line 38, ../sass/components/regions/_header.scss */
+/* line 41, ../sass/components/regions/_header.scss */
 #header .language-switcher-locale-url li.active > a {
   font-weight: bold;
 }
 
-/* line 46, ../sass/components/regions/_header.scss */
+/* line 49, ../sass/components/regions/_header.scss */
 .header-wrapper {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(95%, #ffffff), color-stop(96%, #ffffff), color-stop(97%, #d6d6d6), color-stop(100%, #f8f8f8));
   background-image: -webkit-linear-gradient(#ffffff 95%, #ffffff 96%, #d6d6d6 97%, #f8f8f8 100%);
@@ -2856,39 +2859,39 @@ tr.selected td {
   width: 100%;
 }
 
-/* line 57, ../sass/components/regions/_header.scss */
+/* line 60, ../sass/components/regions/_header.scss */
 .header-outer {
   max-width: 960px;
   margin: 0 auto;
 }
 
-/* line 64, ../sass/components/regions/_header.scss */
+/* line 67, ../sass/components/regions/_header.scss */
 #site-name a {
   display: block;
   text-indent: -119988px;
   overflow: hidden;
   text-align: left;
-  background-image: url('../images/header/logo-960.png?1413774490');
+  background-image: url('../images/header/logo-960.png?1434475015');
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  width: 184px;
-  height: 62px;
+  width: 460px;
+  height: 100px;
 }
 @media only screen and (max-width: 480px) {
-  /* line 64, ../sass/components/regions/_header.scss */
+  /* line 67, ../sass/components/regions/_header.scss */
   #site-name a {
     text-indent: -119988px;
     overflow: hidden;
     text-align: left;
-    background-image: url('../images/header/logo-480.png?1413774490');
+    background-image: url('../images/header/logo-480.png?1434475011');
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    width: 138px;
-    height: 47px;
+    width: 322px;
+    height: 70px;
   }
 }
 
-/* line 74, ../sass/components/regions/_header.scss */
+/* line 77, ../sass/components/regions/_header.scss */
 #navigation {
   /* Move the navbar up inside #main's padding. */
 }
@@ -3008,7 +3011,7 @@ tr.selected td {
 }
 /* line 43, ../sass/components/views/_views_news.scss */
 .view-news .field-name-title-field a {
-  color: #90993d;
+  color: #00948f;
   font-weight: 600;
 }
 /* line 50, ../sass/components/views/_views_news.scss */
@@ -3190,7 +3193,7 @@ tr.selected td {
   /* 9 */
   padding-bottom: 2rem;
   /* 9 */
-  color: #90993d;
+  color: #00948f;
 }
 /* line 11, ../sass/components/views/_views_custom_search.scss */
 .view-custom-search .views-search-results-wrapper {
@@ -3266,7 +3269,7 @@ tr.selected td {
 }
 /* line 41, ../sass/components/views/_views_custom_search.scss */
 .view-custom-search .views-search-results-link-arrow {
-  color: #90993d;
+  color: #00948f;
   font-weight: 300;
   position: relative;
   left: 5px;
@@ -3425,7 +3428,7 @@ tr.selected td {
 .page-search-collections #block-facetapi-hvcq3ktffksi4l0xtojfj0kdaysfltpz .facetapi-facetapi-checkbox-links li a:hover,
 .page-search-collections #block-facetapi-y1fsezkzyvvaxbxfjvqyaaxetf9zuj05 .facetapi-facetapi-checkbox-links li a:focus,
 .page-search-collections #block-facetapi-y1fsezkzyvvaxbxfjvqyaaxetf9zuj05 .facetapi-facetapi-checkbox-links li a:hover {
-  color: #90993d;
+  color: #00948f;
 }
 /* line 76, ../sass/components/views/_facet_search.scss */
 .page-search-collections #block-facetapi-5yehnzco1igll3iekufsppggjxeuzdzp ul,
@@ -3731,6 +3734,11 @@ tr.selected td {
   padding: 4px;
 }
 
+/* line 37, ../sass/components/nodes/_demo_page.scss */
+.node-teaser header {
+  max-width: 500px;
+}
+
 /**
  * Homepage Styling
  */
@@ -3899,7 +3907,7 @@ tr.selected td {
 }
 /* line 143, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-left:focus, .node-type-homepage .group-home-left:hover {
-  background: rgba(144, 153, 61, 0.7);
+  background: rgba(0, 148, 143, 0.7);
 }
 /* line 146, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-left .field-name-field-home-left-title {
@@ -3917,7 +3925,7 @@ tr.selected td {
 }
 /* line 163, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-center:focus, .node-type-homepage .group-home-center:hover {
-  background: rgba(144, 153, 61, 0.7);
+  background: rgba(0, 148, 143, 0.7);
 }
 /* line 166, ../sass/components/nodes/_homepage.scss */
 .node-type-homepage .group-home-center .field-name-field-home-center-title {
@@ -5623,7 +5631,7 @@ tr.selected td {
 }
 /* line 21, ../sass/components/_cookie_control.scss */
 #sliding-popup .popup-content #popup-buttons button:focus, #sliding-popup .popup-content #popup-buttons button:hover {
-  background: #90993d;
+  background: #00948f;
   border: none;
   color: white;
   text-shadow: none;
