@@ -262,7 +262,7 @@ function inspirezen_preprocess_dri_iframe(&$variables) {
 
     if (get_class($fc_item) == 'FieldCollectionItemEntity') {
       $variables['fc_item'] = $fc_item;
-      $curated_text = field_get_items('field_collection_item', $fc_item, 'field_lp_fc_curated_text', 'ga');
+      $curated_text = field_get_items('field_collection_item', $fc_item, 'field_lp_fc_curated_text');
       $variables['curated_text'] = $curated_text[0]['safe_value'];
     }
   }
