@@ -14,6 +14,7 @@
  * - $curated_text: Safe value of Curated Text field for this item
  */
 ?>
+<?php $api_base_url = variable_get('dri_api_endpoint_base_url'); ?>
 <?php global $base_url; ?>
 
 <div class="iframe-object-wrapper">
@@ -37,6 +38,8 @@
     </div>
 
     <div class="iframe-object-link"><a target="_top" href="/object-detail/<?php print $variables['elements']['0']['pid']; ?>"><?php print t('See Object Details'); ?></a></div>
+    <br />
+    <div class="iframe-object-link"><a target="_blank" href="<?php print $api_base_url  ?>catalog/<?php print $variables['elements']['0']['pid']  ?>"><?php print t('See Object On DRI'); ?></a></div>
   </div>
 </div>
 
