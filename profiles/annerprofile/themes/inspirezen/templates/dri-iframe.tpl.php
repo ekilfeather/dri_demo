@@ -26,11 +26,15 @@
 	</div>
   <div class="iframe-object-inner">
     <div class="iframe-object-title"><?php print $title; ?></div>
-      	<?php print $video_player; ?>  
-    <div class="iframe-object-label"><?php print t('Creator:'); ?></div>
-    <div class="iframe-object-creator"><?php print $creator; ?></div>
-    <div class="iframe-object-label"><?php print t('Date:'); ?></div>
-    <div class="iframe-object-date"><?php print $date; ?></div>
+      	<?php print $video_player; ?> 
+    <?php if ($creator): ?>  	 
+	    <div class="iframe-object-label"><?php print t('Creator:'); ?></div>
+	    <div class="iframe-object-creator"><?php print $creator; ?></div>
+    <?php endif; ?>
+    <?php if ($date): ?> 
+	    <div class="iframe-object-label"><?php print t('Date:'); ?></div>
+	    <div class="iframe-object-date"><?php print $date; ?></div>
+    <?php endif; ?>
     <div class="iframe-object-description">
       <?php if ($curated_text): ?>
         <?php print $curated_text; ?>
