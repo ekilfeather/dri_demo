@@ -157,6 +157,12 @@ function template_preprocess_dri_object(&$variables) {
   if (!empty($dates)) {
     $variables['dates'] = implode(', ', $dates);
   }
+  
+  //creation_dates are also sometimes available
+  $creation_dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['creation_date']);
+  if (empty($creation_dates)) {
+    $variables['creation_dates'] = implode(', ', $creation_dates);
+  }
 
   // parse out place names from geographical_coverage metadata
   $places = $variables['elements']['0']['metadata']['geographical_coverage'];
@@ -234,6 +240,12 @@ function template_preprocess_dri_object(&$variables) {
   if (!empty($contributors)) {
     $variables['contributors'] = implode(', ', $contributors);
   }
+  
+  // Include the PID in the variables
+  $pid = $variables['elements']['0']['pid'];
+  if (!empty($pid)) {
+    $variables['pid'] = $pid;
+  }
 }
 
 
@@ -286,7 +298,18 @@ function template_preprocess_dri_iframe(&$variables) {
 
   // clean up date formats
   $dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['date']);
-  $variables['date'] = $dates['0']; // assume only one
+  $creation_dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['creation_date']);
+  $publication_dates = _dri_object_parse_date_metadata($variables['elements']['0']['metadata']['published_date']);
+  
+  if ($creation_dates) {
+  	$variables['creation_date'] = $creation_dates['0']; // assume only one and send first available
+  } elseif ($publication_dates) {
+      $variables['publication_date'] = $publication_dates['0']; // assume only one
+  } elseif ($dates) {
+      $variables['date'] = $dates['0']; // assume only one
+  }
+  
+  
 }
 
 

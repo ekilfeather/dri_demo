@@ -4797,16 +4797,16 @@ tr.selected td {
 .iframe-object-wrapper .iframe-object-creator {
   float: left;
   width: 58.33333%;
-  margin-left: 16.66667%;
-  margin-right: -75%;
+  margin-left: 25%;
+  margin-right: -83.33333%;
   color: #999999;
 }
 /* line 64, ../sass/components/nodes/_landing_page_iframe.scss */
 .iframe-object-wrapper .iframe-object-date {
   float: left;
   width: 58.33333%;
-  margin-left: 16.66667%;
-  margin-right: -75%;
+  margin-left: 25%;
+  margin-right: -83.33333%;
   color: #999999;
 }
 /* line 68, ../sass/components/nodes/_landing_page_iframe.scss */

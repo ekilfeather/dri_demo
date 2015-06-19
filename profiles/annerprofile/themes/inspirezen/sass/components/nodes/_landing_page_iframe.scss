@@ -58,11 +58,11 @@
     font-weight: 600;
   }
   .iframe-object-creator {
-    @include zen-grid-item(7,3);
+    @include zen-grid-item(7,4);
     color: $grey-credits;
   }
   .iframe-object-date {
-    @include zen-grid-item(7,3);
+    @include zen-grid-item(7,4);
     color: $grey-credits;
   }
   .iframe-object-description {

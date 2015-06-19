@@ -35,6 +35,14 @@
 	    <div class="iframe-object-label"><?php print t('Date:'); ?></div>
 	    <div class="iframe-object-date"><?php print $date; ?></div>
     <?php endif; ?>
+    <?php if ($creation_date): ?> 
+	    <div class="iframe-object-label"><?php print t('Creation Date:'); ?></div>
+	    <div class="iframe-object-date"><?php print $creation_date; ?></div>
+    <?php endif; ?>
+    <?php if ($publication_date): ?> 
+	    <div class="iframe-object-label"><?php print t('Published:'); ?></div>
+	    <div class="iframe-object-date"><?php print $publication_date; ?></div>
+    <?php endif; ?>
     <div class="iframe-object-description">
       <?php if ($curated_text): ?>
         <?php print $curated_text; ?>
