@@ -40,6 +40,6 @@
   <?php print render($content['links']); ?>
 
   <?php print render($content['comments']); ?>
-  <div class="footer-bottom-border"></div>
+  <!-- <div class="footer-bottom-border"></div> -->
 
 </article>
