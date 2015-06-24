@@ -152,13 +152,13 @@
       <div class="footer-copyright"><?php print t('Digital Repository of Ireland') ?></div>
       <!-- <div class="footer-divider">|
       </div> -->
-      <div class="footer-terms"><a href="/terms">Terms & Conditions</a></div>
+      <div class="footer-terms"><a href="https://repository.dri.ie/pages/terms">Terms & Conditions</a></div>
       <div class="footer-divider">|
       </div>
-      <div class="footer-contact"><a href="/contact"><?php print t('Contact'); ?></a></div>
+      <div class="footer-contact"><a href="https://repository.dri.ie/pages/about_us"><?php print t('Contact'); ?></a></div>
     </div>
     <div id="sub-footer-right">
-      <div class="footer-design-credits"><?php print t('Powered by <a href="@url">Digital Repository of Ireland</a>', array('@url' => url('http://www.dri.ie/'))); ?>
+      <div class="footer-design-credits"><?php print t('Powered by <a href="@url">Digital Repository of Ireland</a>', array('@url' => url('https://repository.dri.ie/'))); ?>
              </div>
 
 
