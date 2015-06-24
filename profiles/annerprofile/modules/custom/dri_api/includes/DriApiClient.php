@@ -74,9 +74,10 @@ class DriApiClient {
   public function getObjects(array $object_ids, array $metadata = NULL) {
     $request = $this->client->post(
       array( // $uri
-        'get_objects{?auth_token}', // uri template',
+        'get_objects{?user_email}{&user_token}', // uri template',
         array( // uri params
-          'auth_token' => variable_get('dri_api_auth_token', ''),
+          'user_email' =>  variable_get('dri_api_auth_user', ''),
+          'user_token' => variable_get('dri_api_auth_token', '')
         ),
       ),
       array( // $headers
