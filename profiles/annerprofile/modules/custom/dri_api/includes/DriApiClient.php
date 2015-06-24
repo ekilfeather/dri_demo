@@ -71,13 +71,13 @@ class DriApiClient {
    * @todo DRI devs talked about making this a GET instead, to make it more
    *   'RESTful'. Update may be needed.
    */
-  public function getObjects(array $object_ids, array $metadata = NULL) {
+public function getObjects(array $object_ids, array $metadata = NULL) {
     $request = $this->client->post(
       array( // $uri
-        'get_objects{?user_email}{&user_token}', // uri template',
+        'get_objects{?user_email,user_token}', // uri template',
         array( // uri params
-          'user_email' =>  variable_get('dri_api_auth_user', ''),
-          'user_token' => variable_get('dri_api_auth_token', '')
+           'user_email' => variable_get('dri_api_user_email', ''),
+           'user_token' => variable_get('dri_api_user_token', ''),
         ),
       ),
       array( // $headers
