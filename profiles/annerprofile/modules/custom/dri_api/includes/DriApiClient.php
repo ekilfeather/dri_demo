@@ -4,8 +4,6 @@
  * @file
  * Provides a client class for the DRI API.
  *
- * @todo Add auth_token to requests, keep Drupal variable.
- *
  * @todo implement a search the repository method for GET /catalog
  *
  * @todo implement a objects XML method for GET /objects/<object_id>
@@ -71,7 +69,7 @@ class DriApiClient {
    * @todo DRI devs talked about making this a GET instead, to make it more
    *   'RESTful'. Update may be needed.
    */
-public function getObjects(array $object_ids, array $metadata = NULL) {
+  public function getObjects(array $object_ids, array $metadata = NULL) {
     $request = $this->client->post(
       array( // $uri
         'get_objects{?user_email,user_token}', // uri template',
@@ -151,9 +149,10 @@ public function getObjects(array $object_ids, array $metadata = NULL) {
   public function getAssets(array $object_ids) {
     $request = $this->client->post(
       array( // $uri
-        'get_assets{?auth_token}', // uri template',
+        'get_assets{?user_email,user_token}', // uri template',
         array( // uri params
-          'auth_token' => variable_get('dri_api_auth_token', ''),
+           'user_email' => variable_get('dri_api_user_email', ''),
+           'user_token' => variable_get('dri_api_user_token', ''),
         ),
       ),
       array( // $headers
@@ -195,7 +194,7 @@ public function getObjects(array $object_ids, array $metadata = NULL) {
       else {
         // not sure what exception we got
         watchdog('dri_api',
-          "Failed call to getAssetss()<br />Objects: @object_ids<br />@exception_message",
+          "Failed call to getAssets()<br />Objects: @object_ids<br />@exception_message",
           array(
             '@object_ids' => implode(',', $object_ids),
             '@exception_message' => $e->getMessage()
@@ -224,11 +223,12 @@ public function getObjects(array $object_ids, array $metadata = NULL) {
   public function getRelatedObjects($object_id, $count ) {
     $request = $this->client->get(
       array( // $uri
-        'related{?object,count,auth_token}', // uri template
+        'related{?object,count,user_email,user_token}', // uri template
         array( // uri params
           'object' => $object_id,
           'count' => $count,
-          'auth_token' => variable_get('dri_api_auth_token', ''),
+           'user_email' => variable_get('dri_api_user_email', ''),
+           'user_token' => variable_get('dri_api_user_token', ''),
         ),
       ),
       array( // $headers
@@ -281,9 +281,10 @@ public function getObjects(array $object_ids, array $metadata = NULL) {
   public function getCollections() {
     $request = $this->client->get(
       array( // $uri
-        'collections{?auth_token}', // uri template
+        'collections{?user_email,user_token}', // uri template
         array( // uri params
-          'auth_token' => variable_get('dri_api_auth_token', ''),
+           'user_email' => variable_get('dri_api_user_email', ''),
+           'user_token' => variable_get('dri_api_user_token', ''),
         ),
       ),
       array( // $headers
